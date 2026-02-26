@@ -10,8 +10,8 @@ export default defineConfig({
             input: ["resources/css/app.css", "resources/ts/app.ts"],
             refresh: true,
         }),
-        tailwindcss(),
         vue(),
+        tailwindcss(),
     ],
     server: {
         watch: {
