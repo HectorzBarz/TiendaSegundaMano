@@ -6,11 +6,13 @@
     >
         <div class="px-10"><img src="" alt="logo" /></div>
         <nav class="flex justify-around">
-            <ul
-                class="px-5 py-2 hover:scale-125 transition-all hover:bg-gray-300 rounded-xl hover:shadow-xl hover:cursor-pointer"
-            >
-                Inicio
-            </ul>
+            <RouterLink to="/">
+                <ul
+                    class="px-5 py-2 hover:scale-125 transition-all hover:bg-gray-300 rounded-xl hover:shadow-xl hover:cursor-pointer"
+                >
+                    Inicio
+                </ul>
+            </RouterLink>
             <ul
                 class="px-5 py-2 hover:scale-125 transition-all hover:bg-gray-300 rounded-xl hover:shadow-xl hover:cursor-pointer"
             >
