@@ -1,0 +1,139 @@
+<script setup lang="ts">
+import hampter from "@/img/hampter.jpg";
+
+const articles = [
+    {
+        id: 1,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 1",
+        onSale: true,
+    },
+    {
+        id: 2,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 2 ",
+        onSale: false,
+    },
+    {
+        id: 3,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 3",
+        onSale: false,
+    },
+    {
+        id: 4,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 4",
+        onSale: true,
+    },
+    {
+        id: 5,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 5",
+        onSale: false,
+    },
+    {
+        id: 6,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 6",
+        onSale: true,
+    },
+    {
+        id: 7,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 7",
+        onSale: false,
+    },
+    {
+        id: 8,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 8",
+        onSale: false,
+    },
+    {
+        id: 9,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 9",
+        onSale: false,
+    },
+    {
+        id: 10,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 10",
+        onSale: false,
+    },
+];
+</script>
+
+<template>
+    <div class="h-full flex flex-col gap-5">
+        <!-- Title -->
+        <div class="text-center my-5 align-middle">
+            <h1 class="text-5xl">Hola caracola, esto es una Categoría</h1>
+        </div>
+        <!-- END Title -->
+
+        <!-- Article List -->
+        <div
+            class="mx-5 grid grid-cols-5 gap-3 text-center align-middle h-full mb-5"
+        >
+            <div
+                v-for="article in articles"
+                :key="article.id"
+                class="hover:shadow-lg flex rounded-t-xl justify-center items-center min-h-1/4 w-full overflow-hidden hover:cursor-pointer"
+            >
+                <div>
+                    <!-- Imagen -->
+                    <img :src="article.img" alt="img" class="w-full h-full" />
+
+                    <!-- Texto -->
+                    <h2
+                        class="text-xl font-semibold transition-all group-hover:text-2xl"
+                    >
+                        {{ article.name }}
+                    </h2>
+
+                    <div>
+                        <h3
+                            class="flex gap-2 justify-center text-lg font-semibold transition-all group-hover:text-2xl"
+                            :class="
+                                article.onSale
+                                    ? 'text-red-600'
+                                    : 'text-gray-600'
+                            "
+                        >
+                            {{ article.price }}€
+                            <span
+                                v-if="article.onSale"
+                                class="flex line-through text-gray-600 text-sm items-center"
+                            >
+                                Antiguamente: {{ article.oldPrice }}€
+                            </span>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END Article List -->
+    </div>
+</template>
