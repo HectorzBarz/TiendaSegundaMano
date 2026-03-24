@@ -8,23 +8,25 @@
         <nav class="flex justify-around">
             <RouterLink to="/">
                 <ul
-                    class="px-5 py-2 hover:scale-110 transition-all hover:border hover:shadow-lg hover:cursor-pointer"
+                    class="px-5 py-2 hover:scale-110 transition-all hover:rounded-b-lg hover:shadow-lg hover:cursor-pointer"
                 >
                     Inicio
                 </ul>
             </RouterLink>
+            <RouterLink to="/articles">
+                <ul
+                    class="px-5 py-2 hover:scale-110 transition-all hover:rounded-b-lg hover:shadow-lg hover:cursor-pointer"
+                >
+                    Productos
+                </ul>
+            </RouterLink>
             <ul
-                class="px-5 py-2 hover:scale-110 transition-all hover:border hover:shadow-lg hover:cursor-pointer"
-            >
-                Productos
-            </ul>
-            <ul
-                class="px-5 py-2 hover:scale-110 transition-all hover:border hover:shadow-lg hover:cursor-pointer"
+                class="px-5 py-2 hover:scale-110 transition-all hover:rounded-b-lg hover:shadow-lg hover:cursor-pointer"
             >
                 Categorias
             </ul>
             <ul
-                class="px-5 py-2 hover:scale-110 transition-all hover:border hover:shadow-lg hover:cursor-pointer"
+                class="px-5 py-2 hover:scale-110 transition-all hover:rounded-b-lg hover:shadow-lg hover:cursor-pointer"
             >
                 Área personal
             </ul>
