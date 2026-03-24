@@ -7,10 +7,10 @@ const routes = [
         component: () => import("@/views/HomeView.vue"),
     },
     {
-        path: "/category/:id",
-        name: "category",
-        component: () => import("@/views/CategoryView.vue"),
-        meta: { title: "Category" },
+        path: "/articles/:catgory?",
+        name: "articles",
+        component: () => import("@/views/ArticlesView.vue"),
+        meta: { title: "Articles" },
     },
 ];
 
