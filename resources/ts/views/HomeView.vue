@@ -26,7 +26,7 @@ const categorias = [
                 :key="categoria.id"
                 class="group relative flex justify-center items-center min-h-60 border-r border-y border-gray-200 w-full overflow-hidden hover:cursor-pointer"
             >
-                <RouterLink :to="'/category/' + categoria.id">
+                <RouterLink :to="'/articles/' + categoria.id">
                     <!-- Imagen -->
                     <img
                         :src="categoria.img"
