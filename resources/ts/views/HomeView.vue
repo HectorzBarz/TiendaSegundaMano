@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import hampter from "@/img/hampter.jpg";
+import hampter from "/storage/app/public/img/hampter.jpg";
 
 const categorias = [
     { id: 1, img: hampter, name: "Muebles" },
@@ -12,26 +12,26 @@ const categorias = [
 </script>
 
 <template>
-    <div class="h-full flex flex-col gap-5">
+    <div class="flex h-full flex-col gap-5">
         <!-- Slider -->
-        <div class="bg-red-300 h-96 text-center align-middle">
+        <div class="h-96 bg-red-300 text-center align-middle">
             <p>Hola caracola, esto será un slider</p>
         </div>
         <!-- END Slider -->
 
         <!-- Category Selector -->
-        <div class="grid grid-cols-3 text-center align-middle h-full mb-5">
+        <div class="mb-5 grid h-full grid-cols-3 text-center align-middle">
             <div
                 v-for="categoria in categorias"
                 :key="categoria.id"
-                class="group relative flex justify-center items-center min-h-60 border-r border-y border-gray-200 w-full overflow-hidden hover:cursor-pointer"
+                class="group relative flex min-h-60 w-full items-center justify-center overflow-hidden border-y border-r border-gray-200 hover:cursor-pointer"
             >
                 <RouterLink :to="'/articles/' + categoria.id">
                     <!-- Imagen -->
                     <img
                         :src="categoria.img"
                         alt="img"
-                        class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-115 transition-all"
+                        class="absolute inset-0 h-full w-full object-cover opacity-40 transition-all group-hover:scale-115"
                     />
 
                     <!-- Texto -->

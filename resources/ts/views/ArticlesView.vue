@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FilterBase from "@/components/FilterBase.vue";
-import hampter from "@/img/hampter.jpg";
+import hampter from "/storage/app/public/img/hampter.jpg";
 
 const articles = [
     {
