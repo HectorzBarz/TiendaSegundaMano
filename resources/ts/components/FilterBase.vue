@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+import { Article } from "@/types";
+
 import AutoComplete from "@volt/AutoComplete.vue";
 import InputNumber from "@volt/InputNumber.vue";
 import ToggleSwitch from "@volt/ToggleSwitch.vue";
@@ -9,7 +11,7 @@ import Button from "@volt/Button.vue";
 import DangerButton from "@volt/DangerButton.vue";
 
 const props = defineProps<{
-    suggestions: any[];
+    suggestions: Article[];
 }>();
 
 const value = ref(null);
@@ -26,8 +28,8 @@ const search = (event: any) => {
     );
 };
 
-const minPrice = ref(0);
-const maxPrice = ref(100);
+const minPrice = getMinPrice();
+const maxPrice = getMaxPrice();
 
 const checked = ref(false);
 
@@ -39,6 +41,15 @@ const cities = ref([
     { name: "Muebles", code: "muebles" },
     { name: "Juegos de Mesa", code: "juegos_mesa" },
 ]);
+
+function getMinPrice() {
+    if (props.suggestions.length === 0) return 0;
+    return Math.min(...props.suggestions.map((article) => article.price));
+}
+function getMaxPrice() {
+    if (props.suggestions.length === 0) return 0;
+    return Math.max(...props.suggestions.map((article) => article.price));
+}
 </script>
 
 <template>

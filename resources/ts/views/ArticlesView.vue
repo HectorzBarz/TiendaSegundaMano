@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import FilterBase from "@/components/FilterBase.vue";
 import hampter from "/storage/app/public/img/hampter.jpg";
+import { Article } from "@/types";
 
-const articles = [
+const articles = <Article[]>[
     {
         id: 1,
         img: hampter,
@@ -38,8 +39,7 @@ const articles = [
     {
         id: 5,
         img: hampter,
-        oldPrice: 1,
-        price: 0.1,
+        price: 10,
         name: "Artículo 5",
         onSale: false,
     },
