@@ -5,5 +5,11 @@ export type Article = {
     price: number;
     onSale: Boolean;
     img?: string;
-    category: string;
+    categoryId: number;
+};
+
+export type Category = {
+    id: number;
+    name: string;
+    img?: string;
 };

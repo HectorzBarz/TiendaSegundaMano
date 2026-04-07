@@ -1,8 +1,19 @@
 <script setup lang="ts">
 import FilterBase from "@/components/FilterBase.vue";
-import hampter from "/storage/app/public/img/hampter.jpg";
-import { Article } from "@/types";
 
+import hampter from "/storage/app/public/img/hampter.jpg";
+
+import { Article } from "@/types";
+import { computed } from "vue";
+
+const props = defineProps<{
+    categoryId: number;
+}>();
+
+/**
+ * TODO
+ * Articles will come filtered from the backend
+ */
 const articles = <Article[]>[
     {
         id: 1,
@@ -11,7 +22,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 1",
         onSale: true,
-        category: "Categoria 1",
+        categoryId: 1,
     },
     {
         id: 2,
@@ -20,7 +31,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 2 ",
         onSale: false,
-        category: "Categoria 2",
+        categoryId: 2,
     },
     {
         id: 3,
@@ -29,7 +40,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 3",
         onSale: false,
-        category: "Categoria 3",
+        categoryId: 1,
     },
     {
         id: 4,
@@ -38,7 +49,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 4",
         onSale: true,
-        category: "Categoria 4",
+        categoryId: 3,
     },
     {
         id: 5,
@@ -46,7 +57,7 @@ const articles = <Article[]>[
         price: 10,
         name: "Artículo 5",
         onSale: false,
-        category: "Categoria 5",
+        categoryId: 1,
     },
     {
         id: 6,
@@ -55,7 +66,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 6",
         onSale: true,
-        category: "Categoria 6",
+        categoryId: 4,
     },
     {
         id: 7,
@@ -64,7 +75,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 7",
         onSale: false,
-        category: "Categoria 7",
+        categoryId: 6,
     },
     {
         id: 8,
@@ -73,7 +84,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 8",
         onSale: false,
-        category: "Categoria 8",
+        categoryId: 5,
     },
     {
         id: 9,
@@ -82,7 +93,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 9",
         onSale: false,
-        category: "Categoria 9",
+        categoryId: 6,
     },
     {
         id: 10,
@@ -91,9 +102,19 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 10",
         onSale: false,
-        category: "Categoria 10",
+        categoryId: 2,
     },
 ];
+
+const filteredArticles = computed(() => {
+    const categoryId = props.categoryId;
+
+    if (categoryId === 0) return articles;
+
+    return articles.filter(
+        (article) => article.categoryId === props.categoryId,
+    );
+});
 </script>
 
 <template>
@@ -116,7 +137,7 @@ const articles = <Article[]>[
                 class="mx-5 mb-5 grid h-full gap-3 text-center align-middle sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
             >
                 <div
-                    v-for="article in articles"
+                    v-for="article in filteredArticles"
                     :key="article.id"
                     class="flex min-h-1/4 w-full items-center justify-center overflow-hidden rounded-t-xl hover:cursor-pointer hover:shadow-lg"
                 >
