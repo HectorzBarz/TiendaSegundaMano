@@ -14,27 +14,27 @@ const props = defineProps<{
     suggestions: Article[];
 }>();
 
-const value = ref(null);
-const filtered = ref<any[]>([]);
+const articleName = ref("");
+const filteredArticles = ref<any[]>([]);
 
 const search = (event: any) => {
     if (!event.query) {
-        filtered.value = props.suggestions;
+        filteredArticles.value = props.suggestions;
         return;
     }
 
-    filtered.value = props.suggestions.filter((article) =>
+    filteredArticles.value = props.suggestions.filter((article) =>
         article.name.toLowerCase().includes(event.query.toLowerCase()),
     );
 };
 
-const minPrice = getMinPrice();
-const maxPrice = getMaxPrice();
+const minPrice = ref(getMinPrice());
+const maxPrice = ref(getMaxPrice());
 
-const checked = ref(false);
+const onSale = ref(false);
 
-const selectedCity = ref(null);
-const cities = ref([
+const selectedCategory = ref("");
+const categories = ref([
     { name: "Juegetes", code: "jueguetes" },
     { name: "Informática", code: "informatica" },
     { name: "Ropa", code: "ropa" },
@@ -42,13 +42,35 @@ const cities = ref([
     { name: "Juegos de Mesa", code: "juegos_mesa" },
 ]);
 
+const filters = ref({
+    articleName: articleName.value ?? "",
+    minPrice: minPrice.value ?? getMinPrice(),
+    maxPrice: maxPrice.value ?? getMaxPrice(),
+    onSale: onSale.value ?? false,
+    category: selectedCategory.value ?? "",
+});
+
 function getMinPrice() {
     if (props.suggestions.length === 0) return 0;
     return Math.min(...props.suggestions.map((article) => article.price));
 }
+
 function getMaxPrice() {
     if (props.suggestions.length === 0) return 0;
     return Math.max(...props.suggestions.map((article) => article.price));
+}
+
+function submit() {
+    window.location.reload();
+}
+
+function reset() {
+    articleName.value = "";
+    selectedCategory.value = "";
+    minPrice.value = getMinPrice();
+    maxPrice.value = getMaxPrice();
+    onSale.value = false;
+    filteredArticles.value = props.suggestions;
 }
 </script>
 
@@ -62,12 +84,12 @@ function getMaxPrice() {
                 class="flex w-full items-center gap-2 sm:col-span-2 lg:col-span-5 lg:justify-start"
             >
                 <AutoComplete
-                    v-model="value"
+                    v-model="articleName"
                     inputId="name"
                     optionLabel="name"
                     placeholder="Nombre"
                     class="w-full"
-                    :suggestions="filtered"
+                    :suggestions="filteredArticles"
                     @complete="search"
                     inputClass="w-full"
                 />
@@ -78,9 +100,9 @@ function getMaxPrice() {
                 class="flex w-full items-center gap-2 sm:col-span-2 lg:col-span-5 lg:justify-start"
             >
                 <Select
-                    v-model="selectedCity"
+                    v-model="selectedCategory"
                     editable
-                    :options="cities"
+                    :options="categories"
                     optionLabel="name"
                     placeholder="Categoría"
                     class="w-full"
@@ -123,15 +145,18 @@ function getMaxPrice() {
                 class="flex w-full items-center gap-2 sm:col-span-1 md:justify-center lg:col-span-2 lg:justify-start xl:col-span-5"
             >
                 <span>En oferta: </span>
-                <ToggleSwitch v-model="checked" />
+                <ToggleSwitch v-model="onSale" />
             </div>
 
             <!-- SEARCH / RESET -->
             <div
                 class="flex h-full w-full gap-2 sm:col-span-4 md:col-span-1 lg:col-span-3 xl:col-span-5"
             >
-                <Button class="pi pi-search w-1/2 text-white" />
-                <DangerButton class="pi pi-eraser w-1/2 text-white" />
+                <Button class="pi pi-search w-1/2 text-white" @click="submit" />
+                <DangerButton
+                    class="pi pi-eraser w-1/2 text-white"
+                    @click="reset"
+                />
             </div>
         </div>
     </div>

@@ -11,6 +11,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 1",
         onSale: true,
+        category: "Categoria 1",
     },
     {
         id: 2,
@@ -19,6 +20,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 2 ",
         onSale: false,
+        category: "Categoria 2",
     },
     {
         id: 3,
@@ -27,6 +29,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 3",
         onSale: false,
+        category: "Categoria 3",
     },
     {
         id: 4,
@@ -35,6 +38,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 4",
         onSale: true,
+        category: "Categoria 4",
     },
     {
         id: 5,
@@ -42,6 +46,7 @@ const articles = <Article[]>[
         price: 10,
         name: "Artículo 5",
         onSale: false,
+        category: "Categoria 5",
     },
     {
         id: 6,
@@ -50,6 +55,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 6",
         onSale: true,
+        category: "Categoria 6",
     },
     {
         id: 7,
@@ -58,6 +64,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 7",
         onSale: false,
+        category: "Categoria 7",
     },
     {
         id: 8,
@@ -66,6 +73,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 8",
         onSale: false,
+        category: "Categoria 8",
     },
     {
         id: 9,
@@ -74,6 +82,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 9",
         onSale: false,
+        category: "Categoria 9",
     },
     {
         id: 10,
@@ -82,6 +91,7 @@ const articles = <Article[]>[
         price: 0.1,
         name: "Artículo 10",
         onSale: false,
+        category: "Categoria 10",
     },
 ];
 </script>
