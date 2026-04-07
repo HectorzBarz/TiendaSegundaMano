@@ -87,35 +87,35 @@ const articles = [
 </script>
 
 <template>
-    <div class="h-full flex flex-col gap-5">
+    <div class="flex h-full flex-col gap-5">
         <!-- Title -->
-        <div class="text-center my-5 align-middle">
-            <h1 class="text-5xl">Hola caracola, esto es una Categoría</h1>
+        <div class="my-5 text-center align-middle">
+            <h1 class="text-5xl">Artículos</h1>
         </div>
         <!-- END Title -->
 
-        <section class="flex">
+        <section class="flex flex-col lg:flex-row">
             <!-- Article filters -->
 
-            <FilterBase :suggestions="articles" />
+            <FilterBase :suggestions="articles" class="xl:max-w-1/5" />
 
             <!-- END Article filters -->
 
             <!-- Article List -->
             <div
-                class="mx-5 grid grid-cols-5 gap-3 text-center align-middle h-full mb-5"
+                class="mx-5 mb-5 grid h-full gap-3 text-center align-middle sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
             >
                 <div
                     v-for="article in articles"
                     :key="article.id"
-                    class="hover:shadow-lg flex rounded-t-xl justify-center items-center min-h-1/4 w-full overflow-hidden hover:cursor-pointer"
+                    class="flex min-h-1/4 w-full items-center justify-center overflow-hidden rounded-t-xl hover:cursor-pointer hover:shadow-lg"
                 >
                     <div>
                         <!-- Image -->
                         <img
                             :src="article.img"
                             alt="img"
-                            class="w-full h-full"
+                            class="h-full w-full"
                         />
 
                         <!-- Article name -->
@@ -128,7 +128,7 @@ const articles = [
                         <!-- Article price -->
                         <div>
                             <h3
-                                class="flex gap-2 justify-center text-lg font-semibold transition-all group-hover:text-2xl"
+                                class="flex justify-center gap-2 text-lg font-semibold transition-all group-hover:text-2xl"
                                 :class="
                                     article.onSale
                                         ? 'text-red-600'
@@ -138,7 +138,7 @@ const articles = [
                                 {{ article.price }}€
                                 <span
                                     v-if="article.onSale"
-                                    class="flex line-through text-gray-600 text-sm items-center"
+                                    class="flex items-center text-sm text-gray-600 line-through"
                                 >
                                     Antiguamente: {{ article.oldPrice }}€
                                 </span>
