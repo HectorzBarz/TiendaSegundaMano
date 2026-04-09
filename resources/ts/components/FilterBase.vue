@@ -2,7 +2,7 @@
 import hampter from "/storage/app/public/img/hampter.jpg";
 
 import { useRoute } from "vue-router";
-import { onMounted, ref } from "vue";
+import { onBeforeMount, onMounted, ref } from "vue";
 
 import { Article, Category } from "@/types";
 
@@ -93,10 +93,10 @@ const categories = ref<Category[]>([
 ]);
 
 const filters = ref({
-    articleName: articleName.value ?? "",
-    minPrice: minPrice.value ?? getMinPrice(),
-    maxPrice: maxPrice.value ?? getMaxPrice(),
-    onSale: onSale.value ?? false,
+    articleName: articleName.value,
+    minPrice: minPrice.value,
+    maxPrice: maxPrice.value,
+    onSale: onSale.value,
     category: selectedCategory.value ?? "",
 });
 
@@ -114,12 +114,12 @@ function checkCategory() {
 
 function getMinPrice() {
     if (props.suggestions.length === 0) return 0;
-    return Math.min(...props.suggestions.map((article) => article.price));
+    return Math.min(...props.suggestions.map((a) => Number(a.price)));
 }
 
 function getMaxPrice() {
     if (props.suggestions.length === 0) return 0;
-    return Math.max(...props.suggestions.map((article) => article.price));
+    return Math.max(...props.suggestions.map((a) => Number(a.price)));
 }
 
 function submit() {
@@ -136,6 +136,9 @@ function reset() {
 }
 
 onMounted(() => {
+    minPrice.value = getMinPrice();
+    maxPrice.value = getMaxPrice();
+
     checkCategory();
 });
 </script>
@@ -185,8 +188,9 @@ onMounted(() => {
                     <span>Min: </span>
                     <InputNumber
                         v-model="minPrice"
-                        inputId="price"
-                        :min="0"
+                        inputId="price-min"
+                        :min="getMinPrice()"
+                        :max="maxPrice"
                         fluid
                         class="w-full md:w-24"
                     />
@@ -198,8 +202,10 @@ onMounted(() => {
                     <span>Max: </span>
                     <InputNumber
                         v-model="maxPrice"
-                        inputId="price"
-                        :max="100"
+                        inputId="price-max"
+                        :maxFractionDigits="1"
+                        :min="getMinPrice()"
+                        :max="getMaxPrice()"
                         fluid
                         class="w-full md:w-24"
                     />
