@@ -17,6 +17,12 @@ const routes = [
                 : 0,
         }),
     },
+    {
+        path: "/categories",
+        name: "categories",
+        component: () => import("@/views/CategoriesView.vue"),
+        meta: { title: "Categorías" },
+    },
 ];
 
 const router = createRouter({

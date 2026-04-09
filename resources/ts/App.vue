@@ -4,9 +4,13 @@ import BaseFooter from "./components/BaseFooter.vue";
 import BaseHeader from "./components/BaseHeader.vue";
 </script>
 <template>
-    <BaseHeader />
-    <div>
-        <router-view />
+    <div class="flex min-h-screen flex-col">
+        <BaseHeader />
+
+        <main class="flex-1">
+            <router-view />
+        </main>
+
+        <BaseFooter />
     </div>
-    <BaseFooter />
 </template>
