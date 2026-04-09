@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import hampter from "/storage/app/public/img/hampter.jpg";
 
-import { useRoute } from "vue-router";
-import { onBeforeMount, onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { onMounted, ref } from "vue";
 
 import { Article, Category } from "@/types";
 
@@ -17,7 +17,8 @@ const props = defineProps<{
     suggestions: Article[];
 }>();
 
-const router = useRoute();
+const route = useRoute();
+const router = useRouter();
 
 const articleName = ref("");
 const filteredArticles = ref<any[]>([]);
@@ -101,7 +102,7 @@ const filters = ref({
 });
 
 function checkCategory() {
-    const categoryId = Number(router.params.categoryId);
+    const categoryId = Number(route.params.categoryId);
 
     if (!categoryId) return;
 
@@ -133,6 +134,8 @@ function reset() {
     maxPrice.value = getMaxPrice();
     onSale.value = false;
     filteredArticles.value = props.suggestions;
+
+    router.push({ name: "articles" });
 }
 
 onMounted(() => {
