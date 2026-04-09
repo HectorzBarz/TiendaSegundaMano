@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import hampter from "/storage/app/public/img/hampter.jpg";
 
-import { Article } from "@/types";
+import { useRoute } from "vue-router";
+import { onMounted, ref } from "vue";
+
+import { Article, Category } from "@/types";
 
 import AutoComplete from "@volt/AutoComplete.vue";
 import InputNumber from "@volt/InputNumber.vue";
@@ -13,6 +16,8 @@ import DangerButton from "@volt/DangerButton.vue";
 const props = defineProps<{
     suggestions: Article[];
 }>();
+
+const router = useRoute();
 
 const articleName = ref("");
 const filteredArticles = ref<any[]>([]);
@@ -33,13 +38,58 @@ const maxPrice = ref(getMaxPrice());
 
 const onSale = ref(false);
 
-const selectedCategory = ref("");
-const categories = ref([
-    { name: "Juegetes", code: "jueguetes" },
-    { name: "Informática", code: "informatica" },
-    { name: "Ropa", code: "ropa" },
-    { name: "Muebles", code: "muebles" },
-    { name: "Juegos de Mesa", code: "juegos_mesa" },
+const selectedCategory = ref<Category | null>(null);
+const categories = ref<Category[]>([
+    {
+        id: 1,
+        img: hampter,
+        name: "Juguetes",
+    },
+    {
+        id: 2,
+        img: hampter,
+        name: "Informática",
+    },
+    {
+        id: 3,
+        img: hampter,
+        name: "Juegos de mesa",
+    },
+    {
+        id: 4,
+        img: hampter,
+        name: "Electrodomesticos",
+    },
+    {
+        id: 5,
+        img: hampter,
+        name: "Muebles",
+    },
+    {
+        id: 6,
+        img: hampter,
+        name: "Patinetes",
+    },
+    {
+        id: 7,
+        img: hampter,
+        name: "Ropa",
+    },
+    {
+        id: 8,
+        img: hampter,
+        name: "Videojuegos",
+    },
+    {
+        id: 9,
+        img: hampter,
+        name: "Películas",
+    },
+    {
+        id: 10,
+        img: hampter,
+        name: "Reproductores de música",
+    },
 ]);
 
 const filters = ref({
@@ -49,6 +99,18 @@ const filters = ref({
     onSale: onSale.value ?? false,
     category: selectedCategory.value ?? "",
 });
+
+function checkCategory() {
+    const categoryId = Number(router.params.categoryId);
+
+    if (!categoryId) return;
+
+    const foundCategory = categories.value.find((cat) => cat.id === categoryId);
+
+    if (foundCategory) {
+        selectedCategory.value = foundCategory;
+    }
+}
 
 function getMinPrice() {
     if (props.suggestions.length === 0) return 0;
@@ -66,12 +128,16 @@ function submit() {
 
 function reset() {
     articleName.value = "";
-    selectedCategory.value = "";
+    selectedCategory.value = null;
     minPrice.value = getMinPrice();
     maxPrice.value = getMaxPrice();
     onSale.value = false;
     filteredArticles.value = props.suggestions;
 }
+
+onMounted(() => {
+    checkCategory();
+});
 </script>
 
 <template>

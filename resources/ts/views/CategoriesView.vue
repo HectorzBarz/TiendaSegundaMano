@@ -13,52 +13,52 @@ const categories = <Category[]>[
     {
         id: 1,
         img: hampter,
-        name: "Categoría 1",
+        name: "Juguetes",
     },
     {
         id: 2,
         img: hampter,
-        name: "Categoría 2 ",
+        name: "Informática",
     },
     {
         id: 3,
         img: hampter,
-        name: "Categoría 3",
+        name: "Juegos de mesa",
     },
     {
         id: 4,
         img: hampter,
-        name: "Categoría 4",
+        name: "Electrodomesticos",
     },
     {
         id: 5,
         img: hampter,
-        name: "Categoría 5",
+        name: "Muebles",
     },
     {
         id: 6,
         img: hampter,
-        name: "Categoría 6",
+        name: "Patinetes",
     },
     {
         id: 7,
         img: hampter,
-        name: "Categoría 7",
+        name: "Ropa",
     },
     {
         id: 8,
         img: hampter,
-        name: "Categoría 8",
+        name: "Videojuegos",
     },
     {
         id: 9,
         img: hampter,
-        name: "Categoría 9",
+        name: "Películas",
     },
     {
         id: 10,
         img: hampter,
-        name: "Categoría 10",
+        name: "Reproductores de música",
     },
 ];
 </script>
