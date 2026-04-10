@@ -2,7 +2,7 @@
 
 <template>
     <div
-        class="grid h-20 grid-cols-3 content-center items-center bg-gray-200 shadow-2xl"
+        class="grid h-20 grid-cols-3 content-center items-center bg-linear-to-t from-gray-100 to-gray-200"
     >
         <div class="px-10"><img src="" alt="logo" /></div>
         <nav class="flex justify-around">

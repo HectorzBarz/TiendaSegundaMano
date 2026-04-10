@@ -147,7 +147,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="w-full bg-gray-100 p-2 md:mx-auto">
+    <div class="h-screen w-full bg-gray-100 p-2 md:mx-auto">
         <div
             class="flex flex-col gap-5 sm:grid sm:grid-cols-4 md:place-items-center md:gap-4 lg:grid-cols-5"
         >
