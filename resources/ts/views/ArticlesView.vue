@@ -118,7 +118,7 @@ const filteredArticles = computed(() => {
 </script>
 
 <template>
-    <div class="flex flex-1 flex-col gap-5">
+    <div class="flex h-full flex-col gap-5">
         <!-- Title -->
         <div class="my-5 text-center align-middle">
             <h1 class="text-5xl">Artículos</h1>
@@ -128,13 +128,16 @@ const filteredArticles = computed(() => {
         <section class="flex flex-col lg:flex-row">
             <!-- Article filters -->
 
-            <FilterBase :suggestions="articles" class="xl:max-w-1/5" />
+            <FilterBase
+                :suggestions="articles"
+                class="lg:max-w-1/3 xl:max-w-1/5"
+            />
 
             <!-- END Article filters -->
 
             <!-- Article List -->
             <div
-                class="mx-5 mb-5 grid h-full w-full gap-3 text-center align-middle sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
+                class="grid h-full w-full gap-3 text-center align-middle sm:grid-cols-2 md:grid-cols-3 lg:px-5 xl:grid-cols-5"
                 v-if="filteredArticles.length"
             >
                 <div
@@ -180,7 +183,7 @@ const filteredArticles = computed(() => {
                 </div>
             </div>
             <div
-                class="m-auto flex h-full w-full justify-center p-5 text-center text-3xl"
+                class="m-auto flex h-full w-full justify-center p-5 text-center text-3xl text-red-500"
                 v-else
             >
                 No se han encontrado artículos de esta categoría
