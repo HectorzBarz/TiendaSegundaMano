@@ -25,7 +25,7 @@ const filteredArticles = ref<any[]>([]);
 
 const search = (event: any) => {
     if (!event.query) {
-        filteredArticles.value = props.suggestions;
+        filteredArticles.value = [];
         return;
     }
 
@@ -132,6 +132,8 @@ async function reset() {
     selectedCategory.value = null;
     onSale.value = false;
     filteredArticles.value = props.suggestions;
+
+    filteredArticles.value = [];
 
     await router.push({ name: "articles" });
 
