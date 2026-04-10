@@ -2,7 +2,7 @@
 import hampter from "/storage/app/public/img/hampter.jpg";
 
 import { useRoute, useRouter } from "vue-router";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 import { Article, Category } from "@/types";
 
@@ -34,8 +34,8 @@ const search = (event: any) => {
     );
 };
 
-const minPrice = ref(getMinPrice());
-const maxPrice = ref(getMaxPrice());
+const minPrice = ref(0);
+const maxPrice = ref(0);
 
 const onSale = ref(false);
 
@@ -113,41 +113,44 @@ function checkCategory() {
     }
 }
 
-function getMinPrice() {
-    if (props.suggestions.length === 0) return 0;
+const minAvailablePrice = computed(() => {
+    if (!props.suggestions.length) return 0;
     return Math.min(...props.suggestions.map((a) => Number(a.price)));
-}
+});
 
-function getMaxPrice() {
-    if (props.suggestions.length === 0) return 0;
+const maxAvailablePrice = computed(() => {
+    if (!props.suggestions.length) return 0;
     return Math.max(...props.suggestions.map((a) => Number(a.price)));
-}
+});
 
 function submit() {
     window.location.reload();
 }
 
-function reset() {
+async function reset() {
     articleName.value = "";
     selectedCategory.value = null;
-    minPrice.value = getMinPrice();
-    maxPrice.value = getMaxPrice();
     onSale.value = false;
     filteredArticles.value = props.suggestions;
 
-    router.push({ name: "articles" });
+    await router.push({ name: "articles" });
+
+    minPrice.value = minAvailablePrice.value;
+    maxPrice.value = maxAvailablePrice.value;
 }
 
 onMounted(() => {
-    minPrice.value = getMinPrice();
-    maxPrice.value = getMaxPrice();
+    minPrice.value = minAvailablePrice.value;
+    maxPrice.value = maxAvailablePrice.value;
 
     checkCategory();
 });
 </script>
 
 <template>
-    <div class="h-screen w-full bg-gray-100 p-2 md:mx-auto">
+    <div
+        class="top-0 h-fit w-full bg-gray-100 p-2 md:mx-auto lg:sticky lg:h-screen"
+    >
         <div
             class="flex flex-col gap-5 sm:grid sm:grid-cols-4 md:place-items-center md:gap-4 lg:grid-cols-5"
         >
@@ -192,7 +195,7 @@ onMounted(() => {
                     <InputNumber
                         v-model="minPrice"
                         inputId="price-min"
-                        :min="getMinPrice()"
+                        :min="minAvailablePrice"
                         :max="maxPrice"
                         fluid
                         class="w-full md:w-24"
@@ -207,8 +210,8 @@ onMounted(() => {
                         v-model="maxPrice"
                         inputId="price-max"
                         :maxFractionDigits="1"
-                        :min="getMinPrice()"
-                        :max="getMaxPrice()"
+                        :min="minPrice"
+                        :max="maxAvailablePrice"
                         fluid
                         class="w-full md:w-24"
                     />

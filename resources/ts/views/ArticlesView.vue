@@ -4,7 +4,7 @@ import FilterBase from "@/components/FilterBase.vue";
 import hampter from "/storage/app/public/img/hampter.jpg";
 
 import { Article } from "@/types";
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import ArticleItemCard from "@/components/ArticleItemCard.vue";
 
 const props = defineProps<{
@@ -126,11 +126,11 @@ const filteredArticles = computed(() => {
         </div>
         <!-- END Title -->
 
-        <section class="flex flex-col lg:flex-row">
+        <section class="flex flex-col items-stretch lg:flex-row">
             <!-- Article filters -->
 
             <FilterBase
-                :suggestions="articles"
+                :suggestions="filteredArticles"
                 class="lg:w-1/3 xl:max-w-1/5 xl:min-w-1/5"
             />
 
