@@ -5,6 +5,7 @@ import hampter from "/storage/app/public/img/hampter.jpg";
 
 import { Article } from "@/types";
 import { computed } from "vue";
+import ArticleItemCard from "@/components/ArticleItemCard.vue";
 
 const props = defineProps<{
     categoryId: number;
@@ -130,57 +131,21 @@ const filteredArticles = computed(() => {
 
             <FilterBase
                 :suggestions="articles"
-                class="lg:max-w-1/3 xl:max-w-1/5"
+                class="lg:w-1/3 xl:max-w-1/5 xl:min-w-1/5"
             />
 
             <!-- END Article filters -->
 
             <!-- Article List -->
             <div
-                class="grid h-full w-full gap-3 text-center align-middle sm:grid-cols-2 md:grid-cols-3 lg:px-5 xl:grid-cols-5"
                 v-if="filteredArticles.length"
+                class="grid h-full w-full gap-3 text-center align-middle sm:grid-cols-2 md:grid-cols-3 lg:px-5 xl:grid-cols-5"
             >
-                <div
+                <ArticleItemCard
                     v-for="article in filteredArticles"
                     :key="article.id"
-                    class="flex min-h-1/4 w-full items-center justify-center overflow-hidden rounded-t-xl hover:cursor-pointer hover:shadow-lg"
-                >
-                    <div>
-                        <!-- Image -->
-                        <img
-                            :src="article.img"
-                            alt="img"
-                            class="h-full w-full"
-                        />
-
-                        <!-- Article name -->
-                        <h2
-                            class="text-xl font-semibold transition-all group-hover:text-2xl"
-                        >
-                            {{ article.name }}
-                        </h2>
-
-                        <!-- Article price -->
-                        <div>
-                            <h3
-                                class="flex justify-center gap-2 text-lg font-semibold transition-all group-hover:text-2xl"
-                                :class="
-                                    article.onSale
-                                        ? 'text-red-600'
-                                        : 'text-gray-600'
-                                "
-                            >
-                                {{ article.price }}€
-                                <span
-                                    v-if="article.onSale"
-                                    class="flex items-center text-sm text-gray-600 line-through"
-                                >
-                                    Antiguamente: {{ article.oldPrice }}€
-                                </span>
-                            </h3>
-                        </div>
-                    </div>
-                </div>
+                    :article="article"
+                />
             </div>
             <div
                 class="m-auto flex h-full w-full justify-center p-5 text-center text-3xl text-red-500"
