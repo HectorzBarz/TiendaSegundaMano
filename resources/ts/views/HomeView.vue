@@ -8,6 +8,8 @@ const categorias = [
     { id: 4, img: hampter, name: "Deportes" },
     { id: 5, img: hampter, name: "Informática" },
     { id: 6, img: hampter, name: "Juegos de mesa" },
+    { id: 5, img: hampter, name: "Patinetes" },
+    { id: 6, img: hampter, name: "Ropa" },
 ];
 </script>
 
@@ -20,7 +22,9 @@ const categorias = [
         <!-- END Slider -->
 
         <!-- Category Selector -->
-        <div class="mb-5 grid h-full grid-cols-3 text-center align-middle">
+        <div
+            class="mb-5 grid h-full text-center align-middle md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        >
             <div
                 v-for="categoria in categorias"
                 :key="categoria.id"

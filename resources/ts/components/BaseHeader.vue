@@ -4,7 +4,14 @@
     <div
         class="grid h-20 grid-cols-3 content-center items-center bg-linear-to-t from-gray-100 to-gray-200"
     >
-        <div class="px-10"><img src="" alt="logo" /></div>
+        <RouterLink to="/">
+            <div class="px-10">
+                <img
+                    src="/public/img/favicon.svg"
+                    alt="logo"
+                    class="h-16 w-fit"
+                /></div
+        ></RouterLink>
         <nav class="flex justify-around">
             <RouterLink to="/">
                 <ul
