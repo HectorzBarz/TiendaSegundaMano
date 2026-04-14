@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { Category } from "@/types";
+import BaseHoverCard from "./BaseHoverCard.vue";
 
 const props = defineProps<{
     category: Category;
 }>();
 </script>
 <template>
-    <div
-        class="group relative flex min-h-60 w-full items-center justify-center overflow-hidden border-y border-r border-gray-200 hover:cursor-pointer"
-    >
-        <RouterLink :to="'/articles/' + category.id">
+    <BaseHoverCard :to="'/articles/' + category.id">
+        <div
+            class="group relative flex min-h-60 w-full items-center justify-center overflow-hidden hover:cursor-pointer"
+        >
             <!-- Imagen -->
             <img
                 :src="category.img"
@@ -23,6 +24,6 @@ const props = defineProps<{
             >
                 {{ category.name }}
             </span>
-        </RouterLink>
-    </div>
+        </div>
+    </BaseHoverCard>
 </template>

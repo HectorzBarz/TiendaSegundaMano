@@ -1,36 +1,41 @@
 <script setup lang="ts">
 import { Article } from "@/types";
+import BaseHoverCard from "./BaseHoverCard.vue";
 
 const props = defineProps<{
     article: Article;
 }>();
 </script>
 <template>
-    <div
-        class="flex flex-col items-center justify-center overflow-hidden rounded-t-lg hover:cursor-pointer hover:shadow-md"
-    >
-        <!-- Image -->
-        <img :src="props.article.img" alt="img" class="h-full w-full" />
+    <BaseHoverCard :to="'#'">
+        <div
+            class="flex flex-col items-center justify-center overflow-hidden rounded-t-lg hover:cursor-pointer"
+        >
+            <!-- Image -->
+            <img :src="props.article.img" alt="img" class="h-full w-full" />
 
-        <!-- Article name -->
-        <h2 class="text-xl font-semibold transition-all group-hover:text-2xl">
-            {{ props.article.name }}
-        </h2>
-
-        <!-- Article price -->
-        <div>
-            <h3
-                class="flex justify-center gap-2 text-lg font-semibold transition-all"
-                :class="article.onSale ? 'text-red-600' : 'text-gray-600'"
+            <!-- Article name -->
+            <h2
+                class="text-xl font-semibold transition-all group-hover:text-2xl"
             >
-                {{ props.article.price }}€
-                <span
-                    v-if="props.article.onSale"
-                    class="flex items-center text-sm text-gray-600 line-through"
+                {{ props.article.name }}
+            </h2>
+
+            <!-- Article price -->
+            <div>
+                <h3
+                    class="flex justify-center gap-2 text-lg font-semibold transition-all"
+                    :class="article.onSale ? 'text-red-600' : 'text-gray-600'"
                 >
-                    Antiguamente: {{ props.article.oldPrice }}€
-                </span>
-            </h3>
+                    {{ props.article.price }}€
+                    <span
+                        v-if="props.article.onSale"
+                        class="flex items-center text-sm text-gray-600 line-through"
+                    >
+                        Antiguamente: {{ props.article.oldPrice }}€
+                    </span>
+                </h3>
+            </div>
         </div>
-    </div>
+    </BaseHoverCard>
 </template>

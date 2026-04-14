@@ -139,7 +139,7 @@ const filteredArticles = computed(() => {
             <!-- Article List -->
             <div
                 v-if="filteredArticles.length"
-                class="grid h-full w-full gap-3 text-center align-middle sm:grid-cols-2 md:grid-cols-3 lg:px-5 xl:grid-cols-5"
+                class="grid w-full auto-rows-fr grid-cols-1 items-stretch gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
             >
                 <ArticleItemCard
                     v-for="article in filteredArticles"

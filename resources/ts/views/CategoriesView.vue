@@ -74,7 +74,7 @@ const categories = <Category[]>[
 
         <!-- Category Selector -->
         <div
-            class="mb-5 grid h-full w-full grid-cols-5 overflow-hidden text-center align-middle"
+            class="grid h-full w-full grid-cols-5 overflow-hidden px-2 pb-5 text-center align-middle"
         >
             <div v-for="category in categories" :key="category.id" class="">
                 <RouterLink :to="'/articles/' + category.id">
