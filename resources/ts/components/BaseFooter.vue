@@ -20,7 +20,7 @@ const { copyToClipboard } = useCopyToClipboard(emailToCopy);
                 >
                     <i
                         style="font-size: 1.5rem"
-                        class="pi-instagram pi cursor-pointer hover:text-red-500 hover:transition-colors hover:duration-300"
+                        class="pi-instagram pi cursor-pointer rounded-2xl bg-linear-to-b hover:from-red-500 hover:to-yellow-200 hover:text-pink-600 hover:transition-colors hover:duration-300"
                     />
                 </a>
                 <a href="https://github.com/HectorzBarz" target="_blank">
