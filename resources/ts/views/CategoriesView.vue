@@ -4,6 +4,7 @@ import FilterBase from "@/components/FilterBase.vue";
 import hampter from "/storage/app/public/img/hampter.jpg";
 
 import { Category } from "@/types";
+import CategoryItemCard from "@/components/CategoryItemCard.vue";
 
 /**
  * TODO
@@ -72,26 +73,12 @@ const categories = <Category[]>[
         <!-- END Title -->
 
         <!-- Category Selector -->
-        <div class="mb-5 grid h-full grid-cols-5 text-center align-middle">
-            <div
-                v-for="categoria in categories"
-                :key="categoria.id"
-                class="group relative flex min-h-60 w-full items-center justify-center overflow-hidden border-y border-r border-gray-200 hover:cursor-pointer"
-            >
-                <RouterLink :to="'/articles/' + categoria.id">
-                    <!-- Imagen -->
-                    <img
-                        :src="categoria.img"
-                        alt="img"
-                        class="absolute inset-0 h-full w-full object-cover opacity-40 transition-all group-hover:scale-115"
-                    />
-
-                    <!-- Texto -->
-                    <span
-                        class="relative z-10 text-xl font-semibold transition-all group-hover:text-2xl"
-                    >
-                        {{ categoria.name }}
-                    </span>
+        <div
+            class="mb-5 grid h-full w-full grid-cols-5 overflow-hidden text-center align-middle"
+        >
+            <div v-for="category in categories" :key="category.id" class="">
+                <RouterLink :to="'/articles/' + category.id">
+                    <CategoryItemCard :category="category" />
                 </RouterLink>
             </div>
         </div>

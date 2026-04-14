@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import CategoryItemCard from "@/components/CategoryItemCard.vue";
 import hampter from "/storage/app/public/img/hampter.jpg";
 
-const categorias = [
+const categories = [
     { id: 1, img: hampter, name: "Muebles" },
     { id: 2, img: hampter, name: "Consolas" },
     { id: 3, img: hampter, name: "Cubertería" },
@@ -25,25 +26,9 @@ const categorias = [
         <div
             class="mb-5 grid h-full text-center align-middle md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         >
-            <div
-                v-for="categoria in categorias"
-                :key="categoria.id"
-                class="group relative flex min-h-60 w-full items-center justify-center overflow-hidden border-y border-r border-gray-200 hover:cursor-pointer"
-            >
-                <RouterLink :to="'/articles/' + categoria.id">
-                    <!-- Imagen -->
-                    <img
-                        :src="categoria.img"
-                        alt="img"
-                        class="absolute inset-0 h-full w-full object-cover opacity-40 transition-all group-hover:scale-115"
-                    />
-
-                    <!-- Texto -->
-                    <span
-                        class="relative z-10 text-xl font-semibold transition-all group-hover:text-2xl"
-                    >
-                        {{ categoria.name }}
-                    </span>
+            <div v-for="category in categories" :key="category.id">
+                <RouterLink :to="'/articles/' + category.id">
+                    <CategoryItemCard :category="category" />
                 </RouterLink>
             </div>
         </div>
