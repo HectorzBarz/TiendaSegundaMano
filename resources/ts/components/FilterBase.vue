@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import hampter from "/storage/app/public/img/hampter.jpg";
 
-import { useRoute, useRouter } from "vue-router";
-import { computed, onMounted, ref } from "vue";
-
+import { computed, onMounted, ref, watch } from "vue";
 import { Article, Category } from "@/types";
 
 import AutoComplete from "@volt/AutoComplete.vue";
@@ -12,17 +10,53 @@ import ToggleSwitch from "@volt/ToggleSwitch.vue";
 import Select from "@volt/Select.vue";
 import Button from "@volt/Button.vue";
 import DangerButton from "@volt/DangerButton.vue";
+import { useArticleFiltersStore } from "@/stores/articleFilters";
 
 const props = defineProps<{
     suggestions: Article[];
+    categoryId: number | null;
 }>();
 
-const route = useRoute();
-const router = useRouter();
+const emit = defineEmits<{
+    (
+        e: "submit",
+        filters: {
+            categoryId: number | null;
+            articleName: string;
+            minPrice: number;
+            maxPrice: number;
+            onSale: boolean;
+        },
+    ): void;
+}>();
 
+const store = useArticleFiltersStore();
+
+// STATE
 const articleName = ref("");
 const filteredArticles = ref<any[]>([]);
 
+const minPrice = ref(0);
+const maxPrice = ref(0);
+const onSale = ref(false);
+
+const selectedCategory = ref<Category | null>(null);
+
+// MOCK categories
+const categories = ref<Category[]>([
+    { id: 1, img: hampter, name: "Juguetes" },
+    { id: 2, img: hampter, name: "Informática" },
+    { id: 3, img: hampter, name: "Juegos de mesa" },
+    { id: 4, img: hampter, name: "Electrodomesticos" },
+    { id: 5, img: hampter, name: "Muebles" },
+    { id: 6, img: hampter, name: "Patinetes" },
+    { id: 7, img: hampter, name: "Ropa" },
+    { id: 8, img: hampter, name: "Videojuegos" },
+    { id: 9, img: hampter, name: "Películas" },
+    { id: 10, img: hampter, name: "Reproductores de música" },
+]);
+
+// AUTOCOMPLETE
 const search = (event: any) => {
     if (!event.query) {
         filteredArticles.value = [];
@@ -34,85 +68,7 @@ const search = (event: any) => {
     );
 };
 
-const minPrice = ref(0);
-const maxPrice = ref(0);
-
-const onSale = ref(false);
-
-const selectedCategory = ref<Category | null>(null);
-const categories = ref<Category[]>([
-    {
-        id: 1,
-        img: hampter,
-        name: "Juguetes",
-    },
-    {
-        id: 2,
-        img: hampter,
-        name: "Informática",
-    },
-    {
-        id: 3,
-        img: hampter,
-        name: "Juegos de mesa",
-    },
-    {
-        id: 4,
-        img: hampter,
-        name: "Electrodomesticos",
-    },
-    {
-        id: 5,
-        img: hampter,
-        name: "Muebles",
-    },
-    {
-        id: 6,
-        img: hampter,
-        name: "Patinetes",
-    },
-    {
-        id: 7,
-        img: hampter,
-        name: "Ropa",
-    },
-    {
-        id: 8,
-        img: hampter,
-        name: "Videojuegos",
-    },
-    {
-        id: 9,
-        img: hampter,
-        name: "Películas",
-    },
-    {
-        id: 10,
-        img: hampter,
-        name: "Reproductores de música",
-    },
-]);
-
-const filters = ref({
-    articleName: articleName.value,
-    minPrice: minPrice.value,
-    maxPrice: maxPrice.value,
-    onSale: onSale.value,
-    category: selectedCategory.value ?? "",
-});
-
-function checkCategory() {
-    const categoryId = Number(route.params.categoryId);
-
-    if (!categoryId) return;
-
-    const foundCategory = categories.value.find((cat) => cat.id === categoryId);
-
-    if (foundCategory) {
-        selectedCategory.value = foundCategory;
-    }
-}
-
+// PRICE LIMITS
 const minAvailablePrice = computed(() => {
     if (!props.suggestions.length) return 0;
     return Math.min(...props.suggestions.map((a) => Number(a.price)));
@@ -123,30 +79,42 @@ const maxAvailablePrice = computed(() => {
     return Math.max(...props.suggestions.map((a) => Number(a.price)));
 });
 
-function submit() {
-    window.location.reload();
+function onSelect(event: any) {
+    articleName.value = event.value.name;
 }
 
-async function reset() {
+function submit() {
+    store.setFilters({
+        categoryId: selectedCategory.value?.id ?? 0,
+        articleName: articleName.value,
+        minPrice: minPrice.value,
+        maxPrice: maxPrice.value,
+        onSale: onSale.value,
+    });
+}
+
+// RESET
+function reset() {
     articleName.value = "";
     selectedCategory.value = null;
     onSale.value = false;
-    filteredArticles.value = props.suggestions;
-
-    filteredArticles.value = [];
-
-    await router.push({ name: "articles" });
 
     minPrice.value = minAvailablePrice.value;
     maxPrice.value = maxAvailablePrice.value;
+
+    store.reset();
 }
 
 onMounted(() => {
-    minPrice.value = minAvailablePrice.value;
-    maxPrice.value = maxAvailablePrice.value;
-
-    checkCategory();
+    store.categoryId = props.categoryId ?? 0;
 });
+
+watch(
+    () => props.categoryId,
+    (newVal) => {
+        store.categoryId = newVal ?? 0;
+    },
+);
 </script>
 
 <template>
@@ -169,6 +137,7 @@ onMounted(() => {
                     :suggestions="filteredArticles"
                     @complete="search"
                     inputClass="w-full"
+                    @item-select="onSelect"
                 />
             </div>
 
@@ -197,6 +166,7 @@ onMounted(() => {
                     <InputNumber
                         v-model="minPrice"
                         inputId="price-min"
+                        :maxFractionDigits="1"
                         :min="minAvailablePrice"
                         :max="maxPrice"
                         fluid

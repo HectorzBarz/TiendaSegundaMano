@@ -1,20 +1,18 @@
 <script setup lang="ts">
 import FilterBase from "@/components/FilterBase.vue";
-
+import ArticleItemCard from "@/components/ArticleItemCard.vue";
 import hampter from "/storage/app/public/img/hampter.jpg";
 
-import { Article } from "@/types";
 import { computed, onMounted } from "vue";
-import ArticleItemCard from "@/components/ArticleItemCard.vue";
+import { useArticleFiltersStore } from "@/stores/articleFilters";
+import { Article } from "@/types";
 
 const props = defineProps<{
     categoryId: number;
 }>();
 
-/**
- * TODO
- * Articles will come filtered from the backend
- */
+const store = useArticleFiltersStore();
+
 const articles = <Article[]>[
     {
         id: 1,
@@ -108,38 +106,42 @@ const articles = <Article[]>[
 ];
 
 const filteredArticles = computed(() => {
-    const categoryId = props.categoryId;
+    return articles.filter((article) => {
+        const matchesCategory =
+            !store.categoryId || article.categoryId === store.categoryId;
 
-    if (categoryId === 0) return articles;
+        const matchesName =
+            !store.articleName ||
+            article.name
+                .toLowerCase()
+                .includes(store.articleName.toLowerCase());
 
-    return articles.filter(
-        (article) => article.categoryId === props.categoryId,
-    );
+        const matchesPrice =
+            article.price >= store.minPrice && article.price <= store.maxPrice;
+
+        const matchesSale = !store.onSale || article.onSale;
+
+        return matchesCategory && matchesName && matchesPrice && matchesSale;
+    });
 });
 </script>
 
 <template>
     <div class="flex h-full flex-col gap-5">
-        <!-- Title -->
-        <div class="my-5 text-center align-middle">
+        <div class="my-5 text-center">
             <h1 class="text-5xl">Artículos</h1>
         </div>
-        <!-- END Title -->
 
-        <section class="flex flex-col items-stretch lg:flex-row">
-            <!-- Article filters -->
-
+        <section class="flex flex-col lg:flex-row">
             <FilterBase
-                :suggestions="filteredArticles"
+                :suggestions="articles"
+                :category-id="store.categoryId"
                 class="lg:w-1/3 xl:max-w-1/5 xl:min-w-1/5"
             />
 
-            <!-- END Article filters -->
-
-            <!-- Article List -->
             <div
                 v-if="filteredArticles.length"
-                class="grid w-full auto-rows-fr grid-cols-1 items-stretch gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
+                class="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
             >
                 <ArticleItemCard
                     v-for="article in filteredArticles"
@@ -147,13 +149,10 @@ const filteredArticles = computed(() => {
                     :article="article"
                 />
             </div>
-            <div
-                class="m-auto flex h-full w-full justify-center p-5 text-center text-3xl text-red-500"
-                v-else
-            >
-                No se han encontrado artículos de esta categoría
+
+            <div v-else class="m-auto text-3xl text-red-500">
+                No se han encontrado artículos
             </div>
-            <!-- END Article List -->
         </section>
     </div>
 </template>
