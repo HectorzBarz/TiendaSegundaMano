@@ -38,6 +38,16 @@ const props = defineProps<{
                 </h3>
             </div>
 
+            <!-- Rating section -->
+            <section class="flex gap-2">
+                <i class="pi pi-star text-yellow-400"></i>
+                <i class="pi pi-star text-yellow-400"></i>
+                <i class="pi pi-star text-yellow-400"></i>
+                <i class="pi pi-star text-yellow-400"></i>
+                <i class="pi pi-star text-yellow-400"></i>
+            </section>
+            <!-- END Rating section -->
+
             <!-- Cart section -->
             <div>
                 <div>
