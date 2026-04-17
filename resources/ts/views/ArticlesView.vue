@@ -128,7 +128,7 @@ const filteredArticles = computed(() => {
             <h1 class="text-5xl">Artículos</h1>
         </div>
 
-        <section class="flex flex-col lg:flex-row">
+        <section class="flex flex-col lg:flex-row lg:items-start">
             <FilterBase
                 :suggestions="articles"
                 class="lg:w-1/3 xl:max-w-1/5 xl:min-w-1/5"
