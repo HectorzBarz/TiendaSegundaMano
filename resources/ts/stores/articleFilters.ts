@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-
 export const useArticleFiltersStore = defineStore("articleFilters", {
     state: () => ({
         categoryId: 0,
@@ -10,6 +9,10 @@ export const useArticleFiltersStore = defineStore("articleFilters", {
     }),
 
     actions: {
+        setCategory(id: number) {
+            this.categoryId = id;
+        },
+
         setFilters(payload: any) {
             this.categoryId = payload.categoryId ?? 0;
             this.articleName = payload.articleName ?? "";
