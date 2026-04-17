@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Article } from "@/types";
 import BaseHoverCard from "./BaseHoverCard.vue";
+import Button from "@volt/Button.vue";
 
 const props = defineProps<{
     article: Article;
@@ -36,6 +37,29 @@ const props = defineProps<{
                     </span>
                 </h3>
             </div>
+
+            <!-- Cart section -->
+            <div>
+                <div>
+                    <i
+                        class="pi pi-shopping-cart m-2 rounded-4xl bg-green-500 p-2 hover:bg-green-400"
+                        >+</i
+                    >
+                </div>
+
+                <!-- 
+                    TODO:
+                    ! Based on the shopping cart options it will let you remove the article 
+                
+                <div>
+                    <i
+                        class="pi pi-shopping-cart rounded-4xl bg-red-500 p-2 hover:bg-red-400"
+                        >-</i
+                    >
+                </div>
+                -->
+            </div>
+            <!-- END Cart section -->
         </div>
     </BaseHoverCard>
 </template>
