@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import FilterBase from "@/components/FilterBase.vue";
-
 import hampter from "/storage/app/public/img/hampter.jpg";
 
 import { Category } from "@/types";
 import CategoryItemCard from "@/components/CategoryItemCard.vue";
+import { useRouter } from "vue-router";
+import { useArticleFiltersStore } from "@/stores/articleFilters";
 
 /**
  * TODO
@@ -62,6 +62,14 @@ const categories = <Category[]>[
         name: "Reproductores de música",
     },
 ];
+
+const store = useArticleFiltersStore();
+const router = useRouter();
+
+function selectCategory(id: number) {
+    store.setCategory(id);
+    router.push("/articles");
+}
 </script>
 
 <template>
@@ -77,7 +85,7 @@ const categories = <Category[]>[
             class="grid h-full w-full grid-cols-5 overflow-hidden px-2 pb-5 text-center align-middle"
         >
             <div v-for="category in categories" :key="category.id" class="">
-                <RouterLink :to="'/articles/' + category.id">
+                <RouterLink to="/articles" @click="selectCategory(category.id)">
                     <CategoryItemCard :category="category" />
                 </RouterLink>
             </div>

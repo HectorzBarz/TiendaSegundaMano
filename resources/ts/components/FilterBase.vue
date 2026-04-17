@@ -14,7 +14,6 @@ import { useArticleFiltersStore } from "@/stores/articleFilters";
 
 const props = defineProps<{
     suggestions: Article[];
-    categoryId: number | null;
 }>();
 
 const emit = defineEmits<{
@@ -85,7 +84,7 @@ function onSelect(event: any) {
 
 function submit() {
     store.setFilters({
-        categoryId: selectedCategory.value?.id ?? 0,
+        categoryId: selectedCategory.value?.id,
         articleName: articleName.value,
         minPrice: minPrice.value,
         maxPrice: maxPrice.value,
@@ -106,15 +105,8 @@ function reset() {
 }
 
 onMounted(() => {
-    store.categoryId = props.categoryId ?? 0;
+    reset();
 });
-
-watch(
-    () => props.categoryId,
-    (newVal) => {
-        store.categoryId = newVal ?? 0;
-    },
-);
 </script>
 
 <template>

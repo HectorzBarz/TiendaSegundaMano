@@ -3,13 +3,9 @@ import FilterBase from "@/components/FilterBase.vue";
 import ArticleItemCard from "@/components/ArticleItemCard.vue";
 import hampter from "/storage/app/public/img/hampter.jpg";
 
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import { useArticleFiltersStore } from "@/stores/articleFilters";
 import { Article } from "@/types";
-
-const props = defineProps<{
-    categoryId: number;
-}>();
 
 const store = useArticleFiltersStore();
 
@@ -135,7 +131,6 @@ const filteredArticles = computed(() => {
         <section class="flex flex-col lg:flex-row">
             <FilterBase
                 :suggestions="articles"
-                :category-id="store.categoryId"
                 class="lg:w-1/3 xl:max-w-1/5 xl:min-w-1/5"
             />
 
@@ -150,8 +145,10 @@ const filteredArticles = computed(() => {
                 />
             </div>
 
-            <div v-else class="m-auto text-3xl text-red-500">
-                No se han encontrado artículos
+            <div v-else class="m-auto flex h-full w-full justify-center">
+                <span class="text-3xl text-red-500">
+                    No se han encontrado artículos</span
+                >
             </div>
         </section>
     </div>

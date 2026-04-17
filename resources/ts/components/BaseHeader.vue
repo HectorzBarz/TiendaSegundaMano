@@ -1,4 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useArticleFiltersStore } from "@/stores/articleFilters";
+
+const store = useArticleFiltersStore();
+
+function resetArticles() {
+    store.reset();
+}
+</script>
 
 <template>
     <div
@@ -20,7 +28,7 @@
                     Inicio
                 </ul>
             </RouterLink>
-            <RouterLink to="/articles">
+            <RouterLink to="/articles" @click="resetArticles">
                 <ul
                     class="px-5 py-2 transition-all hover:scale-110 hover:cursor-pointer hover:rounded-b-lg hover:shadow-lg"
                 >

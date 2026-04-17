@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import CategoryItemCard from "@/components/CategoryItemCard.vue";
 import hampter from "/storage/app/public/img/hampter.jpg";
+import { useArticleFiltersStore } from "@/stores/articleFilters";
+import { useRouter } from "vue-router";
 
 const categories = [
     { id: 1, img: hampter, name: "Muebles" },
@@ -12,6 +14,14 @@ const categories = [
     { id: 5, img: hampter, name: "Patinetes" },
     { id: 6, img: hampter, name: "Ropa" },
 ];
+
+const store = useArticleFiltersStore();
+const router = useRouter();
+
+function selectCategory(id: number) {
+    store.setCategory(id);
+    router.push("/articles");
+}
 </script>
 
 <template>
@@ -27,7 +37,7 @@ const categories = [
             class="mb-5 grid h-full text-center align-middle md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         >
             <div v-for="category in categories" :key="category.id">
-                <RouterLink :to="'/articles/' + category.id">
+                <RouterLink to="/articles" @click="selectCategory(category.id)">
                     <CategoryItemCard :category="category" />
                 </RouterLink>
             </div>
