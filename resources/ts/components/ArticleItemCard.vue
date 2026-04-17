@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { Article } from "@/types";
 import BaseHoverCard from "./BaseHoverCard.vue";
-import Button from "@volt/Button.vue";
 
 const props = defineProps<{
     article: Article;
 }>();
 </script>
 <template>
-    <BaseHoverCard :to="'#'">
+    <BaseHoverCard :to="'articles/' + article.id">
         <div
             class="flex flex-col items-center justify-center overflow-hidden rounded-t-lg hover:cursor-pointer"
         >
@@ -17,7 +16,7 @@ const props = defineProps<{
 
             <!-- Article name -->
             <h2
-                class="text-xl font-semibold transition-all group-hover:text-2xl"
+                class="text-xl font-semibold transition-transform duration-300 group-hover:scale-110"
             >
                 {{ props.article.name }}
             </h2>
@@ -40,11 +39,11 @@ const props = defineProps<{
 
             <!-- Rating section -->
             <section class="flex gap-2">
-                <i class="pi pi-star text-yellow-400"></i>
-                <i class="pi pi-star text-yellow-400"></i>
-                <i class="pi pi-star text-yellow-400"></i>
-                <i class="pi pi-star text-yellow-400"></i>
-                <i class="pi pi-star text-yellow-400"></i>
+                <i class="pi pi-star text-yellow-400" />
+                <i class="pi pi-star text-yellow-400" />
+                <i class="pi pi-star text-yellow-400" />
+                <i class="pi pi-star text-yellow-400" />
+                <i class="pi pi-star text-yellow-400" />
             </section>
             <!-- END Rating section -->
 

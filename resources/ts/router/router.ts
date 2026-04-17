@@ -13,6 +13,12 @@ const routes = [
         meta: { title: "Articles" },
     },
     {
+        path: "/articles/:id",
+        name: "articles/:id",
+        component: () => import("@/views/ArticleDetailsView.vue"),
+        meta: { title: "Article" },
+    },
+    {
         path: "/categories",
         name: "categories",
         component: () => import("@/views/CategoriesView.vue"),
