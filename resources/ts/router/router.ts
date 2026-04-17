@@ -7,15 +7,10 @@ const routes = [
         component: () => import("@/views/HomeView.vue"),
     },
     {
-        path: "/articles/:categoryId?",
+        path: "/articles/",
         name: "articles",
         component: () => import("@/views/ArticlesView.vue"),
         meta: { title: "Articles" },
-        props: (route: any) => ({
-            categoryId: route.params.categoryId
-                ? Number(route.params.categoryId)
-                : 0,
-        }),
     },
     {
         path: "/categories",
