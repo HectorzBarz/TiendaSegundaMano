@@ -14,12 +14,14 @@ import BaseHeader from "./components/BaseHeader.vue";
         <Toast group="bottom-center" position="bottom-center" />
         <Toast group="bottom-left" position="bottom-left" />
 
-        <BaseHeader />
+        <BaseHeader
+            class="fixed bottom-0 z-50 order-2 w-full md:static md:order-1"
+        />
 
-        <main class="flex-1">
+        <main class="order-1 flex-1 md:order-2">
             <router-view />
         </main>
 
-        <BaseFooter />
+        <BaseFooter class="order-3" />
     </div>
 </template>
