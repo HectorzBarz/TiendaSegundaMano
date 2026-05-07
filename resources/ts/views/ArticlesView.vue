@@ -5,11 +5,11 @@ import hampter from "/storage/app/public/img/hampter.jpg";
 
 import { computed } from "vue";
 import { useArticleFiltersStore } from "@/stores/articleFilters";
-import { Article } from "@/types";
+import { ArticleCard } from "@/types";
 
 const store = useArticleFiltersStore();
 
-const articles = <Article[]>[
+const articles = <ArticleCard[]>[
     {
         id: 1,
         img: hampter,

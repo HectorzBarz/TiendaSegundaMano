@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Article } from "@/types";
+import { ArticleCard } from "@/types";
 import BaseHoverCard from "./BaseHoverCard.vue";
 
 const props = defineProps<{
-    article: Article;
+    article: ArticleCard;
 }>();
 </script>
 <template>
