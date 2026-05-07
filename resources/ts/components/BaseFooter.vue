@@ -7,9 +7,13 @@ const { copyToClipboard } = useCopyToClipboard(emailToCopy);
 </script>
 
 <template>
-    <footer class="flex flex-col bg-linear-to-b from-gray-100 to-gray-300 p-5">
-        <div class="flex items-center justify-between">
-            <div>Héctor Rodríguez Barroso 2026</div>
+    <footer class="grid bg-linear-to-b from-gray-100 to-gray-300 p-5">
+        <div
+            class="flex flex-col items-center justify-between gap-2 sm:flex-row"
+        >
+            <div class="text-center">
+                <span>Copyright Héctor Rodríguez Barroso 2026</span>
+            </div>
             <div class="flex flex-col gap-2">
                 <span>Puedes contactarme a través de:</span>
                 <div class="flex justify-around">
