@@ -44,11 +44,13 @@ function resetArticles() {
                         Categorias
                     </ul>
                 </RouterLink>
-                <ul
-                    class="px-5 py-2 transition-all hover:cursor-pointer hover:rounded-b-lg hover:shadow-lg"
-                >
-                    Área personal
-                </ul>
+                <RouterLink to="/account">
+                    <ul
+                        class="px-5 py-2 transition-all hover:cursor-pointer hover:rounded-b-lg hover:shadow-lg"
+                    >
+                        Área personal
+                    </ul>
+                </RouterLink>
             </nav>
             <!-- Shopping cart -->
             <div class="p-5">
@@ -82,7 +84,7 @@ function resetArticles() {
                         class="pi-book pi cursor-pointer hover:text-white hover:transition-all hover:duration-300"
                     />
                 </RouterLink>
-                <RouterLink to="#">
+                <RouterLink to="/account">
                     <i
                         style="font-size: 1.5rem"
                         class="pi-user pi cursor-pointer hover:text-white hover:transition-all hover:duration-300"

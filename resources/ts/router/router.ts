@@ -24,6 +24,24 @@ const routes = [
         component: () => import("@/views/CategoriesView.vue"),
         meta: { title: "Categorías" },
     },
+    {
+        path: "/login",
+        name: "login",
+        component: () => import("@/views/LoginView.vue"),
+        meta: { title: "Login" },
+    },
+    {
+        path: "/register",
+        name: "register",
+        component: () => import("@/views/RegisterView.vue"),
+        meta: { title: "Register" },
+    },
+    {
+        path: "/account",
+        name: "account",
+        component: () => import("@/views/AccountView.vue"),
+        meta: { title: "Account" },
+    },
 ];
 
 const router = createRouter({
