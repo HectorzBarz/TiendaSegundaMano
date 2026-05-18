@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import Button from "@volt/Button.vue";
 import hampter from "/storage/app/public/img/hampter.jpg";
+import { Carousel, Slide, Navigation, Pagination } from "vue3-carousel";
+import "vue3-carousel/dist/carousel.css";
 
-import { useCopyToClipboard } from "@/composables/useCopyToClipboard";
+import img1 from "@/assets/slide1.webp";
+import img2 from "@/assets/slide2.webp";
+import img3 from "@/assets/slide3.webp";
+
+import { useRouter } from "vue-router";
 import { Article } from "@/types";
 
 const article = <Article>{
@@ -18,8 +24,30 @@ const article = <Article>{
     categoryId: 1,
 };
 
-const emailToCopy = "hectorrodriguezbar99@gmail.com";
-const { copyToClipboard } = useCopyToClipboard(emailToCopy);
+const slides = [
+    { id: 1, img: img1, title: "Oferta 1" },
+    { id: 2, img: img2, title: "Oferta 2" },
+    { id: 3, img: img3, title: "Oferta 3" },
+    { id: 3, img: hampter, title: "Oferta 3" },
+];
+
+const config = {
+    itemsToShow: 1,
+    wrapAround: true,
+    autoplay: 0, // 👈 en detalle normalmente NO autoplay
+    pauseAutoplayOnHover: true,
+};
+
+const router = useRouter();
+
+const goToQuery = () => {
+    router.push({
+        name: "article-query",
+        params: {
+            id: article.id,
+        },
+    });
+};
 </script>
 
 <template>
@@ -29,11 +57,21 @@ const { copyToClipboard } = useCopyToClipboard(emailToCopy);
             <div
                 class="bg-card border-borde overflow-hidden rounded-2xl border shadow-sm"
             >
-                <img
-                    :src="article.img"
-                    alt="img"
-                    class="h-100 w-full object-cover"
-                />
+                <Carousel v-bind="config">
+                    <Slide v-for="slide in slides">
+                        <div class="h-96 w-full">
+                            <img
+                                :src="slide.img"
+                                class="h-full w-full object-cover"
+                            />
+                        </div>
+                    </Slide>
+
+                    <template #addons>
+                        <Navigation />
+                        <Pagination />
+                    </template>
+                </Carousel>
             </div>
 
             <!-- DETALLES -->
@@ -102,6 +140,12 @@ const { copyToClipboard } = useCopyToClipboard(emailToCopy);
                         class="bg-azul! hover:bg-azul/90! w-full rounded-xl py-3 font-semibold text-white transition"
                     >
                         Añadir al carrito
+                    </Button>
+                    <Button
+                        class="bg-naranja! hover:bg-naranja/90! w-full rounded-xl py-3 font-semibold text-white transition"
+                        @click="goToQuery"
+                    >
+                        Consultar producto
                     </Button>
                 </div>
             </div>

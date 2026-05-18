@@ -19,6 +19,12 @@ const routes = [
         meta: { title: "Article" },
     },
     {
+        path: "/article-query/:id",
+        name: "article-query",
+        component: () => import("@/views/ArticleQueryView.vue"),
+        meta: { title: "ArticleQuery" },
+    },
+    {
         path: "/categories",
         name: "categories",
         component: () => import("@/views/CategoriesView.vue"),
