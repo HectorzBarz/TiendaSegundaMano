@@ -79,7 +79,7 @@
         <template #loadingicon>
             <SpinnerIcon class="h-8 w-8 animate-spin text-[2rem]" />
         </template>
-        <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">
+        <template v-for="(_, slotName) in $slots" v-slot:[slotName]="slotProps">
             <slot :name="slotName" v-bind="slotProps ?? {}" />
         </template>
     </DataTable>
@@ -105,29 +105,29 @@ defineProps<Props>();
 const theme = ref<DataTablePassThroughOptions>({
     root: `relative p-flex-scrollable:flex p-flex-scrollable:flex-col p-flex-scrollable:h-full`,
     tableContainer: `p-scrollable:relative p-flex-scrollable:flex p-flex-scrollable:flex-col p-flex-scrollable:flex-1 p-flex-scrollable:h-full`,
-    header: `py-3 px-4 border-b border-surface-200
+    header: `py-3 px-4 border-b border-surface-200 
         bg-surface-0 
         text-surface-700 `,
     table: `border-spacing-0 w-full border-separate`,
     thead: `p-scrollable:bg-surface-0  p-scrollable:top-0 p-scrollable:z-10`,
-    tbody: `p-hoverable:*:hover:bg-surface-100 p-hoverable:*:hover:text-surface-800
+    tbody: `p-hoverable:*:hover:bg-surface-100 p-hoverable:*:hover:text-surface-800  
         p-frozen:sticky p-frozen:z-10`,
-    bodyRow: `bg-surface-0 text-surface-700  p-selectable:cursor-pointer p-selected:bg-highlight!`,
+    bodyRow: `bg-surface-0  text-surface-700  p-selectable:cursor-pointer p-selected:bg-highlight!`,
     tfoot: `p-scrollable:bg-surface-0  p-scrollable:bottom-0 p-scrollable:z-10`,
-    footer: `py-3 px-4 border-b border-surface-200
+    footer: `py-3 px-4 border-b border-surface-200 
         bg-surface-0 
         text-surface-700 `,
-    mask: `bg-black/50 text-surface-200 absolute z-10 flex items-center justify-center w-full h-full backdrop-blur-md`,
+    mask: `bg-black/50 text-surface-200 absolute z-10 flex items-center justify-center w-full h-full backdrop-blu-`,
     column: {
         root: ``,
         headerCell: `group py-3 px-4 font-normal text-start transition-colors duration-200
-            border-b border-surface-200
+            border-b border-surface-200 
             bg-surface-0 
-            text-surface-700
+            text-surface-700 
             p-sortable:cursor-pointer p-sortable:select-none p-sortable:focus-visible:outline p-sortable:focus-visible:outline-1 p-sortable:focus-visible:-outline-offset-1 p-sortable:focus-visible:outline-primary
             p-sortable:not-p-sorted:hover:bg-surface-100 p-sortable:not-p-sorted:hover:text-surface-800 
             p-sorted:bg-highlight
-            p-frozen:sticky p-frozen:bg-surface-0 p-frozen:z-10
+            p-frozen:sticky p-frozen:bg-surface-0  p-frozen:z-10
         `,
         columnHeaderContent: `flex items-center gap-2`,
         columnTitle: `font-semibold`,
@@ -136,13 +136,13 @@ const theme = ref<DataTablePassThroughOptions>({
         bodyCellContent: ``,
         footerCell: `text-start py-3 px-4 border-b border-surface-200 
             bg-surface-0 
-            text-surface-700
+            text-surface-700 
             p-frozen:sticky p-frozen:bg-surface-0 `,
         columnFooter: `font-semibold`,
         columnResizer: `block absolute top-0 end-0 m-0 w-2 h-full p-0 cursor-col-resize border border-transparent`,
         sort: ``,
-        sortIcon: `text-surface-500 transition-colors duration-200
-            group-p-sortable:not-group-p-sorted:group-hover:text-surface-600
+        sortIcon: `text-surface-500  transition-colors duration-200
+            group-p-sortable:not-group-p-sorted:group-hover:text-surface-600 
             group-p-sorted:bg-highlight`,
         pcSortBadge: {
             root: `bg-primary text-primary-contrast rounded-full min-w-6 h-6 inline-flex items-center justify-center text-xs font-bold`,
@@ -160,7 +160,7 @@ const theme = ref<DataTablePassThroughOptions>({
                 p-checked:border-primary p-checked:bg-primary p-checked:text-primary-contrast
                 peer-enabled:peer-hover:p-checked:bg-primary-emphasis peer-enabled:peer-hover:p-checked:border-primary-emphasis
                 peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-focus-visible:outline 
-                p-disabled:bg-surface-200 p-disabled:border-surface-300  p-disabled:text-surface-700
+                p-disabled:bg-surface-200  p-disabled:border-surface-300  p-disabled:text-surface-700 
                 shadow-[0_1px_2px_0_rgba(18,18,23,0.05)] transition-colors duration-200`,
             icon: `text-sm w-[0.875rem] h-[0.875rem] transition-none`,
         },
@@ -176,8 +176,8 @@ const theme = ref<DataTablePassThroughOptions>({
                 peer-enabled:peer-hover:p-checked:bg-primary-emphasis peer-enabled:peer-hover:p-checked:border-primary-emphasis
                 peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-focus-visible:outline 
                 p-filled:bg-surface-50 
-                p-invalid:border-red-400
-                p-disabled:bg-surface-200p-disabled:border-surface-300
+                p-invalid:border-red-400 
+                p-disabled:bg-surface-200  p-disabled:border-surface-300 
                 shadow-[0_1px_2px_0_rgba(18,18,23,0.05)] transition-colors duration-200
                 w-5 h-5`,
             icon: `bg-transparent text-xs w-3 h-3 rounded-full
@@ -194,11 +194,11 @@ const theme = ref<DataTablePassThroughOptions>({
                 border border-surface-300 
                 bg-surface-0 
                 text-surface-700 
-                peer-enabled:peer-hover:border-surface-400
+                peer-enabled:peer-hover:border-surface-400 
                 p-checked:border-primary p-checked:bg-primary p-checked:text-primary-contrast
                 peer-enabled:peer-hover:p-checked:bg-primary-emphasis peer-enabled:peer-hover:p-checked:border-primary-emphasis
                 peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-focus-visible:outline 
-                p-disabled:bg-surface-200 p-disabled:border-surface-300 p-disabled:text-surface-700
+                p-disabled:bg-surface-200  p-disabled:border-surface-300  p-disabled:text-surface-700 
                 shadow-[0_1px_2px_0_rgba(18,18,23,0.05)] transition-colors duration-200`,
             icon: `text-sm w-[0.875rem] h-[0.875rem] transition-none`,
         },
@@ -206,7 +206,7 @@ const theme = ref<DataTablePassThroughOptions>({
             transition-colors duration-200 rounded-full border-none bg-transparent
             text-surface-500 enabled:hover:bg-surface-100 enabled:hover:text-surface-700
             focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-primary
-            p-selected:hover:bg-surface-0 p-selected:hover:text-primary`,
+            p-selected:hover:bg-surface-0  p-selected:hover:text-primary`,
         rowToggleIcon: ``,
         reorderableRowHandle: ``,
     },

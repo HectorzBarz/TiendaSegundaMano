@@ -9,7 +9,7 @@
         <template #dropdownicon>
             <ChevronDownIcon />
         </template>
-        <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">
+        <template v-for="(_, slotName) in $slots" v-slot:[slotName]="slotProps">
             <slot :name="slotName" v-bind="slotProps ?? {}" />
         </template>
     </AutoComplete>
@@ -32,15 +32,15 @@ const theme = ref<AutoCompletePassThroughOptions>({
     pcInputText: {
         root: `appearance-none rounded-md outline-hidden 
             bg-surface-0 
-            p-filled:bg-surface-50 
+            p-filled:bg-surface-50
             text-surface-700 
             placeholder:text-surface-500 
             border border-surface-300 
-            enabled:hover:border-surface-400
+            enabled:hover:border-surface-400 
             enabled:focus:border-primary
             disabled:bg-surface-200 disabled:text-surface-500
             p-invalid:border-red-400 
-            p-invalid:placeholder:text-red-600
+            p-invalid:placeholder:text-red-600 
             px-3 py-2 p-fluid:w-full
             p-small:text-sm p-small:px-[0.625rem] p-small:py-[0.375rem]
             p-large:text-lg p-large:px-[0.875rem] p-large:py-[0.625rem]
@@ -48,12 +48,12 @@ const theme = ref<AutoCompletePassThroughOptions>({
             transition-colors duration-200 shadow-[0_1px_2px_0_rgba(18,18,23,0.05)]`,
     },
     inputMultiple: `m-0 list-none cursor-text overflow-hidden flex items-center flex-wrap
-        px-3 py-1 not-p-empty:px-1 gap-1 text-surface-700
-        border border-surface-300 
-        hover:border-surface-400 
-        p-invalid:border-red-400
-        p-filled:bg-surface-50
-        p-disabled:pointer-events-none p-disabled:bg-surface-200 p-disabled:text-surface-500
+        px-3 py-1 not-p-empty:px-1 gap-1 text-surface-700  bg-surface-0 
+        border border-surface-300  rounded-md p-has-dropdown:rounded-e-none w-full
+        hover:border-surface-400  p-focus:border-primary
+        p-invalid:border-red-400 
+        p-filled:bg-surface-50 
+        p-disabled:pointer-events-none p-disabled:bg-surface-200 p-disabled:text-surface-500  
         shadow-[0_1px_2px_0_rgba(18,18,23,0.05)]
         transition-colors duration-200 outline-none`,
     chipItem: ``,
@@ -65,7 +65,7 @@ const theme = ref<AutoCompletePassThroughOptions>({
             p-focus:bg-surface-200 p-focus:text-surface-800 
             p-removable:pe-2`,
         image: `rounded-full w-8 h-8 -ms-2`,
-        icon: `text-surface-800 text-base w-4 h-4`,
+        icon: `text-surface-800  text-base w-4 h-4`,
         label: ``,
         removeIcon: `cursor-pointer text-base w-4 h-4 rounded-full
             text-surface-800 
@@ -77,7 +77,7 @@ const theme = ref<AutoCompletePassThroughOptions>({
         placeholder:text-surface-500 `,
     loader: `absolute top-1/2 -mt-2 end-3 p-has-dropdown:end-[3.25rem]`,
     dropdown: `cursor-pointer inline-flex items-center justify-center select-none overflow-hidden relative w-10 shrink-0 rounded-e-md
-        border border-s-0 border-surface-300
+        border border-s-0 border-surface-300 
         bg-surface-100 enabled:hover:bg-surface-200 enabled:active:bg-surface-300
         text-surface-600 enabled:hover:text-surface-700 enabled:hover:active:text-surface-800
         focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-primary
@@ -85,16 +85,16 @@ const theme = ref<AutoCompletePassThroughOptions>({
     dropdownIcon: ``,
     overlay: `p-portal-self:min-w-full absolute top-0 left-0 rounded-md
         bg-surface-0 
-        border border-surface-200
-        text-surface-700
+        border border-surface-200 
+        text-surface-700 
         shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)]`,
     virtualScroller: ``,
     listContainer: `overflow-auto`,
     list: `m-0 p-1 list-none flex flex-col gap-[2px]`,
-    optionGroup: `m-0 px-3 py-2 text-surface-500 font-semibold bg-transparent`,
+    optionGroup: `m-0 px-3 py-2 text-surface-500  font-semibold bg-transparent`,
     option: `cursor-pointer whitespace-nowrap relative overflow-hidden flex items-center px-3 py-2 rounded-sm
         text-surface-700  bg-transparent border-none
-        p-focus:bg-surface-100 p-focus:text-surface-800
+        p-focus:bg-surface-100  p-focus:text-surface-800 
         p-selected:bg-highlight p-focus:p-selected:bg-highlight-emphasis
         transition-colors duration-200`,
     emptyMessage: `px-3 py-2`,

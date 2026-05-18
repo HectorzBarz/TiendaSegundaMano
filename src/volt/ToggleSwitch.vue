@@ -6,7 +6,7 @@
             mergeProps: ptViewMerge,
         }"
     >
-        <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">
+        <template v-for="(_, slotName) in $slots" v-slot:[slotName]="slotProps">
             <slot :name="slotName" v-bind="slotProps ?? {}" />
         </template>
     </ToggleSwitch>
@@ -33,7 +33,7 @@ const theme = ref<ToggleSwitchPassThroughOptions>({
         peer-enabled:peer-hover:bg-surface-400 
         p-checked:bg-primary peer-enabled:peer-hover:p-checked:bg-primary-emphasis
         p-invalid:border-red-400 
-        p-disabled:bg-surface-200
+        p-disabled:bg-surface-200 
         peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary`,
     handle: `absolute top-1/2 flex justify-center items-center
         bg-surface-0 

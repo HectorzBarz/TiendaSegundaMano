@@ -6,7 +6,7 @@
             mergeProps: ptViewMerge,
         }"
     >
-        <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">
+        <template v-for="(_, slotName) in $slots" v-slot:[slotName]="slotProps">
             <slot :name="slotName" v-bind="slotProps ?? {}" />
         </template>
     </Button>
@@ -30,7 +30,7 @@ const theme = ref<ButtonPassThroughOptions>({
         border border-red-500 enabled:hover:border-red-600 enabled:active:border-red-700
         text-white enabled:hover:text-white enabled:active:text-white
         focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2
-        focus-visible:outline-red-500
+        focus-visible:outline-red-500 
         p-vertical:flex-col p-fluid:w-full p-fluid:p-icon-only:w-10
         p-icon-only:w-10 p-icon-only:px-0 p-icon-only:gap-0
         p-icon-only:p-rounded:rounded-full p-icon-only:p-rounded:h-10

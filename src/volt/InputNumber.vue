@@ -12,7 +12,7 @@
         <template #decrementicon>
             <AngleDownIcon />
         </template>
-        <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">
+        <template v-for="(_, slotName) in $slots" v-slot:[slotName]="slotProps">
             <slot :name="slotName" v-bind="slotProps ?? {}" />
         </template>
     </InputNumber>
@@ -40,8 +40,8 @@ const theme = ref<InputNumberPassThroughOptions>({
         p-filled:bg-surface-50 
         text-surface-700 
         placeholder:text-surface-500 
-        border border-surface-300 
-        enabled:hover:border-surface-400
+        border border-surface-300  
+        enabled:hover:border-surface-400 
         enabled:focus:border-primary
         disabled:bg-surface-200 disabled:text-surface-500 
         p-invalid:border-red-400 

@@ -6,7 +6,7 @@
             mergeProps: ptViewMerge,
         }"
     >
-        <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">
+        <template v-for="(_, slotName) in $slots" v-slot:[slotName]="slotProps">
             <slot :name="slotName" v-bind="slotProps ?? {}" />
         </template>
     </Button>
@@ -42,7 +42,7 @@ const theme = ref<ButtonPassThroughOptions>({
         p-text:border-transparent enabled:hover:p-text:border-transparent enabled:active:p-text:border-transparent
         p-text:text-primary enabled:hover:p-text:text-primary enabled:active:p-text:text-primary
     `,
-    loadingIcon: `animate-spin`,
+    loadingIcon: ``,
     icon: `p-right:order-1 p-bottom:order-2`,
     label: `font-medium p-icon-only:invisible p-icon-only:w-0
         p-small:text-sm p-large:text-[1.125rem]`,
