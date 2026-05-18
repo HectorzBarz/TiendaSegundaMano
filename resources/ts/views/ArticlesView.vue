@@ -123,17 +123,23 @@ const filteredArticles = computed(() => {
 </script>
 
 <template>
-    <div class="flex h-full flex-col gap-5">
+    <div class="bg-fondo flex h-full flex-col gap-5">
+        <!-- TITLE -->
         <div class="my-5 text-center">
-            <h1 class="text-5xl">Artículos</h1>
+            <h1 class="text-rojo-fuerte text-5xl font-bold">Artículos</h1>
+
+            <p class="text-texto-secundario mt-2">
+                Encuentra productos disponibles en la plataforma
+            </p>
         </div>
 
         <section class="flex flex-col lg:flex-row lg:items-start">
             <FilterBase
                 :suggestions="articles"
-                class="lg:w-1/3 xl:max-w-1/5 xl:min-w-1/5"
+                class="bg-card border-borde rounded-2xl border lg:w-1/3 xl:max-w-1/5 xl:min-w-1/5"
             />
 
+            <!-- LIST -->
             <div
                 v-if="filteredArticles.length"
                 class="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
@@ -145,10 +151,11 @@ const filteredArticles = computed(() => {
                 />
             </div>
 
+            <!-- EMPTY STATE -->
             <div v-else class="m-auto flex h-full w-full justify-center">
-                <span class="text-3xl text-red-500">
-                    No se han encontrado artículos</span
-                >
+                <span class="text-rojo-claro text-3xl font-semibold">
+                    No se han encontrado artículos
+                </span>
             </div>
         </section>
     </div>

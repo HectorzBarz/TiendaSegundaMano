@@ -3,7 +3,6 @@ import Button from "@volt/Button.vue";
 import hampter from "/storage/app/public/img/hampter.jpg";
 
 import { useCopyToClipboard } from "@/composables/useCopyToClipboard";
-
 import { Article } from "@/types";
 
 const article = <Article>{
@@ -20,15 +19,16 @@ const article = <Article>{
 };
 
 const emailToCopy = "hectorrodriguezbar99@gmail.com";
-
 const { copyToClipboard } = useCopyToClipboard(emailToCopy);
 </script>
 
 <template>
-    <main class="mx-auto max-w-6xl px-6 py-10">
+    <main class="bg-fondo mx-auto max-w-6xl px-6 py-10">
         <div class="grid gap-10 md:grid-cols-2">
-            <!-- Imagen -->
-            <div class="overflow-hidden rounded-2xl bg-white shadow-sm">
+            <!-- IMAGEN -->
+            <div
+                class="bg-card border-borde overflow-hidden rounded-2xl border shadow-sm"
+            >
                 <img
                     :src="article.img"
                     alt="img"
@@ -36,68 +36,72 @@ const { copyToClipboard } = useCopyToClipboard(emailToCopy);
                 />
             </div>
 
-            <!-- Detalles -->
+            <!-- DETALLES -->
             <div class="flex flex-col justify-between">
                 <div class="space-y-6">
-                    <!-- Nombre + categoría -->
+                    <!-- NOMBRE -->
                     <div>
-                        <p class="text-sm text-gray-500">
-                            Segunda mano · Como nuevo
+                        <p class="text-texto-secundario text-sm">
+                            Segunda mano · Estado medio
                         </p>
-                        <h1 class="mt-1 text-3xl font-semibold">
+
+                        <h1
+                            class="text-rojo-fuerte mt-1 text-3xl font-semibold"
+                        >
                             {{ article.name }}
                         </h1>
                     </div>
 
-                    <!-- Precio -->
+                    <!-- PRECIO -->
                     <div class="flex items-center gap-3">
-                        <span class="text-3xl font-bold text-green-600">
+                        <span class="text-azul text-3xl font-bold">
                             {{ article.price }} €
                         </span>
 
                         <span
                             v-if="article.onSale"
-                            class="text-gray-400 line-through"
+                            class="text-texto-secundario line-through"
                         >
                             {{ article.oldPrice }} €
                         </span>
 
                         <span
                             v-if="article.onSale"
-                            class="rounded-full bg-green-100 px-2 py-1 text-sm text-green-700"
+                            class="bg-amarillo/30 text-naranja rounded-full px-3 py-1 text-sm font-semibold"
                         >
                             Oferta
                         </span>
                     </div>
 
-                    <!-- Descripción -->
+                    <!-- DESCRIPCIÓN -->
                     <div>
-                        <h2 class="mb-2 text-lg font-medium">Descripción</h2>
-                        <p class="leading-relaxed text-gray-600">
+                        <h2 class="text-rojo-fuerte mb-2 text-lg font-medium">
+                            Descripción
+                        </h2>
+
+                        <p class="text-texto-secundario leading-relaxed">
                             {{ article.description }}
                         </p>
                     </div>
 
-                    <!-- Info vendedor -->
-                    <div class="rounded-xl bg-gray-50 p-4">
-                        <p class="text-sm text-gray-500">Vendido por</p>
-                        <p class="font-medium">Héctor Rodríguez</p>
+                    <!-- VENDEDOR -->
+                    <div
+                        class="bg-card border-borde rounded-xl border p-4 shadow-sm"
+                    >
+                        <p class="text-texto-secundario text-sm">Vendido por</p>
+
+                        <p class="text-rojo-fuerte font-medium">
+                            Héctor Rodríguez
+                        </p>
                     </div>
                 </div>
 
-                <!-- CTA -->
+                <!-- BOTONES -->
                 <div class="mt-8 flex gap-4">
                     <Button
-                        class="w-full rounded-xl bg-black py-3 text-white hover:bg-gray-800"
+                        class="bg-azul! hover:bg-azul/90! w-full rounded-xl py-3 font-semibold text-white transition"
                     >
                         Añadir al carrito
-                    </Button>
-
-                    <Button
-                        class="w-full rounded-xl bg-gray-100 py-3 hover:bg-gray-200"
-                        @click="copyToClipboard"
-                    >
-                        Contactar
                     </Button>
                 </div>
             </div>

@@ -1,50 +1,127 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import InputText from "@volt/InputText.vue";
 import { RouterLink } from "vue-router";
+
+// ----------------------
+// STATE
+// ----------------------
+const form = ref({
+    email: "",
+    password: "",
+});
+
+const errors = ref<Record<string, string>>({});
+const submitted = ref(false);
+
+// ----------------------
+// REGEX
+// ----------------------
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// ----------------------
+// VALIDATION
+// ----------------------
+function validate() {
+    errors.value = {};
+
+    if (!form.value.email) {
+        errors.value.email = "Email obligatorio";
+    } else if (!emailRegex.test(form.value.email)) {
+        errors.value.email = "Email inválido";
+    }
+
+    if (!form.value.password) {
+        errors.value.password = "Contraseña obligatoria";
+    }
+
+    return Object.keys(errors.value).length === 0;
+}
+
+// ----------------------
+// FIELD CLASS
+// ----------------------
+function fieldClass(field: string) {
+    if (!submitted.value) {
+        return "focus:border-azul focus:ring-azul/20";
+    }
+
+    if (errors.value[field]) {
+        return "border-red-500 focus:border-red-500 focus:ring-red-200";
+    }
+
+    return "border-green-500 focus:border-green-500 focus:ring-green-200";
+}
+
+// ----------------------
+// SUBMIT
+// ----------------------
+function submit() {
+    submitted.value = true;
+
+    if (!validate()) return;
+
+    console.log("Login OK:", form.value);
+}
 </script>
 
 <template>
-    <main
-        class="flex min-h-screen items-center justify-center bg-gray-100 px-4"
-    >
+    <main class="bg-fondo flex min-h-screen items-center justify-center px-4">
         <section
-            class="mb-5 w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-2xl"
+            class="bg-card border-borde w-full max-w-4xl overflow-hidden rounded-3xl border shadow-2xl"
         >
             <div class="grid md:grid-cols-2">
                 <!-- FORM -->
                 <div class="flex flex-col justify-center p-10">
                     <h1
-                        class="mb-8 text-center text-4xl font-bold text-gray-800"
+                        class="text-rojo-fuerte mb-8 text-center text-4xl font-bold"
                     >
                         Inicio de Sesión
                     </h1>
 
                     <div class="space-y-5">
+                        <!-- EMAIL -->
                         <InputText
-                            class="w-full rounded-xl border border-gray-300 p-3"
+                            v-model="form.email"
                             placeholder="Correo"
+                            class="w-full rounded-xl border p-3 transition focus:ring-2"
+                            :class="fieldClass('email')"
                         />
 
+                        <p v-if="errors.email" class="text-sm text-red-500">
+                            {{ errors.email }}
+                        </p>
+
+                        <!-- PASSWORD -->
                         <InputText
-                            class="w-full rounded-xl border border-gray-300 p-3"
+                            v-model="form.password"
+                            type="password"
                             placeholder="Contraseña"
+                            class="w-full rounded-xl border p-3 transition focus:ring-2"
+                            :class="fieldClass('password')"
                         />
 
+                        <p v-if="errors.password" class="text-sm text-red-500">
+                            {{ errors.password }}
+                        </p>
+
+                        <!-- BUTTON -->
                         <button
-                            class="w-full rounded-xl bg-black py-3 text-white transition hover:bg-gray-800"
+                            @click="submit"
+                            class="bg-azul hover:bg-azul/90 w-full rounded-xl py-3 font-semibold text-white transition hover:cursor-pointer"
                         >
                             Entrar
                         </button>
 
                         <!-- REGISTER LINK -->
                         <div class="text-center">
-                            <span class="text-gray-500">
+                            <span class="text-texto-secundario">
                                 ¿No tienes cuenta?
                             </span>
 
                             <RouterLink
                                 to="/register"
-                                class="ml-2 font-semibold text-black transition hover:text-gray-700 hover:underline"
+                                class="text-rojo-fuerte ml-2 font-semibold hover:underline"
                             >
                                 Regístrate
                             </RouterLink>
@@ -53,7 +130,9 @@ import { RouterLink } from "vue-router";
                 </div>
 
                 <!-- IMAGE -->
-                <div class="flex items-center justify-center bg-gray-50 p-10">
+                <div
+                    class="bg-amarillo/10 flex items-center justify-center p-10"
+                >
                     <img
                         src="/public/img/favicon.svg"
                         alt="logo"

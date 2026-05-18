@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useAppToast } from "@/composables/useAppToast";
 
 import Button from "@volt/Button.vue";
 
@@ -17,6 +18,17 @@ const user = ref({
 });
 
 const preview = hampter;
+
+const { show } = useAppToast();
+
+const showSuccess = () => {
+    show({
+        message: "¡Cambios guardados!",
+        severity: "success",
+        life: 3000,
+        position: "top-right",
+    });
+};
 </script>
 
 <template>
@@ -187,6 +199,7 @@ const preview = hampter;
                         label="Guardar cambios"
                         icon="pi pi-save"
                         class="bg-azul! hover:bg-azul/90! rounded-2xl border-0 px-6 py-3 text-white transition"
+                        @click="showSuccess"
                     />
                 </div>
             </div>

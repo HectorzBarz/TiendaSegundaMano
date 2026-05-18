@@ -14,6 +14,7 @@ import { computed, ref } from "vue";
 import { useArticleFiltersStore } from "@/stores/articleFilters";
 import { Article } from "@/types";
 import StockBarChart from "@/components/StockBarChart.vue";
+import { RouterLink } from "vue-router";
 
 const isChartCollapsed = ref(true);
 
@@ -258,11 +259,13 @@ const filteredArticles = computed(() => {
             </div>
 
             <div class="flex gap-3">
-                <Button
-                    label="Nuevo artículo"
-                    icon="pi pi-plus"
-                    class="bg-azul! hover:bg-azul/90! rounded-2xl border-0 px-5 py-3 text-white transition"
-                />
+                <RouterLink to="/admin/create">
+                    <Button
+                        label="Nuevo artículo"
+                        icon="pi pi-plus"
+                        class="bg-azul! hover:bg-azul/90! rounded-2xl border-0 px-5 py-3 text-white transition"
+                    />
+                </RouterLink>
 
                 <Button
                     icon="pi pi-refresh"

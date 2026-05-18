@@ -25,10 +25,14 @@ function selectCategory(id: number) {
 </script>
 
 <template>
-    <div class="flex h-full flex-col gap-5">
+    <div class="bg-fondo flex h-full flex-col gap-5">
         <!-- Slider -->
-        <div class="h-96 bg-red-300 text-center align-middle">
-            <p>Hola caracola, esto será un slider</p>
+        <div
+            class="bg-amarillo/20 border-borde text-rojo-fuerte flex h-96 items-center justify-center rounded-2xl border"
+        >
+            <p class="text-xl font-semibold">
+                Hola caracola, esto será un slider
+            </p>
         </div>
         <!-- END Slider -->
 
@@ -38,7 +42,10 @@ function selectCategory(id: number) {
         >
             <div v-for="category in categories" :key="category.id">
                 <RouterLink to="/articles" @click="selectCategory(category.id)">
-                    <CategoryItemCard :category="category" />
+                    <CategoryItemCard
+                        :category="category"
+                        class="bg-card border-borde"
+                    />
                 </RouterLink>
             </div>
         </div>

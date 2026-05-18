@@ -73,10 +73,14 @@ function selectCategory(id: number) {
 </script>
 
 <template>
-    <div class="flex h-full flex-col gap-5">
+    <div class="bg-fondo flex h-full flex-col gap-5">
         <!-- Title -->
         <div class="my-5 text-center align-middle">
-            <h1 class="text-5xl">Categorías</h1>
+            <h1 class="text-rojo-fuerte text-5xl font-bold">Categorías</h1>
+
+            <p class="text-texto-secundario mt-2">
+                Explora todas las categorías disponibles
+            </p>
         </div>
         <!-- END Title -->
 
@@ -86,7 +90,10 @@ function selectCategory(id: number) {
         >
             <div v-for="category in categories" :key="category.id" class="">
                 <RouterLink to="/articles" @click="selectCategory(category.id)">
-                    <CategoryItemCard :category="category" />
+                    <CategoryItemCard
+                        :category="category"
+                        class="bg-card border-borde text-texto"
+                    />
                 </RouterLink>
             </div>
         </div>

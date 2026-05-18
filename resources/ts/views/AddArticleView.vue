@@ -9,6 +9,7 @@ import Select from "@volt/Select.vue";
 import Checkbox from "@volt/Checkbox.vue";
 
 import { Article } from "@/types";
+import { RouterLink } from "vue-router";
 
 const categories = [
     { label: "Accesorios", value: 1 },
@@ -329,11 +330,13 @@ const preview = "https://placehold.co/600x400/f8f7f5/70191d?text=Vista+previa";
                             class="rounded-2xl px-6 py-3"
                         />
 
-                        <Button
-                            label="Guardar artículo"
-                            icon="pi pi-save"
-                            class="bg-azul! hover:bg-azul/90! rounded-2xl border-0 px-6 py-3 text-white transition"
-                        />
+                        <RouterLink to="/admin">
+                            <Button
+                                label="Guardar artículo"
+                                icon="pi pi-save"
+                                class="bg-azul! hover:bg-azul/90! rounded-2xl border-0 px-6 py-3 text-white transition"
+                            />
+                        </RouterLink>
                     </div>
                 </div>
             </div>
