@@ -42,7 +42,7 @@ const groupedItems = computed(() => cart.items);
                             >
                                 <!-- IMAGE -->
                                 <div
-                                    class="border-borde bg-fondo h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border"
+                                    class="border-borde bg-fondo h-20 w-20 shrink-0 overflow-hidden rounded-xl border"
                                 >
                                     <img
                                         :src="item.article.img"

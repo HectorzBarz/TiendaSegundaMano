@@ -15,6 +15,7 @@ import { useArticleFiltersStore } from "@/stores/articleFilters";
 import { Article } from "@/types";
 import StockBarChart from "@/components/StockBarChart.vue";
 import { RouterLink } from "vue-router";
+import SecondaryButton from "@volt/SecondaryButton.vue";
 
 const isChartCollapsed = ref(true);
 

@@ -1,27 +1,67 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useAppToast } from "@/composables/useAppToast";
-
 import Button from "@volt/Button.vue";
-
 import InputText from "@volt/InputText.vue";
 import Password from "@volt/Password.vue";
-
 import hampter from "/storage/app/public/img/hampter.jpg";
 
+/**
+ * FORM EXTENDED
+ */
 const user = ref({
     name: "Juan Pérez",
     email: "juan@email.com",
     password: "",
     password_confirmation: "",
+    birthDate: "",
+    phone: "",
+    shippingAddress: "",
     avatar: null,
 });
 
 const preview = hampter;
-
 const { show } = useAppToast();
 
+/**
+ * REGEX (igual que tu otra vista)
+ */
+const birthRegex =
+    /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19\d{2}|20\d{2})$/;
+
+const phoneRegex = /^\+\d{1,4}\s?\d{6,14}$/;
+
+const addressRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,º\-]{5,}$/;
+
+/**
+ * ERRORS
+ */
+const errors = ref<Record<string, string>>({});
+
+function validate() {
+    errors.value = {};
+
+    if (user.value.birthDate && !birthRegex.test(user.value.birthDate)) {
+        errors.value.birthDate = "Formato DD/MM/YYYY inválido";
+    }
+
+    if (user.value.phone && !phoneRegex.test(user.value.phone)) {
+        errors.value.phone = "Teléfono inválido (+34...)";
+    }
+
+    if (
+        user.value.shippingAddress &&
+        !addressRegex.test(user.value.shippingAddress)
+    ) {
+        errors.value.shippingAddress = "Dirección inválida";
+    }
+
+    return Object.keys(errors.value).length === 0;
+}
+
 const showSuccess = () => {
+    if (!validate()) return;
+
     show({
         message: "¡Cambios guardados!",
         severity: "success",
@@ -141,6 +181,57 @@ const showSuccess = () => {
                         />
                     </div>
 
+                    <div class="flex flex-col gap-2">
+                        <label class="text-rojo-fuerte text-sm font-semibold">
+                            Fecha de nacimiento
+                        </label>
+
+                        <InputText
+                            v-model="user.birthDate"
+                            placeholder="DD/MM/YYYY"
+                            class="border-borde focus:border-azul hover:border-azul rounded-2xl px-4 py-3 transition"
+                        />
+
+                        <p v-if="errors.birthDate" class="text-sm text-red-500">
+                            {{ errors.birthDate }}
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-rojo-fuerte text-sm font-semibold">
+                            Teléfono
+                        </label>
+
+                        <InputText
+                            v-model="user.phone"
+                            placeholder="+34 600000000"
+                            class="border-borde focus:border-azul hover:border-azul rounded-2xl px-4 py-3 transition"
+                        />
+
+                        <p v-if="errors.phone" class="text-sm text-red-500">
+                            {{ errors.phone }}
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col gap-2 lg:col-span-2">
+                        <label class="text-rojo-fuerte text-sm font-semibold">
+                            Dirección de envío
+                        </label>
+
+                        <InputText
+                            v-model="user.shippingAddress"
+                            placeholder="Calle, número, ciudad, código postal"
+                            class="border-borde focus:border-azul hover:border-azul rounded-2xl px-4 py-3 transition"
+                        />
+
+                        <p
+                            v-if="errors.shippingAddress"
+                            class="text-sm text-red-500"
+                        >
+                            {{ errors.shippingAddress }}
+                        </p>
+                    </div>
+
                     <!-- IMAGE -->
                     <div class="flex flex-col gap-3 lg:col-span-2">
                         <label class="text-rojo-fuerte text-sm font-semibold">
@@ -182,18 +273,8 @@ const showSuccess = () => {
 
                 <!-- FOOTER -->
                 <div
-                    class="border-borde flex flex-col gap-4 border-t bg-slate-50 px-8 py-6 sm:flex-row sm:items-center sm:justify-between"
+                    class="border-borde flex flex-col gap-4 border-t bg-slate-50 px-8 py-6 sm:flex-row sm:items-center sm:justify-end"
                 >
-                    <div>
-                        <p class="text-rojo-fuerte font-semibold">
-                            Seguridad de la cuenta
-                        </p>
-
-                        <p class="text-texto-secundario text-sm">
-                            Recomendamos actualizar tu contraseña regularmente.
-                        </p>
-                    </div>
-
                     <!-- SUBMIT -->
                     <Button
                         label="Guardar cambios"
