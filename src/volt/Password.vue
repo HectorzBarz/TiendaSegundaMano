@@ -41,11 +41,10 @@ const theme = ref<PasswordPassThroughOptions>({
     root: `inline-flex relative p-fluid:flex`,
     pcInputText: {
         root: `appearance-none rounded-md outline-hidden
-        bg-surface-0 bg-surface-950
+        bg-surface-0
         p-filled:bg-surface-50 p-filled:bg-surface-800
-        text-surface-700 text-surface-0
         placeholder:text-surface-500 placeholder:text-surface-400
-        border border-surface-300 border-surface-700
+        border border-surface-300
         enabled:hover:border-surface-400 enabled:hover:border-surface-600
         enabled:focus:border-primary
         disabled:bg-surface-200 disabled:text-surface-500

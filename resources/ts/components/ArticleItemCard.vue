@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ArticleCard } from "@/types";
+import { Article } from "@/types";
 import BaseHoverCard from "./BaseHoverCard.vue";
 
 const props = defineProps<{
-    article: ArticleCard;
+    article: Article;
 }>();
 </script>
 <template>
@@ -38,13 +38,41 @@ const props = defineProps<{
             </div>
 
             <!-- Rating section -->
-            <section class="flex gap-2">
-                <i class="pi pi-star text-yellow-400" />
-                <i class="pi pi-star text-yellow-400" />
-                <i class="pi pi-star text-yellow-400" />
-                <i class="pi pi-star text-yellow-400" />
-                <i class="pi pi-star text-yellow-400" />
-            </section>
+            <div class="flex gap-2">
+                <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1">
+                        <template v-for="star in 5" :key="star">
+                            <!-- COMPLETA -->
+                            <i
+                                v-if="
+                                    star <= Math.floor(article.product_avg ?? 0)
+                                "
+                                class="pi pi-star-fill text-xl text-yellow-400"
+                            />
+
+                            <!-- MEDIA -->
+                            <i
+                                v-else-if="
+                                    star ===
+                                        Math.ceil(article.product_avg ?? 0) &&
+                                    (article.product_avg ?? 0) % 1 >= 0.5
+                                "
+                                class="pi pi-star-half-fill text-xl text-yellow-400"
+                            />
+
+                            <!-- VACÍA -->
+                            <i
+                                v-else
+                                class="pi pi-star text-xl text-gray-300"
+                            />
+                        </template>
+                    </div>
+
+                    <span class="font-semibold">
+                        {{ (article.product_avg ?? 0).toFixed(1) }}
+                    </span>
+                </div>
+            </div>
             <!-- END Rating section -->
 
             <!-- Cart section -->

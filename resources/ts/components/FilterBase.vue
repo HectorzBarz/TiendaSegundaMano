@@ -2,7 +2,7 @@
 import hampter from "/storage/app/public/img/hampter.jpg";
 
 import { computed, onMounted, ref, watch } from "vue";
-import { ArticleCard, Category } from "@/types";
+import { Article, Category } from "@/types";
 
 import AutoComplete from "@volt/AutoComplete.vue";
 import InputNumber from "@volt/InputNumber.vue";
@@ -13,7 +13,7 @@ import DangerButton from "@volt/DangerButton.vue";
 import { useArticleFiltersStore } from "@/stores/articleFilters";
 
 const props = defineProps<{
-    suggestions: ArticleCard[];
+    suggestions: Article[];
 }>();
 
 const emit = defineEmits<{
