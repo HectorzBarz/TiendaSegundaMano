@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import hampter from "/storage/app/public/img/hampter.jpg";
+import DataTable from "@volt/DataTable.vue";
+import Column from "primevue/column";
 
 const orders = [
     {
@@ -44,45 +46,70 @@ const orders = [
             No tienes compras todavía
         </div>
 
-        <!-- LIST -->
-        <section class="mx-auto grid max-w-5xl gap-5">
-            <div
-                v-for="order in orders"
-                :key="order.id"
-                class="bg-card border-borde flex items-center gap-4 rounded-2xl border p-4 shadow-sm"
+        <!-- TABLE -->
+        <section v-else class="mx-auto max-w-6xl">
+            <DataTable
+                :value="orders"
+                paginator
+                :rows="10"
+                stripedRows
+                responsiveLayout="scroll"
+                tableStyle="min-width: 900px"
+                class="bg-card border-borde rounded-2xl border"
             >
                 <!-- IMAGE -->
-                <img
-                    :src="order.img"
-                    class="h-16 w-16 rounded-xl object-cover"
-                />
+                <Column header="">
+                    <template #body="{ data }">
+                        <img
+                            :src="data.img"
+                            class="border-borde h-14 w-14 rounded-xl border object-cover"
+                        />
+                    </template>
+                </Column>
 
-                <!-- INFO -->
-                <div class="flex-1">
-                    <h2 class="text-rojo-fuerte font-semibold">
-                        {{ order.name }}
-                    </h2>
+                <!-- PRODUCT -->
+                <Column field="name" header="Producto">
+                    <template #body="{ data }">
+                        <p class="text-texto font-semibold">
+                            {{ data.name }}
+                        </p>
+                    </template>
+                </Column>
 
-                    <p class="text-texto-secundario text-sm">
-                        {{ order.date }}
-                    </p>
-                </div>
+                <!-- DATE -->
+                <Column field="date" header="Fecha">
+                    <template #body="{ data }">
+                        <span class="text-texto-secundario">
+                            {{ data.date }}
+                        </span>
+                    </template>
+                </Column>
 
                 <!-- PRICE -->
-                <div class="text-azul font-bold">{{ order.price }} €</div>
+                <Column field="price" header="Precio">
+                    <template #body="{ data }">
+                        <span class="text-azul font-bold">
+                            {{ data.price }} €
+                        </span>
+                    </template>
+                </Column>
 
                 <!-- STATUS -->
-                <span
-                    class="rounded-full px-3 py-1 text-xs font-semibold"
-                    :class="{
-                        'bg-amarillo/30 text-naranja':
-                            order.delivered === false,
-                        'bg-azul/10 text-azul': order.delivered === true,
-                    }"
-                >
-                    {{ order.delivered ? "Entregado" : "Enviado" }}
-                </span>
-            </div>
+                <Column field="delivered" header="Estado">
+                    <template #body="{ data }">
+                        <span
+                            class="rounded-full px-4 py-1 text-xs font-semibold"
+                            :class="
+                                data.delivered
+                                    ? 'bg-azul/10 text-azul'
+                                    : 'bg-amarillo/30 text-naranja'
+                            "
+                        >
+                            {{ data.delivered ? "Entregado" : "Enviado" }}
+                        </span>
+                    </template>
+                </Column>
+            </DataTable>
         </section>
     </main>
 </template>
