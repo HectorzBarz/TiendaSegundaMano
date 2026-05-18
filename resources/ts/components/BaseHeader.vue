@@ -9,95 +9,111 @@ function resetArticles() {
 </script>
 
 <template>
-    <div>
+    <header
+        class="border-borde bg-card/95 sticky top-0 z-50 border-b shadow-sm backdrop-blur-md"
+    >
+        <!-- DESKTOP -->
         <section
-            class="hidden h-20 content-center items-center justify-between bg-linear-to-t from-gray-100 to-gray-200 md:flex"
+            class="mx-auto hidden h-24 max-w-7xl items-center justify-between px-6 md:flex"
         >
+            <!-- LOGO -->
             <RouterLink to="/">
-                <div class="px-10">
+                <div
+                    class="hover:bg-amarillo/10 rounded-3xl p-2 transition-all duration-200"
+                >
                     <img
                         src="/public/img/favicon.svg"
                         alt="logo"
-                        class="h-16 w-fit"
-                    /></div
-            ></RouterLink>
-            <nav class="flex justify-around">
+                        class="h-14 w-fit"
+                    />
+                </div>
+            </RouterLink>
+
+            <!-- NAV -->
+            <nav class="flex items-center gap-2">
                 <RouterLink to="/">
-                    <ul
-                        class="px-5 py-2 transition-all hover:cursor-pointer hover:rounded-b-lg hover:shadow-lg"
+                    <div
+                        class="text-rojo-fuerte hover:bg-amarillo/20 hover:text-rojo-claro rounded-2xl px-5 py-3 font-semibold transition-all duration-200"
                     >
                         Inicio
-                    </ul>
+                    </div>
                 </RouterLink>
+
                 <RouterLink to="/articles" @click="resetArticles">
-                    <ul
-                        class="px-5 py-2 transition-all hover:cursor-pointer hover:rounded-b-lg hover:shadow-lg"
+                    <div
+                        class="text-rojo-fuerte hover:bg-amarillo/20 hover:text-rojo-claro rounded-2xl px-5 py-3 font-semibold transition-all duration-200"
                     >
                         Productos
-                    </ul>
+                    </div>
                 </RouterLink>
 
                 <RouterLink to="/categories">
-                    <ul
-                        class="px-5 py-2 transition-all hover:cursor-pointer hover:rounded-b-lg hover:shadow-lg"
+                    <div
+                        class="text-rojo-fuerte hover:bg-amarillo/20 hover:text-rojo-claro rounded-2xl px-5 py-3 font-semibold transition-all duration-200"
                     >
-                        Categorias
-                    </ul>
+                        Categorías
+                    </div>
                 </RouterLink>
+
                 <RouterLink to="/account">
-                    <ul
-                        class="px-5 py-2 transition-all hover:cursor-pointer hover:rounded-b-lg hover:shadow-lg"
+                    <div
+                        class="text-rojo-fuerte hover:bg-amarillo/20 hover:text-rojo-claro rounded-2xl px-5 py-3 font-semibold transition-all duration-200"
                     >
                         Área personal
-                    </ul>
+                    </div>
                 </RouterLink>
             </nav>
-            <!-- Shopping cart -->
-            <div class="p-5">
-                <i
-                    style="font-size: 1.5rem"
-                    class="pi-shopping-cart pi cursor-pointer hover:text-white hover:transition-all hover:duration-300"
-                />
+
+            <!-- ACTIONS -->
+            <div class="flex items-center gap-3">
+                <!-- CART -->
+                <button
+                    class="bg-azul/10 text-azul hover:bg-azul flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-200 hover:cursor-pointer hover:text-white"
+                >
+                    <i class="pi pi-shopping-cart text-xl"></i>
+                </button>
             </div>
         </section>
 
-        <section
-            class="flex h-20 content-center items-center justify-between bg-linear-to-t from-gray-100 to-gray-200 md:hidden"
-        >
-            <nav class="flex w-full justify-around gap-2">
-                <RouterLink to="/">
-                    <i
-                        style="font-size: 1.5rem"
-                        class="pi-home pi cursor-pointer hover:text-white hover:transition-all hover:duration-300"
-                    />
-                </RouterLink>
-                <RouterLink to="/articles" @click="resetArticles">
-                    <i
-                        style="font-size: 1.5rem"
-                        class="pi-shop pi cursor-pointer hover:text-white hover:transition-all hover:duration-300"
-                    />
-                </RouterLink>
-
-                <RouterLink to="/categories">
-                    <i
-                        style="font-size: 1.5rem"
-                        class="pi-book pi cursor-pointer hover:text-white hover:transition-all hover:duration-300"
-                    />
-                </RouterLink>
-                <RouterLink to="/account">
-                    <i
-                        style="font-size: 1.5rem"
-                        class="pi-user pi cursor-pointer hover:text-white hover:transition-all hover:duration-300"
-                    />
-                </RouterLink>
-                <!-- Shopping cart -->
-                <div>
-                    <i
-                        style="font-size: 1.5rem"
-                        class="pi-shopping-cart pi cursor-pointer hover:text-white hover:transition-all hover:duration-300"
-                    />
+        <!-- MOBILE -->
+        <section class="flex h-20 items-center justify-around px-4 md:hidden">
+            <RouterLink to="/">
+                <div
+                    class="text-rojo-fuerte hover:bg-amarillo/20 hover:text-rojo-claro flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-200"
+                >
+                    <i class="pi pi-home text-xl"></i>
                 </div>
-            </nav>
+            </RouterLink>
+
+            <RouterLink to="/articles" @click="resetArticles">
+                <div
+                    class="text-rojo-fuerte hover:bg-amarillo/20 hover:text-rojo-claro flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-200"
+                >
+                    <i class="pi pi-shop text-xl"></i>
+                </div>
+            </RouterLink>
+
+            <RouterLink to="/categories">
+                <div
+                    class="text-rojo-fuerte hover:bg-amarillo/20 hover:text-rojo-claro flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-200"
+                >
+                    <i class="pi pi-book text-xl"></i>
+                </div>
+            </RouterLink>
+
+            <RouterLink to="/account">
+                <div
+                    class="text-rojo-fuerte hover:bg-amarillo/20 hover:text-rojo-claro flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-200"
+                >
+                    <i class="pi pi-user text-xl"></i>
+                </div>
+            </RouterLink>
+
+            <button
+                class="bg-azul/10 text-azul hover:bg-azul flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-200 hover:cursor-pointer hover:text-white"
+            >
+                <i class="pi pi-shopping-cart text-xl"></i>
+            </button>
         </section>
-    </div>
+    </header>
 </template>

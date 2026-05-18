@@ -3,8 +3,8 @@ import { ref } from "vue";
 
 import Button from "@volt/Button.vue";
 
-import InputText from "primevue/inputtext";
-import Password from "primevue/password";
+import InputText from "@volt/InputText.vue";
+import Password from "@volt/Password.vue";
 
 import hampter from "/storage/app/public/img/hampter.jpg";
 
