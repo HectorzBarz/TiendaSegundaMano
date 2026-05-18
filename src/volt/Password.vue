@@ -63,10 +63,13 @@ const theme = ref<PasswordPassThroughOptions>({
         shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)]`,
     content: `flex flex-col gap-2`,
     meter: `h-3 bg-surface-200 bg-surface-700 rounded-md`,
-    meterLabel: `h-full w-0 transition-[width] duration-1000 ease-in-out rounded-md
-        p-weak:bg-red-500 p-weak:bg-red-400
-        p-medium:bg-amber-500 p-medium:bg-amber-400
-        p-strong:bg-green-500 p-strong:bg-green-400`,
+    meterLabel: `
+            h-full rounded-md transition-all
+
+            p-weak:bg-[var(--color-rojo-claro)]
+            p-medium:bg-[var(--color-amarillo)]
+            p-strong:bg-[var(--color-azul)]
+            `,
     meterText: ``,
     transition: {
         enterFromClass: "opacity-0 scale-y-75",

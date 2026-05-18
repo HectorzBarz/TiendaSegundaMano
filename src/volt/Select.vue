@@ -40,15 +40,19 @@ interface Props extends /* @vue-ignore */ SelectProps {}
 defineProps<Props>();
 
 const theme = ref<SelectPassThroughOptions>({
-    root: `inline-flex cursor-pointer relative select-none rounded-md p-fluid:flex
-        bg-surface-0
-        border border-surface-300 hover:border-surface-400
-        p-focus:border-primary
-        p-filled:bg-surface-50
-        p-invalid:border-red-400
-        p-disabled:bg-surface-200 p-disabled:text-surface-500 p-disabled:pointer-events-none
-        shadow-[0_1px_2px_0_rgba(18,18,23,0.05)]
-        transition-colors duration-200`,
+    root: `
+        inline-flex rounded-md
+
+        bg-[var(--color-card)]
+        border border-[var(--color-borde)]
+
+        hover:border-[var(--color-azul)]
+        p-focus:border-[var(--color-azul)]
+
+        p-filled:bg-[var(--color-card)]
+
+        p-invalid:border-[var(--color-rojo-claro)]
+        `,
 
     label: `block whitespace-nowrap overflow-hidden flex-auto w-[1%]
         py-2 px-3 overflow-ellipsis 
@@ -97,11 +101,15 @@ const theme = ref<SelectPassThroughOptions>({
     optionGroup: `m-0 px-3 py-2 bg-transparent text-surface-500 font-semibold`,
     optionGroupLabel: ``,
 
-    option: `cursor-pointer font-normal whitespace-nowrap relative overflow-hidden flex items-center
-        px-3 py-2 border-none text-surface-700 bg-transparent rounded-sm
-        p-focus:bg-surface-100 p-focus:text-surface-800
-        p-selected:bg-highlight p-focus:p-selected:bg-highlight-emphasis
-        transition-colors duration-200`,
+    option: `
+        cursor-pointer px-3 py-2 rounded-sm
+
+        text-[var(--color-texto)]
+        hover:bg-[var(--color-fondo)]
+
+        p-selected:bg-[var(--color-azul)]
+        p-selected:text-white
+        `,
 
     optionLabel: ``,
 

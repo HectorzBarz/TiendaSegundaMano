@@ -227,7 +227,7 @@ const preview = "https://placehold.co/600x400/f8f7f5/70191d?text=Vista+previa";
                             rows="6"
                             autoResize
                             placeholder="Describe el producto..."
-                            class="rounded-2xl"
+                            class="rounded-2xl p-2"
                         />
                     </div>
 

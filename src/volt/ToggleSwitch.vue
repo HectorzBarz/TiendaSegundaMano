@@ -27,12 +27,12 @@ const theme = ref<ToggleSwitchPassThroughOptions>({
     root: `inline-block w-10 h-6`,
     input: `peer cursor-pointer disabled:cursor-default appearance-none absolute top-0 start-0 w-full h-full m-0 p-0 opacity-0 z-10 rounded-[30px]`,
     slider: `inline-block w-full h-full rounded-[30px] shadow-[0_1px_2px_0_rgba(18,18,23,0.05)]
-        bg-surface-300 
+        bg-[var(--color-azul)]
         border border-transparent
         transition-colors duration-200
-        peer-enabled:peer-hover:bg-surface-400 
-        p-checked:bg-primary peer-enabled:peer-hover:p-checked:bg-primary-emphasis
-        p-invalid:border-red-400 
+        peer-enabled:peer-hover:bg-[var(--color-azul)] 
+        p-checked:bg-[var(--color-borde)] peer-enabled:peer-hover:p-checked:bg-[var(--color-borde)]
+        p-invalid:border-[var(--color-rojo-claro)] 
         p-disabled:bg-surface-200 
         peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary`,
     handle: `absolute top-1/2 flex justify-center items-center

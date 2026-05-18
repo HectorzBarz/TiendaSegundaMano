@@ -105,62 +105,85 @@ defineProps<Props>();
 const theme = ref<DataTablePassThroughOptions>({
     root: `relative p-flex-scrollable:flex p-flex-scrollable:flex-col p-flex-scrollable:h-full`,
     tableContainer: `p-scrollable:relative p-flex-scrollable:flex p-flex-scrollable:flex-col p-flex-scrollable:flex-1 p-flex-scrollable:h-full`,
-    header: `py-3 px-4 border-b border-surface-200 
-        bg-surface-0 
-        text-surface-700 `,
+    header: `py-3 px-4 border-b border-[var(--color-borde)]
+            bg-[var(--color-card)]
+            text-[var(--color-texto)]
+            `,
     table: `border-spacing-0 w-full border-separate`,
     thead: `p-scrollable:bg-surface-0  p-scrollable:top-0 p-scrollable:z-10`,
-    tbody: `p-hoverable:*:hover:bg-surface-100 p-hoverable:*:hover:text-surface-800  
+    tbody: `p-hoverable:*:hover:bg-surface-100 p-hoverable:*:hover:text-surface-800
         p-frozen:sticky p-frozen:z-10`,
-    bodyRow: `bg-surface-0  text-surface-700  p-selectable:cursor-pointer p-selected:bg-highlight!`,
+    bodyRow: `bg-[var(--color-card)]
+                text-[var(--color-texto)]
+                hover:bg-[var(--color-fondo)]
+                p-selected:bg-[var(--color-azul)]
+                p-selected:text-white
+                `,
     tfoot: `p-scrollable:bg-surface-0  p-scrollable:bottom-0 p-scrollable:z-10`,
-    footer: `py-3 px-4 border-b border-surface-200 
-        bg-surface-0 
+    footer: `py-3 px-4 border-b border-surface-200
+        bg-surface-0
         text-surface-700 `,
     mask: `bg-black/50 text-surface-200 absolute z-10 flex items-center justify-center w-full h-full backdrop-blu-`,
     column: {
         root: ``,
-        headerCell: `group py-3 px-4 font-normal text-start transition-colors duration-200
-            border-b border-surface-200 
-            bg-surface-0 
-            text-surface-700 
-            p-sortable:cursor-pointer p-sortable:select-none p-sortable:focus-visible:outline p-sortable:focus-visible:outline-1 p-sortable:focus-visible:-outline-offset-1 p-sortable:focus-visible:outline-primary
-            p-sortable:not-p-sorted:hover:bg-surface-100 p-sortable:not-p-sorted:hover:text-surface-800 
-            p-sorted:bg-highlight
-            p-frozen:sticky p-frozen:bg-surface-0  p-frozen:z-10
-        `,
+        headerCell: `
+            group py-3 px-4 font-normal text-start transition-colors duration-200
+            border-b border-[var(--color-borde)]
+            bg-[var(--color-card)]
+            text-[var(--color-texto)]
+
+            /* sortable hover */
+            p-sortable:not-p-sorted:hover:bg-[var(--color-fondo)]
+            p-sortable:not-p-sorted:hover:text-[var(--color-azul)]
+
+            /* sorted state (ESTO era el verde oculto) */
+            p-sorted:bg-[var(--color-azul)]
+            p-sorted:text-white
+
+            /* focus */
+            p-sortable:focus-visible:outline
+            p-sortable:focus-visible:outline-1
+            p-sortable:focus-visible:outline-[var(--color-azul)]
+            p-sortable:focus-visible:-outline-offset-1
+            `,
         columnHeaderContent: `flex items-center gap-2`,
         columnTitle: `font-semibold`,
-        bodyCell: `text-start py-3 px-4 border-b border-surface-200 
+        bodyCell: `text-start py-3 px-4 border-b border-surface-200
             p-frozen:sticky p-frozen:bg-surface-0 `,
         bodyCellContent: ``,
-        footerCell: `text-start py-3 px-4 border-b border-surface-200 
-            bg-surface-0 
-            text-surface-700 
+        footerCell: `text-start py-3 px-4 border-b border-surface-200
+            bg-surface-0
+            text-surface-700
             p-frozen:sticky p-frozen:bg-surface-0 `,
         columnFooter: `font-semibold`,
         columnResizer: `block absolute top-0 end-0 m-0 w-2 h-full p-0 cursor-col-resize border border-transparent`,
         sort: ``,
         sortIcon: `text-surface-500  transition-colors duration-200
-            group-p-sortable:not-group-p-sorted:group-hover:text-surface-600 
+            group-p-sortable:not-group-p-sorted:group-hover:text-surface-600
             group-p-sorted:bg-highlight`,
         pcSortBadge: {
-            root: `bg-primary text-primary-contrast rounded-full min-w-6 h-6 inline-flex items-center justify-center text-xs font-bold`,
+            root: `
+                bg-[var(--color-azul)]
+                text-white
+                rounded-full min-w-6 h-6
+                inline-flex items-center justify-center
+                text-xs font-bold
+                `,
         },
         pcHeaderCheckbox: {
             root: `relative inline-flex select-none w-5 h-5 align-bottom`,
-            input: `peer cursor-pointer disabled:cursor-default appearance-none 
+            input: `peer cursor-pointer disabled:cursor-default appearance-none
                 absolute start-0 top-0 w-full h-full m-0 p-0 opacity-0 z-10
                 border border-transparent rounded-xs`,
             box: `flex justify-center items-center rounded-sm w-5 h-5
-                border border-surface-300 
-                bg-surface-0 
-                text-surface-700 
-                peer-enabled:peer-hover:border-surface-400 
+                border border-surface-300
+                bg-surface-0
+                text-surface-700
+                peer-enabled:peer-hover:border-surface-400
                 p-checked:border-primary p-checked:bg-primary p-checked:text-primary-contrast
                 peer-enabled:peer-hover:p-checked:bg-primary-emphasis peer-enabled:peer-hover:p-checked:border-primary-emphasis
-                peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-focus-visible:outline 
-                p-disabled:bg-surface-200  p-disabled:border-surface-300  p-disabled:text-surface-700 
+                peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-focus-visible:outline
+                p-disabled:bg-surface-200  p-disabled:border-surface-300  p-disabled:text-surface-700
                 shadow-[0_1px_2px_0_rgba(18,18,23,0.05)] transition-colors duration-200`,
             icon: `text-sm w-[0.875rem] h-[0.875rem] transition-none`,
         },
@@ -169,15 +192,15 @@ const theme = ref<DataTablePassThroughOptions>({
             input: `peer cursor-pointer disabled:cursor-default appearance-none absolute start-0 top-0 w-full h-full m-0 p-0 opacity-0 z-10
                 border border-transparent rounded-full`,
             box: `flex justify-center items-center rounded-full
-                border border-surface-300 
-                bg-surface-0 
-                peer-enabled:peer-hover:border-surface-400 
+                border border-surface-300
+                bg-surface-0
+                peer-enabled:peer-hover:border-surface-400
                 p-checked:border-primary p-checked:bg-primary
                 peer-enabled:peer-hover:p-checked:bg-primary-emphasis peer-enabled:peer-hover:p-checked:border-primary-emphasis
-                peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-focus-visible:outline 
-                p-filled:bg-surface-50 
-                p-invalid:border-red-400 
-                p-disabled:bg-surface-200  p-disabled:border-surface-300 
+                peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-focus-visible:outline
+                p-filled:bg-surface-50
+                p-invalid:border-red-400
+                p-disabled:bg-surface-200  p-disabled:border-surface-300
                 shadow-[0_1px_2px_0_rgba(18,18,23,0.05)] transition-colors duration-200
                 w-5 h-5`,
             icon: `bg-transparent text-xs w-3 h-3 rounded-full
@@ -187,18 +210,18 @@ const theme = ref<DataTablePassThroughOptions>({
         },
         pcRowCheckbox: {
             root: `relative inline-flex select-none w-5 h-5 align-bottom`,
-            input: `peer cursor-pointer disabled:cursor-default appearance-none 
+            input: `peer cursor-pointer disabled:cursor-default appearance-none
                 absolute start-0 top-0 w-full h-full m-0 p-0 opacity-0 z-10
                 border border-transparent rounded-xs`,
             box: `flex justify-center items-center rounded-sm w-5 h-5
-                border border-surface-300 
-                bg-surface-0 
-                text-surface-700 
-                peer-enabled:peer-hover:border-surface-400 
+                border border-surface-300
+                bg-surface-0
+                text-surface-700
+                peer-enabled:peer-hover:border-surface-400
                 p-checked:border-primary p-checked:bg-primary p-checked:text-primary-contrast
                 peer-enabled:peer-hover:p-checked:bg-primary-emphasis peer-enabled:peer-hover:p-checked:border-primary-emphasis
-                peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-focus-visible:outline 
-                p-disabled:bg-surface-200  p-disabled:border-surface-300  p-disabled:text-surface-700 
+                peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary peer-focus-visible:outline
+                p-disabled:bg-surface-200  p-disabled:border-surface-300  p-disabled:text-surface-700
                 shadow-[0_1px_2px_0_rgba(18,18,23,0.05)] transition-colors duration-200`,
             icon: `text-sm w-[0.875rem] h-[0.875rem] transition-none`,
         },
