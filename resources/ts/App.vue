@@ -3,6 +3,10 @@ import "../css/app.css";
 import Toast from "@volt/Toast.vue";
 import BaseFooter from "./components/BaseFooter.vue";
 import BaseHeader from "./components/BaseHeader.vue";
+import { useCartStore } from "./stores/cart";
+import CartDrawer from "./components/CartDrawer.vue";
+
+const cart = useCartStore();
 </script>
 <template>
     <div class="flex min-h-screen flex-col">
@@ -23,5 +27,7 @@ import BaseHeader from "./components/BaseHeader.vue";
         </main>
 
         <BaseFooter class="order-3" />
+
+        <CartDrawer v-model="cart.open" />
     </div>
 </template>

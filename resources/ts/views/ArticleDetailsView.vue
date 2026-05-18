@@ -10,6 +10,9 @@ import img3 from "@/assets/slide3.webp";
 
 import { useRouter } from "vue-router";
 import { Article } from "@/types";
+import { useCartStore } from "@/stores/cart";
+
+const cart = useCartStore();
 
 const article = <Article>{
     id: 1,
@@ -25,6 +28,8 @@ const article = <Article>{
     product_avg: 3.2,
     product_count: 3,
 };
+
+const hasStock = (article.stock ?? 0) > 0;
 
 const slides = [
     { id: 1, img: img1, title: "Oferta 1" },
@@ -175,9 +180,16 @@ const goToQuery = () => {
                 <!-- BOTONES -->
                 <div class="mt-8 flex gap-4">
                     <Button
-                        class="bg-azul! hover:bg-azul/90! w-full rounded-xl py-3 font-semibold text-white transition"
+                        class="w-full rounded-xl py-3 font-semibold text-white transition"
+                        :class="
+                            hasStock
+                                ? 'bg-azul! hover:bg-azul/90!'
+                                : 'cursor-not-allowed! bg-gray-300!'
+                        "
+                        :disabled="!hasStock"
+                        @click="hasStock && cart.add(article)"
                     >
-                        Añadir al carrito
+                        {{ hasStock ? "Añadir al carrito" : "Sin stock" }}
                     </Button>
                     <Button
                         class="bg-naranja! hover:bg-naranja/90! w-full rounded-xl py-3 font-semibold text-white transition"

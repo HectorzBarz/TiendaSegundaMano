@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { useArticleFiltersStore } from "@/stores/articleFilters";
+import { ref } from "vue";
+import { useCartStore } from "@/stores/cart";
+import CartDrawer from "@/components/CartDrawer.vue";
 
-const store = useArticleFiltersStore();
+const articlesStore = useArticleFiltersStore();
+
+const cart = useCartStore();
 
 function resetArticles() {
-    store.reset();
+    articlesStore.reset();
 }
 </script>
 
@@ -68,9 +73,17 @@ function resetArticles() {
             <div class="flex items-center gap-3">
                 <!-- CART -->
                 <button
-                    class="bg-azul/10 text-azul hover:bg-azul flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-200 hover:cursor-pointer hover:text-white"
+                    @click="cart.openCart()"
+                    class="bg-azul/10 text-azul hover:bg-azul relative flex h-12 w-12 items-center justify-center rounded-2xl transition hover:text-white"
                 >
                     <i class="pi pi-shopping-cart text-xl"></i>
+
+                    <span
+                        v-if="cart.count"
+                        class="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white"
+                    >
+                        {{ cart.count }}
+                    </span>
                 </button>
             </div>
         </section>
@@ -110,9 +123,17 @@ function resetArticles() {
             </RouterLink>
 
             <button
-                class="bg-azul/10 text-azul hover:bg-azul flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-200 hover:cursor-pointer hover:text-white"
+                @click="cart.openCart()"
+                class="bg-azul/10 text-azul hover:bg-azul relative flex h-12 w-12 items-center justify-center rounded-2xl transition hover:text-white"
             >
                 <i class="pi pi-shopping-cart text-xl"></i>
+
+                <span
+                    v-if="cart.count"
+                    class="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white"
+                >
+                    {{ cart.count }}
+                </span>
             </button>
         </section>
     </header>

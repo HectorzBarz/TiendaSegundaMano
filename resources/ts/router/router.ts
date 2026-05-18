@@ -79,6 +79,12 @@ const routes = [
         meta: { title: "Create" },
     },
     {
+        path: "/checkout",
+        name: "Checkout",
+        component: () => import("@/views/CheckoutView.vue"),
+        meta: { title: "Checkout" },
+    },
+    {
         path: "/admin/articles/:id/edit",
         name: "edit",
         component: () => import("@/views/EditArticleView.vue"),

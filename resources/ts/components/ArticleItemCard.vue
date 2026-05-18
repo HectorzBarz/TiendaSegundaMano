@@ -2,9 +2,15 @@
 import { Article } from "@/types";
 import BaseHoverCard from "./BaseHoverCard.vue";
 
+import { useCartStore } from "@/stores/cart";
+
 const props = defineProps<{
     article: Article;
 }>();
+
+const cart = useCartStore();
+
+const hasStock = (props.article.stock ?? 0) > 0;
 </script>
 <template>
     <BaseHoverCard :to="'articles/' + article.id">
@@ -77,24 +83,22 @@ const props = defineProps<{
 
             <!-- Cart section -->
             <div>
-                <div>
-                    <i
-                        class="pi pi-shopping-cart m-2 rounded-4xl bg-green-500 p-2 hover:bg-green-400"
-                        >+</i
-                    >
-                </div>
+                <i
+                    class="pi pi-shopping-cart m-2 rounded-4xl p-2 transition"
+                    :class="
+                        hasStock
+                            ? 'cursor-pointer bg-green-500 hover:bg-green-400'
+                            : 'cursor-not-allowed bg-gray-300 text-gray-500'
+                    "
+                    @click.prevent="hasStock && cart.add(article)"
+                >
+                    <span v-if="hasStock"> Añadir al carrito</span>
+                </i>
 
-                <!-- 
-                    TODO:
-                    ! Based on the shopping cart options it will let you remove the article 
-                
-                <div>
-                    <i
-                        class="pi pi-shopping-cart rounded-4xl bg-red-500 p-2 hover:bg-red-400"
-                        >-</i
-                    >
-                </div>
-                -->
+                <!-- Texto opcional UX -->
+                <p v-if="!hasStock" class="mt-1 text-xs text-red-500">
+                    Sin stock
+                </p>
             </div>
             <!-- END Cart section -->
         </div>
