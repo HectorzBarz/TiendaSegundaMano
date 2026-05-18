@@ -5,11 +5,11 @@ import hampter from "/storage/app/public/img/hampter.jpg";
 
 import { computed } from "vue";
 import { useArticleFiltersStore } from "@/stores/articleFilters";
-import { ArticleCard } from "@/types";
+import { Article } from "@/types";
 
 const store = useArticleFiltersStore();
 
-const articles = <ArticleCard[]>[
+const articles = <Article[]>[
     {
         id: 1,
         img: hampter,
@@ -18,6 +18,9 @@ const articles = <ArticleCard[]>[
         name: "Artículo 1",
         onSale: true,
         categoryId: 1,
+        product_avg: 3.2,
+        product_count: 3,
+        stock: 1,
     },
     {
         id: 2,
@@ -27,6 +30,9 @@ const articles = <ArticleCard[]>[
         name: "Artículo 2 ",
         onSale: false,
         categoryId: 2,
+        product_avg: 4.1,
+        product_count: 3,
+        stock: 1,
     },
     {
         id: 3,
@@ -36,6 +42,9 @@ const articles = <ArticleCard[]>[
         name: "Artículo 3",
         onSale: false,
         categoryId: 1,
+        product_avg: 3.5,
+        product_count: 3,
+        stock: 1,
     },
     {
         id: 4,
@@ -45,6 +54,9 @@ const articles = <ArticleCard[]>[
         name: "Artículo 4",
         onSale: true,
         categoryId: 3,
+        product_avg: 3,
+        product_count: 3,
+        stock: 1,
     },
     {
         id: 5,
@@ -53,6 +65,9 @@ const articles = <ArticleCard[]>[
         name: "Artículo 5",
         onSale: false,
         categoryId: 1,
+        product_avg: 3.2,
+        product_count: 3,
+        stock: 1,
     },
     {
         id: 6,
@@ -62,6 +77,9 @@ const articles = <ArticleCard[]>[
         name: "Artículo 6",
         onSale: true,
         categoryId: 4,
+        product_avg: 4,
+        product_count: 3,
+        stock: 1,
     },
     {
         id: 7,
@@ -71,6 +89,9 @@ const articles = <ArticleCard[]>[
         name: "Artículo 7",
         onSale: false,
         categoryId: 6,
+        product_avg: 1.2,
+        product_count: 3,
+        stock: 1,
     },
     {
         id: 8,
@@ -80,6 +101,9 @@ const articles = <ArticleCard[]>[
         name: "Artículo 8",
         onSale: false,
         categoryId: 5,
+        product_avg: 5,
+        product_count: 3,
+        stock: 1,
     },
     {
         id: 9,
@@ -89,6 +113,9 @@ const articles = <ArticleCard[]>[
         name: "Artículo 9",
         onSale: false,
         categoryId: 6,
+        product_avg: 4.2,
+        product_count: 3,
+        stock: 1,
     },
     {
         id: 10,
@@ -98,6 +125,21 @@ const articles = <ArticleCard[]>[
         name: "Artículo 10",
         onSale: false,
         categoryId: 2,
+        product_avg: 3.2,
+        product_count: 3,
+        stock: 1,
+    },
+    {
+        id: 10,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 10",
+        onSale: false,
+        categoryId: 2,
+        product_avg: 3.2,
+        product_count: 3,
+        stock: 0,
     },
 ];
 
@@ -142,7 +184,7 @@ const filteredArticles = computed(() => {
             <!-- LIST -->
             <div
                 v-if="filteredArticles.length"
-                class="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
+                class="grid w-full grid-cols-1 gap-3 p-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
             >
                 <ArticleItemCard
                     v-for="article in filteredArticles"

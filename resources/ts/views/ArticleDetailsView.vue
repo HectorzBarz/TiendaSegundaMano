@@ -22,6 +22,8 @@ const article = <Article>{
     onSale: true,
     itemState: 1,
     categoryId: 1,
+    product_avg: 3.2,
+    product_count: 3,
 };
 
 const slides = [
@@ -51,7 +53,7 @@ const goToQuery = () => {
 </script>
 
 <template>
-    <main class="bg-fondo mx-auto max-w-6xl px-6 py-10">
+    <main class="bg-fondo mx-auto max-w-6xl p-10">
         <div class="grid gap-10 md:grid-cols-2">
             <!-- IMAGEN -->
             <div
@@ -122,14 +124,50 @@ const goToQuery = () => {
                         </p>
                     </div>
 
-                    <!-- VENDEDOR -->
+                    <!-- RATING -->
                     <div
                         class="bg-card border-borde rounded-xl border p-4 shadow-sm"
                     >
-                        <p class="text-texto-secundario text-sm">Vendido por</p>
+                        <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1">
+                                <template v-for="star in 5" :key="star">
+                                    <!-- COMPLETA -->
+                                    <i
+                                        v-if="
+                                            star <=
+                                            Math.floor(article.product_avg ?? 0)
+                                        "
+                                        class="pi pi-star-fill text-xl text-yellow-400"
+                                    />
 
-                        <p class="text-rojo-fuerte font-medium">
-                            Héctor Rodríguez
+                                    <!-- MEDIA -->
+                                    <i
+                                        v-else-if="
+                                            star ===
+                                                Math.ceil(
+                                                    article.product_avg ?? 0,
+                                                ) &&
+                                            (article.product_avg ?? 0) % 1 >=
+                                                0.5
+                                        "
+                                        class="pi pi-star-half-fill text-xl text-yellow-400"
+                                    />
+
+                                    <!-- VACÍA -->
+                                    <i
+                                        v-else
+                                        class="pi pi-star text-xl text-gray-300"
+                                    />
+                                </template>
+                            </div>
+
+                            <span class="font-semibold">
+                                {{ (article.product_avg ?? 0).toFixed(1) }}
+                            </span>
+                        </div>
+
+                        <p class="text-texto-secundario mt-2 text-sm">
+                            {{ article.product_count ?? 0 }} valoraciones
                         </p>
                     </div>
                 </div>

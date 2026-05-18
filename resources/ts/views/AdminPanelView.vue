@@ -29,7 +29,8 @@ const articles = <Article[]>[
         name: "Artículo 1",
         onSale: true,
         categoryId: 1,
-        stock: 10,
+        stock: 0,
+        sell_count: 10,
     },
     {
         id: 2,
@@ -40,6 +41,7 @@ const articles = <Article[]>[
         onSale: false,
         categoryId: 2,
         stock: 2,
+        sell_count: 5,
     },
     {
         id: 3,
@@ -50,6 +52,7 @@ const articles = <Article[]>[
         onSale: false,
         categoryId: 1,
         stock: 1,
+        sell_count: 6,
     },
     {
         id: 4,
@@ -60,6 +63,7 @@ const articles = <Article[]>[
         onSale: true,
         categoryId: 3,
         stock: 7,
+        sell_count: 2,
     },
     {
         id: 5,
@@ -69,6 +73,7 @@ const articles = <Article[]>[
         onSale: false,
         categoryId: 1,
         stock: 1,
+        sell_count: 1,
     },
     {
         id: 6,
@@ -79,6 +84,7 @@ const articles = <Article[]>[
         onSale: true,
         categoryId: 4,
         stock: 8,
+        sell_count: 9,
     },
     {
         id: 7,
@@ -89,6 +95,7 @@ const articles = <Article[]>[
         onSale: false,
         categoryId: 6,
         stock: 2,
+        sell_count: 7,
     },
     {
         id: 8,
@@ -99,6 +106,7 @@ const articles = <Article[]>[
         onSale: false,
         categoryId: 5,
         stock: 3,
+        sell_count: 5,
     },
     {
         id: 9,
@@ -109,6 +117,7 @@ const articles = <Article[]>[
         onSale: false,
         categoryId: 6,
         stock: 1,
+        sell_count: 10,
     },
     {
         id: 10,
@@ -119,6 +128,7 @@ const articles = <Article[]>[
         onSale: false,
         categoryId: 2,
         stock: 11,
+        sell_count: 11,
     },
     {
         id: 1,
@@ -129,6 +139,7 @@ const articles = <Article[]>[
         onSale: true,
         categoryId: 1,
         stock: 10,
+        sell_count: 15,
     },
     {
         id: 2,
@@ -139,6 +150,7 @@ const articles = <Article[]>[
         onSale: false,
         categoryId: 2,
         stock: 2,
+        sell_count: 1,
     },
     {
         id: 3,
@@ -149,6 +161,7 @@ const articles = <Article[]>[
         onSale: false,
         categoryId: 1,
         stock: 1,
+        sell_count: 6,
     },
     {
         id: 4,
@@ -159,6 +172,7 @@ const articles = <Article[]>[
         onSale: true,
         categoryId: 3,
         stock: 7,
+        sell_count: 6,
     },
     {
         id: 5,
@@ -168,6 +182,7 @@ const articles = <Article[]>[
         onSale: false,
         categoryId: 1,
         stock: 1,
+        sell_count: 7,
     },
     {
         id: 6,
@@ -178,6 +193,7 @@ const articles = <Article[]>[
         onSale: true,
         categoryId: 4,
         stock: 8,
+        sell_count: 1,
     },
     {
         id: 7,
@@ -188,6 +204,7 @@ const articles = <Article[]>[
         onSale: false,
         categoryId: 6,
         stock: 2,
+        sell_count: 1,
     },
     {
         id: 8,
@@ -198,6 +215,7 @@ const articles = <Article[]>[
         onSale: false,
         categoryId: 5,
         stock: 3,
+        sell_count: 8,
     },
     {
         id: 9,
@@ -208,6 +226,7 @@ const articles = <Article[]>[
         onSale: false,
         categoryId: 6,
         stock: 1,
+        sell_count: 2,
     },
     {
         id: 10,
@@ -218,6 +237,7 @@ const articles = <Article[]>[
         onSale: false,
         categoryId: 2,
         stock: 11,
+        sell_count: 4,
     },
 ];
 
@@ -240,6 +260,10 @@ const filteredArticles = computed(() => {
         return matchesCategory && matchesName && matchesPrice && matchesSale;
     });
 });
+
+const rowClass = (data: Article) => {
+    return data.stock === 0 ? "bg-red-50/60 opacity-70 grayscale" : "";
+};
 </script>
 
 <template>
@@ -434,6 +458,7 @@ const filteredArticles = computed(() => {
             >
                 <DataTable
                     :value="filteredArticles"
+                    :rowClass="rowClass"
                     paginator
                     :rows="10"
                     stripedRows
@@ -452,7 +477,7 @@ const filteredArticles = computed(() => {
                     </Column>
 
                     <!-- ID -->
-                    <Column field="id" header="ID">
+                    <Column field="id" header="ID" sortable>
                         <template #body="{ data }">
                             <span
                                 class="bg-rojo-fuerte/10 text-rojo-fuerte rounded-xl px-3 py-1 text-sm font-semibold"
@@ -466,7 +491,14 @@ const filteredArticles = computed(() => {
                     <Column field="name" header="Producto">
                         <template #body="{ data }">
                             <div>
-                                <p class="text-texto font-semibold">
+                                <p
+                                    class="font-semibold"
+                                    :class="
+                                        data.stock === 0
+                                            ? 'text-red-700 line-through'
+                                            : 'text-texto'
+                                    "
+                                >
                                     {{ data.name }}
                                 </p>
 
@@ -496,7 +528,37 @@ const filteredArticles = computed(() => {
                     </Column>
 
                     <!-- STOCK -->
-                    <Column field="stock" header="Stock">
+                    <Column field="stock" header="Stock" sortable>
+                        <template #body="{ data }">
+                            <!-- SIN STOCK -->
+                            <span
+                                v-if="data.stock === 0"
+                                class="flex items-center gap-2 rounded-full bg-red-100 px-4 py-2 text-xs font-bold text-red-700"
+                            >
+                                <i class="pi pi-times-circle"></i>
+                                Sin stock
+                            </span>
+
+                            <!-- STOCK BAJO -->
+                            <span
+                                v-else-if="data.stock < 10"
+                                class="rounded-full bg-amber-100 px-4 py-2 text-xs font-semibold text-amber-700"
+                            >
+                                {{ data.stock }} unidades
+                            </span>
+
+                            <!-- STOCK OK -->
+                            <span
+                                v-else
+                                class="rounded-full bg-blue-100 px-4 py-2 text-xs font-semibold text-blue-700"
+                            >
+                                {{ data.stock }} unidades
+                            </span>
+                        </template>
+                    </Column>
+
+                    <!-- SELLED -->
+                    <Column field="selled" header="Vendidos">
                         <template #body="{ data }">
                             <span
                                 :class="
@@ -506,7 +568,7 @@ const filteredArticles = computed(() => {
                                 "
                                 class="rounded-full px-4 py-2 text-xs font-semibold"
                             >
-                                {{ data.stock }} unidades
+                                {{ data.sell_count }} unidades
                             </span>
                         </template>
                     </Column>
@@ -529,24 +591,23 @@ const filteredArticles = computed(() => {
 
                     <!-- ACTIONS -->
                     <Column header="Acciones">
-                        <template #body>
+                        <template #body="{ data }">
                             <div class="flex gap-2">
-                                <!-- VIEW -->
-                                <Button
-                                    icon="pi pi-eye"
-                                    class="border-borde! text-azul! hover:bg-azul/5! h-11 w-11 rounded-2xl border bg-white! transition"
-                                />
-
                                 <!-- EDIT -->
-                                <Button
-                                    icon="pi pi-pencil"
-                                    class="bg-azul! hover:bg-azul/90! h-11 w-11 rounded-2xl border-0 text-white! transition"
-                                />
+                                <RouterLink
+                                    :to="'/admin/articles/' + data.id + '/edit'"
+                                >
+                                    <Button
+                                        icon="pi pi-pencil"
+                                        :disabled="data.stock === 0"
+                                        class="bg-azul! hover:bg-azul/90! h-11 w-11 rounded-2xl border-0 text-white! transition"
+                                    />
+                                </RouterLink>
 
                                 <!-- DELETE -->
                                 <Button
                                     icon="pi pi-trash"
-                                    class="bg-rojo-claro hover:bg-rojo-fuerte h-11 w-11 rounded-2xl border-0 text-white transition"
+                                    class="bg-rojo-claro hover:bg-rojo-fuerte! h-11 w-11 rounded-2xl border-0 text-white transition"
                                 />
                             </div>
                         </template>

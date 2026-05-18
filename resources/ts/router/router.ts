@@ -78,6 +78,12 @@ const routes = [
         component: () => import("@/views/AddArticleView.vue"),
         meta: { title: "Create" },
     },
+    {
+        path: "/admin/articles/:id/edit",
+        name: "edit",
+        component: () => import("@/views/EditArticleView.vue"),
+        meta: { title: "Edit Article" },
+    },
 ];
 
 const router = createRouter({
