@@ -52,7 +52,13 @@ const routes = [
         path: "/admin",
         name: "admin",
         component: () => import("@/views/AdminPanelView.vue"),
-        meta: { title: "admin" },
+        meta: { title: "Admin" },
+    },
+    {
+        path: "/admin/create",
+        name: "create",
+        component: () => import("@/views/AddArticleView.vue"),
+        meta: { title: "Create" },
     },
 ];
 

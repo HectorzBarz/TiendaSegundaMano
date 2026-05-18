@@ -65,6 +65,15 @@ const router = useRouter();
                         class="h-full w-full"
                     />
                 </RouterLink>
+
+                <RouterLink v-if="showAdmin" to="/admin/create">
+                    <ItemCard
+                        title="Añadir Artículo"
+                        description="Crear un nuevo producto para el catálogo."
+                        icon="pi-plus"
+                        class="h-full w-full"
+                    />
+                </RouterLink>
             </div>
         </section>
     </main>
