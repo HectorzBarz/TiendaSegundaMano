@@ -49,6 +49,18 @@ const routes = [
         meta: { title: "Profile" },
     },
     {
+        path: "/account/history",
+        name: "history",
+        component: () => import("@/views/ShoppingHistoryView.vue"),
+        meta: { title: "History" },
+    },
+    {
+        path: "/account/wishlist",
+        name: "wishlist",
+        component: () => import("@/views/WishlistView.vue"),
+        meta: { title: "Wishlist" },
+    },
+    {
         path: "/admin",
         name: "admin",
         component: () => import("@/views/AdminPanelView.vue"),
