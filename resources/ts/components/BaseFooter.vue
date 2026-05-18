@@ -84,6 +84,40 @@ const { copyToClipboard } = useCopyToClipboard(emailToCopy);
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d26184.37697069079!2d27.40146889000398!3d54.54418292577938!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46db792a595410bd%3A0x19558da5b280ebc3!2z0KbQsNGA0LrQstCwINCf0YDQsNCw0LHRgNCw0LbRjdC90L3RjyDQk9Cw0YHQv9C-0LTQvdGP0LPQsA!5e0!3m2!1ses!2ses!4v1776188916217!5m2!1ses!2ses"
                 ></iframe>
             </div>
+
+            <!-- FAQ -->
+            <div class="mt-10 space-y-4">
+                <h3 class="text-rojo-fuerte text-xl font-semibold">FAQ</h3>
+
+                <div class="space-y-2">
+                    <details class="rounded-xl bg-slate-100 p-4">
+                        <summary class="cursor-pointer font-medium">
+                            ¿Qué tecnologías usas?
+                        </summary>
+                        <p class="text-texto-secundario mt-2">
+                            Vue 3, TypeScript, TailwindCSS y Volt UI.
+                        </p>
+                    </details>
+
+                    <details class="rounded-xl bg-slate-100 p-4">
+                        <summary class="cursor-pointer font-medium">
+                            ¿El proyecto es real?
+                        </summary>
+                        <p class="text-texto-secundario mt-2">
+                            No, es una aplicación hipotética para practicar UI.
+                        </p>
+                    </details>
+
+                    <details class="rounded-xl bg-slate-100 p-4">
+                        <summary class="cursor-pointer font-medium">
+                            ¿Dónde puedo contactarte?
+                        </summary>
+                        <p class="text-texto-secundario mt-2">
+                            A través de las redes o el email del footer.
+                        </p>
+                    </details>
+                </div>
+            </div>
         </div>
     </footer>
 </template>
