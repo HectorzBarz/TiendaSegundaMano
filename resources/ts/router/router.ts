@@ -42,6 +42,18 @@ const routes = [
         component: () => import("@/views/AccountView.vue"),
         meta: { title: "Account" },
     },
+    {
+        path: "/account/profile",
+        name: "profile",
+        component: () => import("@/views/ProfileView.vue"),
+        meta: { title: "Profile" },
+    },
+    {
+        path: "/admin",
+        name: "admin",
+        component: () => import("@/views/AdminPanelView.vue"),
+        meta: { title: "admin" },
+    },
 ];
 
 const router = createRouter({

@@ -14,6 +14,18 @@
         "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
         "Noto Color Emoji";
+
+    --color-rojo-fuerte: #70191d;
+    --color-rojo-claro: #970a12;
+    --color-naranja: #d1601f;
+    --color-amarillo: #fecd6d;
+    --color-azul: #5686bb;
+
+    --color-fondo: #f8f7f5;
+    --color-card: #ffffff;
+    --color-borde: #eadfda;
+    --color-texto: #2f2f2f;
+    --color-texto-secundario: #6d6d6d;
 }
 
 /* Primary and Surface Palettes */
