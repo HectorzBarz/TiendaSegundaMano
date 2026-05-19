@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useAppToast } from "@/composables/useAppToast";
 import Button from "@volt/Button.vue";
 import InputText from "@volt/InputText.vue";
@@ -33,22 +33,82 @@ const phoneRegex = /^\+\d{1,4}\s?\d{6,14}$/;
 
 const addressRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,º\-]{5,}$/;
 
+const nameRegex = /^([A-Za-zÁÉÍÓÚáéíóúÑñ'-]+)(\s[A-Za-zÁÉÍÓÚáéíóúÑñ'-]+){1,3}$/;
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 /**
  * ERRORS
  */
 const errors = ref<Record<string, string>>({});
 
+const passwordStrength = computed(() => {
+    const p = user.value.password;
+
+    if (!p) return "";
+
+    let score = 0;
+
+    if (p.length >= 8) score++;
+    if (/[a-z]/.test(p)) score++;
+    if (/[A-Z]/.test(p)) score++;
+    if (/\d/.test(p)) score++;
+    if (/[\W_]/.test(p)) score++;
+
+    if (p.length < 8 || score <= 2) return "Débil";
+    if (score === 3 || score === 4) return "Media";
+
+    return "Fuerte";
+});
+
 function validate() {
     errors.value = {};
 
-    if (user.value.birthDate && !birthRegex.test(user.value.birthDate)) {
-        errors.value.birthDate = "Formato DD/MM/YYYY inválido";
+    // NAME
+    if (!nameRegex.test(user.value.name)) {
+        errors.value.name = "Introduce nombre y apellido válidos";
     }
 
+    // EMAIL
+    if (!emailRegex.test(user.value.email)) {
+        errors.value.email = "Correo electrónico inválido";
+    }
+
+    // PASSWORD
+    if (user.value.password) {
+        if (passwordStrength.value === "Débil") {
+            errors.value.password =
+                "La contraseña debe tener seguridad media o fuerte";
+        }
+
+        if (user.value.password !== user.value.password_confirmation) {
+            errors.value.password_confirmation = "Las contraseñas no coinciden";
+        }
+    }
+
+    // BIRTH DATE
+    if (user.value.birthDate) {
+        if (!birthRegex.test(user.value.birthDate)) {
+            errors.value.birthDate = "Formato DD/MM/YYYY inválido";
+        } else {
+            const [d, m, y] = user.value.birthDate.split("/").map(Number);
+
+            const birth = new Date(y, m - 1, d);
+
+            const age = new Date().getFullYear() - birth.getFullYear();
+
+            if (age < 18 || age > 100) {
+                errors.value.birthDate = "Debes tener entre 18 y 100 años";
+            }
+        }
+    }
+
+    // PHONE
     if (user.value.phone && !phoneRegex.test(user.value.phone)) {
         errors.value.phone = "Teléfono inválido (+34...)";
     }
 
+    // ADDRESS
     if (
         user.value.shippingAddress &&
         !addressRegex.test(user.value.shippingAddress)
@@ -134,8 +194,16 @@ const showSuccess = () => {
 
                         <InputText
                             v-model="user.name"
-                            class="border-borde focus:border-azul hover:border-azul rounded-2xl px-4 py-3 transition"
+                            class="focus:border-azul hover:border-azul rounded-2xl border px-4 py-3 transition"
+                            :class="
+                                errors.name ? 'border-red-500' : 'border-borde'
+                            "
+                            @blur="validate"
                         />
+
+                        <p v-if="errors.name" class="text-sm text-red-500">
+                            {{ errors.name }}
+                        </p>
                     </div>
 
                     <!-- EMAIL -->
@@ -147,8 +215,16 @@ const showSuccess = () => {
                         <InputText
                             v-model="user.email"
                             type="email"
-                            class="border-borde focus:border-azul hover:border-azul rounded-2xl px-4 py-3 transition"
+                            class="focus:border-azul hover:border-azul rounded-2xl border px-4 py-3 transition"
+                            :class="
+                                errors.email ? 'border-red-500' : 'border-borde'
+                            "
+                            @blur="validate"
                         />
+
+                        <p v-if="errors.email" class="text-sm text-red-500">
+                            {{ errors.email }}
+                        </p>
                     </div>
 
                     <!-- PASSWORD -->
@@ -162,8 +238,42 @@ const showSuccess = () => {
                             toggleMask
                             :feedback="false"
                             class="w-full"
-                            inputClass="w-full rounded-2xl border-borde px-4 py-3"
+                            inputClass="w-full rounded-2xl border px-4 py-3"
+                            :inputProps="{
+                                class: errors.password
+                                    ? 'border-red-500'
+                                    : 'border-borde',
+                            }"
+                            @blur="validate"
                         />
+
+                        <!-- PASSWORD METER -->
+                        <meter
+                            v-if="user.password"
+                            class="h-2 w-full overflow-hidden rounded-full"
+                            min="0"
+                            max="3"
+                            :value="
+                                passwordStrength === 'Débil'
+                                    ? 1
+                                    : passwordStrength === 'Media'
+                                      ? 2
+                                      : 3
+                            "
+                        ></meter>
+
+                        <!-- PASSWORD STRENGTH -->
+                        <p
+                            v-if="passwordStrength"
+                            class="text-texto-secundario text-sm"
+                        >
+                            Seguridad: {{ passwordStrength }}
+                        </p>
+
+                        <!-- ERROR -->
+                        <p v-if="errors.password" class="text-sm text-red-500">
+                            {{ errors.password }}
+                        </p>
                     </div>
 
                     <!-- PASSWORD CONFIRMATION -->
@@ -177,8 +287,16 @@ const showSuccess = () => {
                             toggleMask
                             :feedback="false"
                             class="w-full"
-                            inputClass="w-full rounded-2xl border-borde px-4 py-3"
+                            inputClass="w-full rounded-2xl border px-4 py-3"
+                            @blur="validate"
                         />
+
+                        <p
+                            v-if="errors.password_confirmation"
+                            class="text-sm text-red-500"
+                        >
+                            {{ errors.password_confirmation }}
+                        </p>
                     </div>
 
                     <div class="flex flex-col gap-2">
@@ -190,6 +308,7 @@ const showSuccess = () => {
                             v-model="user.birthDate"
                             placeholder="DD/MM/YYYY"
                             class="border-borde focus:border-azul hover:border-azul rounded-2xl px-4 py-3 transition"
+                            @blur="validate"
                         />
 
                         <p v-if="errors.birthDate" class="text-sm text-red-500">
@@ -206,6 +325,7 @@ const showSuccess = () => {
                             v-model="user.phone"
                             placeholder="+34 600000000"
                             class="border-borde focus:border-azul hover:border-azul rounded-2xl px-4 py-3 transition"
+                            @blur="validate"
                         />
 
                         <p v-if="errors.phone" class="text-sm text-red-500">
@@ -213,6 +333,7 @@ const showSuccess = () => {
                         </p>
                     </div>
 
+                    <!-- SHIPPING ADDRESS -->
                     <div class="flex flex-col gap-2 lg:col-span-2">
                         <label class="text-rojo-fuerte text-sm font-semibold">
                             Dirección de envío
@@ -221,8 +342,18 @@ const showSuccess = () => {
                         <InputText
                             v-model="user.shippingAddress"
                             placeholder="Calle, número, ciudad, código postal"
-                            class="border-borde focus:border-azul hover:border-azul rounded-2xl px-4 py-3 transition"
+                            class="focus:border-azul hover:border-azul rounded-2xl border px-4 py-3 transition"
+                            :class="
+                                errors.shippingAddress
+                                    ? 'border-red-500'
+                                    : 'border-borde'
+                            "
+                            @blur="validate"
                         />
+
+                        <p class="text-texto-secundario text-sm">
+                            Ejemplo: Calle Mallorca 401, 3º 2ª, Barcelona
+                        </p>
 
                         <p
                             v-if="errors.shippingAddress"
@@ -280,6 +411,12 @@ const showSuccess = () => {
                         label="Guardar cambios"
                         icon="pi pi-save"
                         class="bg-azul! hover:bg-azul/90! rounded-2xl border-0 px-6 py-3 text-white transition"
+                        :class="
+                            Object.keys(errors).length
+                                ? 'cursor-not-allowed bg-gray-400'
+                                : 'bg-azul hover:bg-azul/90'
+                        "
+                        :disabled="Object.keys(errors).length > 0"
                         @click="showSuccess"
                     />
                 </div>

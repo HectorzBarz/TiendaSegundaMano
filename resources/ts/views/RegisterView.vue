@@ -14,7 +14,7 @@ const form = ref({
     password: "",
     confirmPassword: "",
     shippingAddress: "",
-    billingAddress: "",
+    billingAddress: false,
     favoriteCategory: "",
     referralCode: "",
 });
@@ -86,9 +86,9 @@ function validate() {
     }
 
     // PASSWORD
-    if (!passwordStrongRegex.test(form.value.password)) {
+    if (passwordStrength.value === "Débil") {
         errors.value.password =
-            "La contraseña debe ser media o fuerte (mayús, minús, número y símbolo)";
+            "La contraseña debe tener al menos seguridad media";
     }
 
     if (form.value.password !== form.value.confirmPassword) {
@@ -158,7 +158,7 @@ function submit() {
                             v-model="form.fullName"
                             placeholder="Nombre completo"
                             class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
-                            @blur="formatName"
+                            @blur="validate"
                         />
                         <p
                             v-if="errors.fullName"
@@ -174,6 +174,7 @@ function submit() {
                             v-model="form.birthDate"
                             placeholder="DD/MM/YYYY"
                             class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
+                            @blur="validate"
                         />
                         <p
                             v-if="errors.birthDate"
@@ -189,6 +190,7 @@ function submit() {
                             v-model="form.phone"
                             placeholder="+34 600000000"
                             class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
+                            @blur="validate"
                         />
                         <p
                             v-if="errors.phone"
@@ -199,34 +201,71 @@ function submit() {
                     </div>
 
                     <!-- EMAIL -->
-                    <InputText
-                        v-model="form.email"
-                        placeholder="Correo"
-                        class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 focus:ring-2"
-                    />
+                    <div>
+                        <InputText
+                            v-model="form.email"
+                            placeholder="Correo electrónico"
+                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
+                            @blur="validate"
+                        />
 
-                    <!-- ADDRESS -->
-                    <InputText
-                        v-model="form.shippingAddress"
-                        placeholder="Dirección de envío"
-                        class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 focus:ring-2"
-                    />
+                        <p
+                            v-if="errors.email"
+                            class="mt-1 text-sm text-red-500"
+                        >
+                            {{ errors.email }}
+                        </p>
+                    </div>
+
+                    <!-- SHIPPING ADDRESS -->
+                    <div>
+                        <InputText
+                            v-model="form.shippingAddress"
+                            placeholder="Dirección de envío"
+                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
+                            @blur="validate"
+                        />
+
+                        <!-- EJEMPLO PERMANENTE -->
+                        <p class="text-texto-secundario mt-1 text-sm">
+                            Ejemplo: Calle Mallorca 401, 3º 2ª, Barcelona
+                        </p>
+
+                        <!-- ERROR -->
+                        <p
+                            v-if="errors.shippingAddress"
+                            class="mt-1 text-sm text-red-500"
+                        >
+                            {{ errors.shippingAddress }}
+                        </p>
+                    </div>
 
                     <!-- BILLING COPY -->
                     <label
                         class="text-texto-secundario flex items-center gap-2 text-sm"
                     >
                         <input type="checkbox" v-model="form.billingAddress" />
+
                         Usar misma dirección de envío
                     </label>
 
                     <!-- PASSWORD -->
-                    <InputText
-                        v-model="form.password"
-                        type="password"
-                        placeholder="Contraseña"
-                        class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 focus:ring-2"
-                    />
+                    <div>
+                        <InputText
+                            v-model="form.password"
+                            type="password"
+                            placeholder="Contraseña"
+                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
+                            @blur="validate"
+                        />
+
+                        <p
+                            v-if="errors.password"
+                            class="mt-1 text-sm text-red-500"
+                        >
+                            {{ errors.password }}
+                        </p>
+                    </div>
 
                     <!-- METER -->
                     <meter
@@ -246,13 +285,23 @@ function submit() {
                         Seguridad: {{ passwordStrength }}
                     </p>
 
-                    <!-- CONFIRM -->
-                    <InputText
-                        v-model="form.confirmPassword"
-                        type="password"
-                        placeholder="Confirmar contraseña"
-                        class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 focus:ring-2"
-                    />
+                    <!-- CONFIRM PASSWORD -->
+                    <div>
+                        <InputText
+                            v-model="form.confirmPassword"
+                            type="password"
+                            placeholder="Confirmar contraseña"
+                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
+                            @blur="validate"
+                        />
+
+                        <p
+                            v-if="errors.confirmPassword"
+                            class="mt-1 text-sm text-red-500"
+                        >
+                            {{ errors.confirmPassword }}
+                        </p>
+                    </div>
 
                     <!-- SUBMIT -->
                     <button

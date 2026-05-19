@@ -40,21 +40,32 @@ defineProps<Props>();
 const theme = ref<PasswordPassThroughOptions>({
     root: `inline-flex relative p-fluid:flex`,
     pcInputText: {
-        root: `appearance-none rounded-md outline-hidden
-        bg-surface-0
-        p-filled:bg-surface-50 p-filled:bg-surface-800
-        placeholder:text-surface-500 placeholder:text-surface-400
-        border border-surface-300
-        enabled:hover:border-surface-400 enabled:hover:border-surface-600
-        enabled:focus:border-primary
-        disabled:bg-surface-200 disabled:text-surface-500
-        disabled:bg-surface-700 disabled:text-surface-400
-        p-invalid:border-red-400 p-invalid:border-red-300
-        p-invalid:placeholder:text-red-600 p-invalid:placeholder:text-red-400
+        root: `
+        appearance-none rounded-md outline-hidden
+
+        bg-[var(--color-card)]
+        text-[var(--color-texto)]
+
         px-3 py-2 p-fluid:w-full p-has-e-icon:pe-10
+
         p-small:text-sm p-small:px-[0.625rem] p-small:py-[0.375rem]
         p-large:text-lg p-large:px-[0.875rem] p-large:py-[0.625rem]
-        transition-colors duration-200 shadow-[0_1px_2px_0_rgba(18,18,23,0.05)]`,
+
+        border border-[var(--color-borde)]
+
+        enabled:hover:border-[var(--color-azul)]
+        enabled:focus:border-[var(--color-azul)]
+
+        placeholder:text-[var(--color-texto-secundario)]
+
+        disabled:bg-[var(--color-borde)]
+        disabled:text-[var(--color-texto-secundario)]
+
+        p-invalid:border-[var(--color-rojo-claro)]
+
+        transition-colors duration-200
+        shadow-[0_1px_2px_0_rgba(18,18,23,0.05)]
+    `,
     },
     overlay: `p-3 rounded-md p-portal-self:min-w-full
         bg-surface-0 bg-surface-900
