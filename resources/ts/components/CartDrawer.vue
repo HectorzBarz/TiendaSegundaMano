@@ -18,13 +18,13 @@ function close() {
     <!-- BACKDROP -->
     <div
         v-if="modelValue"
-        class="fixed inset-0 z-50 bg-black/40"
+        class="fixed inset-0 z-90 bg-black/40 backdrop-blur-[2px]"
         @click="close"
     />
 
     <!-- DRAWER -->
     <aside
-        class="bg-card fixed top-0 right-0 z-50 flex h-full w-full max-w-md flex-col shadow-2xl transition-transform md:w-105"
+        class="bg-card fixed top-0 right-0 z-100 flex h-full w-full flex-col rounded-none shadow-2xl transition-transform md:max-w-md md:rounded-l-3xl"
         :class="modelValue ? 'translate-x-0' : 'translate-x-full'"
     >
         <!-- HEADER -->
