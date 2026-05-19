@@ -1,30 +1,38 @@
 <script setup lang="ts">
 import CategoryItemCard from "@/components/CategoryItemCard.vue";
-import hampter from "/storage/app/public/img/hampter.jpg";
 import { useArticleFiltersStore } from "@/stores/articleFilters";
 import { useRouter } from "vue-router";
-import img1 from "@/assets/slide1.webp";
-import img2 from "@/assets/slide2.webp";
-import img3 from "@/assets/slide3.webp";
+import slide1 from "@/assets/slide1.webp";
+import slide2 from "@/assets/slide2.webp";
+import slide3 from "@/assets/slide3.webp";
+
+import img1 from "@/assets/example/juguetes.webp";
+import img2 from "@/assets/example/informatica.png";
+import img3 from "@/assets/example/dados.png";
+import img4 from "@/assets/example/nevera.svg";
+import img5 from "@/assets/example/mesa.svg";
+import img6 from "@/assets/example/patinete.svg";
+import img7 from "@/assets/example/camiseta.svg";
+import img8 from "@/assets/example/videojuegos.svg";
 
 import { Carousel, Slide, Navigation, Pagination } from "vue3-carousel";
 import "vue3-carousel/dist/carousel.css";
 
 const categories = [
-    { id: 1, img: hampter, name: "Muebles" },
-    { id: 2, img: hampter, name: "Consolas" },
-    { id: 3, img: hampter, name: "Cubertería" },
-    { id: 4, img: hampter, name: "Deportes" },
-    { id: 5, img: hampter, name: "Informática" },
-    { id: 6, img: hampter, name: "Juegos de mesa" },
-    { id: 7, img: hampter, name: "Patinetes" },
-    { id: 8, img: hampter, name: "Ropa" },
+    { id: 1, img: img1, name: "Muebles" },
+    { id: 2, img: img2, name: "Consolas" },
+    { id: 3, img: img3, name: "Cubertería" },
+    { id: 4, img: img4, name: "Deportes" },
+    { id: 5, img: img5, name: "Informática" },
+    { id: 6, img: img6, name: "Juegos de mesa" },
+    { id: 7, img: img7, name: "Patinetes" },
+    { id: 8, img: img8, name: "Ropa" },
 ];
 
 const slides = [
-    { id: 1, img: img1 },
-    { id: 2, img: img2 },
-    { id: 3, img: img3 },
+    { id: 1, img: slide1 },
+    { id: 2, img: slide2 },
+    { id: 3, img: slide3 },
 ];
 
 const store = useArticleFiltersStore();

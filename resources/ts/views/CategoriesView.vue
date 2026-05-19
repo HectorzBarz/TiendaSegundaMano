@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import hampter from "/storage/app/public/img/hampter.jpg";
+import img1 from "@/assets/example/juguetes.webp";
+import img2 from "@/assets/example/informatica.png";
+import img3 from "@/assets/example/dados.png";
+import img4 from "@/assets/example/nevera.svg";
+import img5 from "@/assets/example/mesa.svg";
+import img6 from "@/assets/example/patinete.svg";
+import img7 from "@/assets/example/camiseta.svg";
+import img8 from "@/assets/example/videojuegos.svg";
+import img9 from "@/assets/example/vhs.svg";
+import img10 from "@/assets/example/reprodutor_musical.svg";
 
 import { Category } from "@/types";
 import CategoryItemCard from "@/components/CategoryItemCard.vue";
@@ -13,52 +22,52 @@ import { useArticleFiltersStore } from "@/stores/articleFilters";
 const categories = <Category[]>[
     {
         id: 1,
-        img: hampter,
+        img: img1,
         name: "Juguetes",
     },
     {
         id: 2,
-        img: hampter,
+        img: img2,
         name: "Informática",
     },
     {
         id: 3,
-        img: hampter,
+        img: img3,
         name: "Juegos de mesa",
     },
     {
         id: 4,
-        img: hampter,
+        img: img4,
         name: "Electrodomesticos",
     },
     {
         id: 5,
-        img: hampter,
+        img: img5,
         name: "Muebles",
     },
     {
         id: 6,
-        img: hampter,
+        img: img6,
         name: "Patinetes",
     },
     {
         id: 7,
-        img: hampter,
+        img: img7,
         name: "Ropa",
     },
     {
         id: 8,
-        img: hampter,
+        img: img8,
         name: "Videojuegos",
     },
     {
         id: 9,
-        img: hampter,
+        img: img9,
         name: "Películas",
     },
     {
         id: 10,
-        img: hampter,
+        img: img10,
         name: "Reproductores de música",
     },
 ];
