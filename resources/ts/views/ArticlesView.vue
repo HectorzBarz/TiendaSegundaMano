@@ -1,0 +1,204 @@
+<script setup lang="ts">
+import FilterBase from "@/components/FilterBase.vue";
+import ArticleItemCard from "@/components/ArticleItemCard.vue";
+import hampter from "/storage/app/public/img/hampter.jpg";
+
+import { computed } from "vue";
+import { useArticleFiltersStore } from "@/stores/articleFilters";
+import { Article } from "@/types";
+
+const store = useArticleFiltersStore();
+
+const articles = <Article[]>[
+    {
+        id: 1,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 1",
+        onSale: true,
+        categoryId: 1,
+        product_avg: 3.2,
+        product_count: 3,
+        stock: 1,
+    },
+    {
+        id: 2,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 2 ",
+        onSale: false,
+        categoryId: 2,
+        product_avg: 4.1,
+        product_count: 3,
+        stock: 1,
+    },
+    {
+        id: 3,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 3",
+        onSale: false,
+        categoryId: 1,
+        product_avg: 3.5,
+        product_count: 3,
+        stock: 1,
+    },
+    {
+        id: 4,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 4",
+        onSale: true,
+        categoryId: 3,
+        product_avg: 3,
+        product_count: 3,
+        stock: 1,
+    },
+    {
+        id: 5,
+        img: hampter,
+        price: 10,
+        name: "Artículo 5",
+        onSale: false,
+        categoryId: 1,
+        product_avg: 3.2,
+        product_count: 3,
+        stock: 1,
+    },
+    {
+        id: 6,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 6",
+        onSale: true,
+        categoryId: 4,
+        product_avg: 4,
+        product_count: 3,
+        stock: 1,
+    },
+    {
+        id: 7,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 7",
+        onSale: false,
+        categoryId: 6,
+        product_avg: 1.2,
+        product_count: 3,
+        stock: 1,
+    },
+    {
+        id: 8,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 8",
+        onSale: false,
+        categoryId: 5,
+        product_avg: 5,
+        product_count: 3,
+        stock: 1,
+    },
+    {
+        id: 9,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 9",
+        onSale: false,
+        categoryId: 6,
+        product_avg: 4.2,
+        product_count: 3,
+        stock: 1,
+    },
+    {
+        id: 10,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 10",
+        onSale: false,
+        categoryId: 2,
+        product_avg: 3.2,
+        product_count: 3,
+        stock: 2,
+    },
+    {
+        id: 10,
+        img: hampter,
+        oldPrice: 1,
+        price: 0.1,
+        name: "Artículo 11",
+        onSale: false,
+        categoryId: 2,
+        product_avg: 3.2,
+        product_count: 3,
+        stock: 0,
+    },
+];
+
+const filteredArticles = computed(() => {
+    return articles.filter((article) => {
+        const matchesCategory =
+            !store.categoryId || article.categoryId === store.categoryId;
+
+        const matchesName =
+            !store.articleName ||
+            article.name
+                .toLowerCase()
+                .includes(store.articleName.toLowerCase());
+
+        const matchesPrice =
+            article.price >= store.minPrice && article.price <= store.maxPrice;
+
+        const matchesSale = !store.onSale || article.onSale;
+
+        return matchesCategory && matchesName && matchesPrice && matchesSale;
+    });
+});
+</script>
+
+<template>
+    <div class="bg-fondo flex h-full flex-col gap-5">
+        <!-- TITLE -->
+        <div class="my-5 text-center">
+            <h1 class="text-rojo-fuerte text-5xl font-bold">Artículos</h1>
+
+            <p class="text-texto-secundario mt-2">
+                Encuentra productos disponibles en la plataforma
+            </p>
+        </div>
+
+        <section class="flex flex-col lg:flex-row lg:items-start">
+            <FilterBase
+                :suggestions="articles"
+                class="bg-card border-borde rounded-2xl border lg:w-1/3 xl:max-w-1/5 xl:min-w-1/5"
+            />
+
+            <!-- LIST -->
+            <div
+                v-if="filteredArticles.length"
+                class="grid w-full grid-cols-1 gap-3 p-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
+            >
+                <ArticleItemCard
+                    v-for="article in filteredArticles"
+                    :key="article.id"
+                    :article="article"
+                />
+            </div>
+
+            <!-- EMPTY STATE -->
+            <div v-else class="m-auto flex h-full w-full justify-center">
+                <span class="text-rojo-claro text-3xl font-semibold">
+                    No se han encontrado artículos
+                </span>
+            </div>
+        </section>
+    </div>
+</template>

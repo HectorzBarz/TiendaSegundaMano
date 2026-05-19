@@ -10,8 +10,8 @@ export default defineConfig({
             input: ["resources/css/app.css", "resources/ts/app.ts"],
             refresh: true,
         }),
-        tailwindcss(),
         vue(),
+        tailwindcss(),
     ],
     server: {
         watch: {
@@ -21,6 +21,7 @@ export default defineConfig({
     resolve: {
         alias: {
             "@": path.resolve(__dirname, "resources/ts"),
+            "@volt": path.resolve(__dirname, "src/volt"),
         },
     },
 });

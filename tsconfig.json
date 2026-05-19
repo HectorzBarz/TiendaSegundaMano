@@ -2,22 +2,23 @@
     "compilerOptions": {
         "target": "ESNext",
         "module": "ESNext",
-        "moduleResolution": "Node",
+        "moduleResolution": "bundler",
         "strict": true,
         "jsx": "preserve",
         "resolveJsonModule": true,
         "isolatedModules": true,
         "esModuleInterop": true,
         "lib": ["ESNext", "DOM"],
-        "baseUrl": ".",
         "paths": {
-            "@/*": ["resources/ts/*"]
+            "@/*": ["./resources/ts/*"],
+            "@volt/*": ["./src/volt/*"]
         },
         "types": ["vite/client"]
     },
     "include": [
         "resources/ts/**/*.ts",
         "resources/ts/**/*.vue",
-        "resources/ts/**/*.d.ts"
+        "src/volt/**/*.ts",
+        "src/volt/**/*.vue"
     ]
 }
