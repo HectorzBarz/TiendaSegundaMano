@@ -292,6 +292,14 @@ const rowClass = (data: Article) => {
                     />
                 </RouterLink>
 
+                <RouterLink to="/admin/category">
+                    <Button
+                        label="Nueva categoría"
+                        icon="pi pi-plus"
+                        class="bg-naranja! hover:bg-naranja/90! rounded-2xl border-0 px-5 py-3 text-white transition"
+                    />
+                </RouterLink>
+
                 <Button
                     icon="pi pi-refresh"
                     class="border-borde! text-rojo-fuerte! hover:bg-amarillo/20! rounded-2xl border bg-white px-4 py-3 transition"

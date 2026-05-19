@@ -76,7 +76,13 @@ const routes = [
         path: "/admin/create",
         name: "create",
         component: () => import("@/views/AddArticleView.vue"),
-        meta: { title: "Create" },
+        meta: { title: "Create Article" },
+    },
+    {
+        path: "/admin/category",
+        name: "category",
+        component: () => import("@/views/CreateCategoryView.vue"),
+        meta: { title: "Create Category" },
     },
     {
         path: "/checkout",

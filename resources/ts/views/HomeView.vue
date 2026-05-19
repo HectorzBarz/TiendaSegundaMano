@@ -22,9 +22,9 @@ const categories = [
 ];
 
 const slides = [
-    { id: 1, img: img1, title: "Oferta 1" },
-    { id: 2, img: img2, title: "Oferta 2" },
-    { id: 3, img: img3, title: "Oferta 3" },
+    { id: 1, img: img1 },
+    { id: 2, img: img2 },
+    { id: 3, img: img3 },
 ];
 
 const store = useArticleFiltersStore();
@@ -65,12 +65,6 @@ function selectCategory(id: number) {
                             :src="slide.img"
                             class="h-full w-full rounded-2xl object-cover"
                         />
-
-                        <div class="absolute bottom-4 left-4 text-white">
-                            <h2 class="text-xl font-bold">
-                                {{ slide.title }}
-                            </h2>
-                        </div>
                     </div>
                 </Slide>
 

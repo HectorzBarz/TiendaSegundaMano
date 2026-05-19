@@ -25,6 +25,10 @@ const theme = ref<InputTextPassThroughOptions>({
 
             bg-[var(--color-card)]
             text-[var(--color-texto)]
+            
+            px-3 py-2 p-fluid:w-full
+            p-small:text-sm p-small:px-[0.625rem] p-small:py-[0.375rem]
+            p-large:text-lg p-large:px-[0.875rem] p-large:py-[0.625rem]
 
             border border-[var(--color-borde)]
 

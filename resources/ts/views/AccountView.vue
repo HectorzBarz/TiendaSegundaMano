@@ -70,7 +70,17 @@ const showAdmin = ref(true);
                     <ItemCard
                         title="Añadir artículo"
                         description="Crear un nuevo producto para el catálogo."
-                        icon="pi-plus"
+                        icon="pi-box"
+                        class="h-full w-full"
+                    />
+                </RouterLink>
+
+                <!-- CREATE CATEGORY -->
+                <RouterLink v-if="showAdmin" to="/admin/category">
+                    <ItemCard
+                        title="Añadir categoría"
+                        description="Crear una nueva categoría para el catálogo."
+                        icon="pi-tags"
                         class="h-full w-full"
                     />
                 </RouterLink>

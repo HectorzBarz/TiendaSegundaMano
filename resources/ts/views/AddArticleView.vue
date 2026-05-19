@@ -327,7 +327,7 @@ const preview = "https://placehold.co/600x400/f8f7f5/70191d?text=Vista+previa";
                             icon="pi pi-times"
                             severity="secondary"
                             outlined
-                            class="rounded-2xl px-6 py-3"
+                            class="bg-naranja! hover:bg-naranja/90! rounded-2xl px-6 py-3 text-white!"
                         />
 
                         <RouterLink to="/admin">
