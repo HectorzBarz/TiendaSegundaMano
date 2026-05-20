@@ -9,9 +9,13 @@ export interface User {
     name: string;
     email: string;
     is_admin: boolean;
-    phone?: string;
-    birth_date?: string;
-    // Añade aquí cualquier otro campo que necesites leer en el frontend
+    phone?: string | null;
+    birth_date?: string | null;
+    city?: string | null;
+    postal_code?: string | null;
+    shipping_address?: string | null;
+    billing_address?: string | null;
+    profile_image?: string | null;
 }
 
 // Configura la URL base de tu API de Laravel
@@ -74,7 +78,28 @@ export const useAuthStore = defineStore(
             localStorage.removeItem("auth_token");
         }
 
-        return { user, token, isAuthenticated, login, register, logout };
+        async function updateProfile(formData: FormData) {
+            // Usamos 'POST' con el header multipart para que Laravel gestione el archivo
+            const response = await api.post("/user/profile", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            // Actualizamos el usuario en la store con los datos frescos del servidor
+            user.value = response.data.user;
+            return response.data;
+        }
+
+        return {
+            user,
+            token,
+            isAuthenticated,
+            login,
+            register,
+            logout,
+            updateProfile,
+        };
     },
     {
         persist: true,
