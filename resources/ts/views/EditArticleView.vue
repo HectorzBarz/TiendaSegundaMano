@@ -11,11 +11,21 @@ import Select from "@volt/Select.vue";
 
 import hampter from "/storage/app/public/img/hampter.jpg";
 
+import { useAuthStore } from "@/stores/auth";
+
 import { useAppToast } from "@/composables/useAppToast";
+
 import type { Article } from "@/types";
 
-const route = useRoute();
+// Instancias del Store y Router
+const auth = useAuthStore();
 const router = useRouter();
+const route = useRoute();
+
+// Redirección si el usuario no está autenticado
+if (!auth.user?.is_admin) {
+    router.push("account");
+}
 
 const { show } = useAppToast();
 

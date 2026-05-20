@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import ItemCard from "@/components/ItemCard.vue";
 import { useAuthStore } from "@/stores/auth";
-import { ref } from "vue";
+import { computed } from "vue"; // 1. Importamos computed
 import { RouterLink, useRouter } from "vue-router";
 
-const showAdmin = ref(true);
-
-// Instancias añadidas para el Logout
+// Instancias del Store y Router
 const auth = useAuthStore();
 const router = useRouter();
 
+// Redirección si el usuario no está autenticado
 if (!auth.isAuthenticated) {
     router.push("/login");
 }
+
+const showAdmin = computed(() => {
+    return auth.isAuthenticated && auth.user?.is_admin === true;
+});
 </script>
 
 <template>
@@ -22,19 +25,16 @@ if (!auth.isAuthenticated) {
         <section
             class="bg-card border-borde w-full max-w-5xl rounded-3xl border p-10 shadow-2xl"
         >
-            <!-- HEADER -->
             <h1 class="text-rojo-fuerte mb-10 text-center text-4xl font-bold">
                 Mi Cuenta
             </h1>
 
-            <!-- GRID -->
             <div
                 class="grid gap-6"
                 style="
                     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
                 "
             >
-                <!-- MIS DATOS -->
                 <RouterLink to="/account/profile">
                     <ItemCard
                         title="Mis datos"
@@ -44,7 +44,6 @@ if (!auth.isAuthenticated) {
                     />
                 </RouterLink>
 
-                <!-- COMPRAS -->
                 <RouterLink to="/account/history">
                     <ItemCard
                         title="Mis compras"
@@ -54,7 +53,6 @@ if (!auth.isAuthenticated) {
                     />
                 </RouterLink>
 
-                <!-- WISHLIST -->
                 <RouterLink to="/account/wishlist">
                     <ItemCard
                         title="Lista de deseados"
@@ -64,7 +62,6 @@ if (!auth.isAuthenticated) {
                     />
                 </RouterLink>
 
-                <!-- ADMIN -->
                 <RouterLink v-if="showAdmin" to="/admin">
                     <ItemCard
                         title="Administrador"
@@ -74,7 +71,6 @@ if (!auth.isAuthenticated) {
                     />
                 </RouterLink>
 
-                <!-- CREATE PRODUCT -->
                 <RouterLink v-if="showAdmin" to="/admin/create">
                     <ItemCard
                         title="Añadir artículo"
@@ -84,7 +80,6 @@ if (!auth.isAuthenticated) {
                     />
                 </RouterLink>
 
-                <!-- CREATE CATEGORY -->
                 <RouterLink v-if="showAdmin" to="/admin/category">
                     <ItemCard
                         title="Añadir categoría"

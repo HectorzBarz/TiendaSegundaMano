@@ -1,11 +1,22 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+import { useAuthStore } from "@/stores/auth";
+
 import Button from "@volt/Button.vue";
 import InputText from "@volt/InputText.vue";
 
 import { Category } from "@/types";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
+
+// Instancias del Store y Router
+const auth = useAuthStore();
+const router = useRouter();
+
+// Redirección si el usuario no está autenticado
+if (!auth.user?.is_admin) {
+    router.push("account");
+}
 
 const category = ref<Category>({
     id: 0,

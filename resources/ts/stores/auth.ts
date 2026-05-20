@@ -3,6 +3,17 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import axios from "axios";
 
+// 1. Definimos la interfaz (molde) de lo que es un Usuario en tu aplicación
+export interface User {
+    id: number;
+    name: string;
+    email: string;
+    is_admin: boolean;
+    phone?: string;
+    birth_date?: string;
+    // Añade aquí cualquier otro campo que necesites leer en el frontend
+}
+
 // Configura la URL base de tu API de Laravel
 const api = axios.create({
     baseURL: "http://localhost:8000/api",
@@ -22,7 +33,8 @@ api.interceptors.request.use((config) => {
 });
 
 export const useAuthStore = defineStore("auth", () => {
-    const user = ref(null);
+    // 2. Le indicamos a TypeScript que 'user' puede ser de tipo 'User' o 'null'
+    const user = ref<User | null>(null);
     const token = ref(localStorage.getItem("auth_token") || null);
 
     const isAuthenticated = computed(() => !!token.value);
@@ -47,7 +59,8 @@ export const useAuthStore = defineStore("auth", () => {
         }
     }
 
-    function setSession(newToken: string, userData: any) {
+    // 3. Tipamos 'userData' para que coincida con nuestra interfaz
+    function setSession(newToken: string, userData: User) {
         token.value = newToken;
         user.value = userData;
         localStorage.setItem("auth_token", newToken);

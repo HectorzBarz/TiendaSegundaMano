@@ -8,8 +8,19 @@ import Textarea from "@volt/Textarea.vue";
 import Select from "@volt/Select.vue";
 import Checkbox from "@volt/Checkbox.vue";
 
+import { useAuthStore } from "@/stores/auth";
+
 import { Article } from "@/types";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
+
+// Instancias del Store y Router
+const auth = useAuthStore();
+const router = useRouter();
+
+// Redirección si el usuario no está autenticado
+if (!auth.user?.is_admin) {
+    router.push("account");
+}
 
 const categories = [
     { label: "Accesorios", value: 1 },

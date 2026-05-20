@@ -1,21 +1,27 @@
 <script setup lang="ts">
 import FilterBase from "@/components/FilterBase.vue";
-import ArticleItemCard from "@/components/ArticleItemCard.vue";
+import StockBarChart from "@/components/StockBarChart.vue";
 import hampter from "/storage/app/public/img/hampter.jpg";
 
 import DataTable from "@volt/DataTable.vue";
 import Column from "primevue/column";
 import Button from "@volt/Button.vue";
-import DangerButton from "@volt/DangerButton.vue";
-import ColumnGroup from "primevue/columngroup"; // optional
-import Row from "primevue/row"; // optional
 
-import { computed, ref } from "vue";
 import { useArticleFiltersStore } from "@/stores/articleFilters";
+import { useAuthStore } from "@/stores/auth";
+
+import { RouterLink, useRouter } from "vue-router";
+import { computed, ref } from "vue";
 import { Article } from "@/types";
-import StockBarChart from "@/components/StockBarChart.vue";
-import { RouterLink } from "vue-router";
-import SecondaryButton from "@volt/SecondaryButton.vue";
+
+// Instancias del Store y Router
+const auth = useAuthStore();
+const router = useRouter();
+
+// Redirección si el usuario no está autenticado
+if (!auth.user?.is_admin) {
+    router.push("account");
+}
 
 const isChartCollapsed = ref(true);
 
