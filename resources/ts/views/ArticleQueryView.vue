@@ -1,17 +1,27 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
+const auth = useAuthStore(); // Instanciar el store
 const articleId = route.params.id;
 
-// simulación sesión
-const isLoggedIn = ref(false);
+// Sesión real basada en el store
+const isLoggedIn = computed(() => !!auth.user);
 
 // form
 const name = ref("");
 const email = ref("");
 const message = ref("");
+
+// Precarga de datos al montar si el usuario está logueado
+onMounted(() => {
+    if (isLoggedIn.value && auth.user) {
+        name.value = auth.user.name;
+        email.value = auth.user.email;
+    }
+});
 
 // usamos el id como referencia directa
 const productRef = computed(() => `Producto #${articleId}`);
@@ -80,28 +90,39 @@ const submit = async () => {
                 </div>
 
                 <!-- NOMBRE -->
-                <div v-if="!isLoggedIn">
+                <div>
                     <label class="text-texto text-sm font-medium">
                         Nombre y apellidos
                     </label>
 
                     <input
                         v-model="name"
-                        class="border-borde bg-fondo focus:ring-azul/20 mt-2 w-full rounded-2xl border px-4 py-3 focus:ring-2 focus:outline-none"
+                        :readonly="isLoggedIn"
+                        :class="[
+                            'border-borde mt-2 w-full rounded-2xl border px-4 py-3 focus:ring-2 focus:outline-none',
+                            isLoggedIn
+                                ? 'cursor-not-allowed bg-slate-100 text-gray-500'
+                                : 'bg-fondo focus:ring-azul/20',
+                        ]"
                         type="text"
                         placeholder="Tu nombre completo"
                     />
                 </div>
 
-                <!-- EMAIL -->
-                <div v-if="!isLoggedIn">
+                <div>
                     <label class="text-texto text-sm font-medium">
                         Email
                     </label>
 
                     <input
                         v-model="email"
-                        class="border-borde bg-fondo focus:ring-azul/20 mt-2 w-full rounded-2xl border px-4 py-3 focus:ring-2 focus:outline-none"
+                        :readonly="isLoggedIn"
+                        :class="[
+                            'border-borde mt-2 w-full rounded-2xl border px-4 py-3 focus:ring-2 focus:outline-none',
+                            isLoggedIn
+                                ? 'cursor-not-allowed bg-slate-100 text-gray-500'
+                                : 'bg-fondo focus:ring-azul/20',
+                        ]"
                         type="email"
                         placeholder="tu@email.com"
                     />
