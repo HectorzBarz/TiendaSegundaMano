@@ -65,7 +65,9 @@ function selectCategory(id: number) {
         </div>
 
         <!-- Carousel -->
-        <div class="border-borde overflow-hidden rounded-2xl border">
+        <div
+            class="border-borde mx-5 overflow-hidden rounded-2xl border md:mx-20"
+        >
             <Carousel v-bind="config" :wrap-around="true">
                 <Slide v-for="slide in slides" :key="slide.id">
                     <div class="relative h-96 w-full">
@@ -85,7 +87,7 @@ function selectCategory(id: number) {
 
         <!-- Category Selector -->
         <div
-            class="mb-5 grid h-full text-center align-middle md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            class="m-5 grid h-full text-center align-middle md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         >
             <div v-for="category in categories" :key="category.id">
                 <RouterLink to="/articles" @click="selectCategory(category.id)">

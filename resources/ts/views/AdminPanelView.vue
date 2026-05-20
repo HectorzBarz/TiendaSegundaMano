@@ -283,26 +283,26 @@ const rowClass = (data: Article) => {
                 </p>
             </div>
 
-            <div class="flex gap-3">
-                <RouterLink to="/admin/create">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <RouterLink to="/admin/create" class="w-full sm:w-auto">
                     <Button
                         label="Nuevo artículo"
                         icon="pi pi-plus"
-                        class="bg-azul! hover:bg-azul/90! rounded-2xl border-0 px-5 py-3 text-white transition"
+                        class="bg-azul! hover:bg-azul/90! w-full rounded-2xl border-0 px-5 py-3 text-white transition sm:w-auto"
                     />
                 </RouterLink>
 
-                <RouterLink to="/admin/category">
+                <RouterLink to="/admin/category" class="w-full sm:w-auto">
                     <Button
                         label="Nueva categoría"
                         icon="pi pi-plus"
-                        class="bg-naranja! hover:bg-naranja/90! rounded-2xl border-0 px-5 py-3 text-white transition"
+                        class="bg-naranja! hover:bg-naranja/90! w-full rounded-2xl border-0 px-5 py-3 text-white transition sm:w-auto"
                     />
                 </RouterLink>
 
                 <Button
                     icon="pi pi-refresh"
-                    class="border-borde! text-rojo-fuerte! hover:bg-amarillo/20! rounded-2xl border bg-white px-4 py-3 transition"
+                    class="border-borde! text-rojo-fuerte! hover:bg-amarillo/20! w-full border bg-white px-4 py-3 transition sm:w-auto"
                 />
             </div>
         </div>
