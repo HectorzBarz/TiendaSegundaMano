@@ -29,7 +29,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
 
+    Route::get('/admin/users', [AdminUserController::class, 'index']);
+
     Route::get('/admin/users/{id}', [AdminUserController::class, 'show']);
+
     Route::post('/admin/users/{id}', [AdminUserController::class, 'update']);
 
 });

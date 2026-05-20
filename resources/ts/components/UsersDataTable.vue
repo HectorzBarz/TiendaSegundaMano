@@ -18,7 +18,7 @@ defineProps<{ data: User[] }>();
         <Column field="img" header="Imagen">
             <template #body="{ data }">
                 <img
-                    :src="data.img"
+                    :src="data.profile_image"
                     :alt="data.name"
                     class="border-borde h-16 w-16 rounded-2xl border object-cover"
                 />

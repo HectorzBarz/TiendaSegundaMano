@@ -11,12 +11,13 @@ import { useArticleFiltersStore } from "@/stores/articleFilters";
 import { useAuthStore } from "@/stores/auth";
 
 import { RouterLink, useRouter } from "vue-router";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { Article } from "@/types";
 import SelectButton from "@volt/SelectButton.vue";
 import ArticlesDataTable from "@/components/ArticlesDataTable.vue";
 import CategoriesDataTable from "@/components/CategoriesDataTable.vue";
 import UsersDataTable from "@/components/UsersDataTable.vue";
+import type { User } from "@/stores/auth";
 
 // Instancias del Store y Router
 const auth = useAuthStore();
@@ -289,17 +290,34 @@ const mockCategories = ref([
     { id: 1, name: "Electrónica" },
     { id: 2, name: "Hogar" },
 ]);
-const mockUsers = ref([
-    { id: 1, name: "Admin", email: "admin@test.com", is_admin: true },
-]);
+
+// USERS
+const users = ref<User[]>([]);
+const usersLoading = ref(false);
+
+const fetchUsers = async () => {
+    try {
+        usersLoading.value = true;
+
+        users.value = await auth.getUsers();
+    } catch (e) {
+        console.error("Error fetching users", e);
+    } finally {
+        usersLoading.value = false;
+    }
+};
 
 const getData = () => {
     if (selectedOption.value.value === "articles")
         return filteredArticles.value;
     if (selectedOption.value.value === "categories")
         return mockCategories.value;
-    return mockUsers.value;
+    return users.value;
 };
+
+onMounted(() => {
+    fetchUsers();
+});
 </script>
 
 <template>

@@ -106,6 +106,11 @@ export const useAuthStore = defineStore(
             return response.data;
         }
 
+        async function getUsers() {
+            const response = await api.get("/admin/users");
+            return response.data;
+        }
+
         return {
             user,
             token,
@@ -116,6 +121,7 @@ export const useAuthStore = defineStore(
             updateProfile,
             getUserById,
             updateUserByAdmin,
+            getUsers,
         };
     },
     {

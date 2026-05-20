@@ -11,6 +11,19 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminUserController extends Controller
 {
+    public function index(Request $request)
+    {
+        if (!$request->user()->is_admin) {
+            return response()->json([
+                'message' => 'No autorizado'
+            ], 403);
+        }
+
+        $users = User::latest()->get();
+
+        return response()->json($users);
+    }
+
     public function show(Request $request, $id)
     {
         // Seguridad admin
