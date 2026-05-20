@@ -12,7 +12,11 @@ return new class extends Migration {
             $table->string('name');
             $table->string('email')->unique();
 
-            // Campos adicionales
+            // Nuevos campos de contacto integrados directamente
+            $table->string('phone');
+            $table->date('birth_date'); // Formato estándar DATE (YYYY-MM-DD)
+
+            // Campos adicionales de dirección
             $table->string('city')->nullable();
             $table->string('postal_code')->nullable();
             $table->string('shipping_address')->nullable();
@@ -29,8 +33,6 @@ return new class extends Migration {
             $table->rememberToken();
             $table->timestamps();
         });
-
-        // El resto de tablas (password_reset_tokens y sessions) déjalas como vienen por defecto
     }
 
     public function down(): void
