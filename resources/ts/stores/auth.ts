@@ -111,6 +111,18 @@ export const useAuthStore = defineStore(
             return response.data;
         }
 
+        async function makeAdmin(id: number) {
+            const response = await api.patch(`/admin/users/${id}/make-admin`);
+
+            return response.data;
+        }
+
+        async function removeAdmin(id: number) {
+            const response = await api.patch(`/admin/users/${id}/remove-admin`);
+
+            return response.data;
+        }
+
         return {
             user,
             token,
@@ -122,6 +134,8 @@ export const useAuthStore = defineStore(
             getUserById,
             updateUserByAdmin,
             getUsers,
+            makeAdmin,
+            removeAdmin,
         };
     },
     {

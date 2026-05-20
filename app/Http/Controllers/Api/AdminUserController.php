@@ -84,4 +84,49 @@ class AdminUserController extends Controller
             'user' => $user->fresh()
         ]);
     }
+
+    public function makeAdmin(Request $request, $id)
+    {
+        if (!$request->user()->is_admin) {
+            return response()->json([
+                'message' => 'No autorizado'
+            ], 403);
+        }
+
+        $user = User::findOrFail($id);
+
+        $user->is_admin = true;
+        $user->save();
+
+        return response()->json([
+            'message' => 'Privilegios de administrador asignados correctamente',
+            'user' => $user
+        ]);
+    }
+
+    public function removeAdmin(Request $request, $id)
+    {
+        if (!$request->user()->is_admin) {
+            return response()->json([
+                'message' => 'No autorizado'
+            ], 403);
+        }
+
+        $user = User::findOrFail($id);
+
+        // Evita quitarte permisos a ti mismo
+        if ($request->user()->id === $user->id) {
+            return response()->json([
+                'message' => 'No puedes eliminar tus propios privilegios'
+            ], 422);
+        }
+
+        $user->is_admin = false;
+        $user->save();
+
+        return response()->json([
+            'message' => 'Privilegios de administrador eliminados correctamente',
+            'user' => $user
+        ]);
+    }
 }

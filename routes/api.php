@@ -35,4 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/admin/users/{id}', [AdminUserController::class, 'update']);
 
+    Route::patch('/admin/users/{id}/make-admin', [AdminUserController::class, 'makeAdmin']);
+
+    Route::patch('/admin/users/{id}/remove-admin', [AdminUserController::class, 'removeAdmin']);
 });
