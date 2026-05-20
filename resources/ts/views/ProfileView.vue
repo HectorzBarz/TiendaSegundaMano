@@ -17,6 +17,10 @@ const user = ref({
     birthDate: "",
     phone: "",
     shippingAddress: "",
+
+    billingAddress: "",
+    useShippingAsBilling: false,
+
     avatar: null,
 });
 
@@ -29,7 +33,7 @@ const { show } = useAppToast();
 const birthRegex =
     /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19\d{2}|20\d{2})$/;
 
-const phoneRegex = /^\+\d{1,4}\s?\d{6,14}$/;
+const phoneRegex = /^\+34\s?[6789]\d{8}$/;
 
 const addressRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,º\-]{5,}$/;
 
@@ -109,6 +113,7 @@ function validate() {
     }
 
     // ADDRESS
+    // SHIPPING ADDRESS
     if (
         user.value.shippingAddress &&
         !addressRegex.test(user.value.shippingAddress)
@@ -116,11 +121,30 @@ function validate() {
         errors.value.shippingAddress = "Dirección inválida";
     }
 
+    // BILLING ADDRESS
+    const billingToValidate = user.value.useShippingAsBilling
+        ? user.value.shippingAddress
+        : user.value.billingAddress;
+
+    if (billingToValidate && !addressRegex.test(billingToValidate)) {
+        errors.value.billingAddress = "Dirección de facturación inválida";
+    }
+
     return Object.keys(errors.value).length === 0;
 }
 
 const showSuccess = () => {
     if (!validate()) return;
+
+    const finalPayload = {
+        ...user.value,
+
+        billingAddress: user.value.useShippingAsBilling
+            ? user.value.shippingAddress
+            : user.value.billingAddress,
+    };
+
+    console.log(finalPayload);
 
     show({
         message: "¡Cambios guardados!",
@@ -299,6 +323,7 @@ const showSuccess = () => {
                         </p>
                     </div>
 
+                    <!-- BIRTH DATE -->
                     <div class="flex flex-col gap-2">
                         <label class="text-rojo-fuerte text-sm font-semibold">
                             Fecha de nacimiento
@@ -316,6 +341,7 @@ const showSuccess = () => {
                         </p>
                     </div>
 
+                    <!-- PHONE -->
                     <div class="flex flex-col gap-2">
                         <label class="text-rojo-fuerte text-sm font-semibold">
                             Teléfono
@@ -360,6 +386,54 @@ const showSuccess = () => {
                             class="text-sm text-red-500"
                         >
                             {{ errors.shippingAddress }}
+                        </p>
+                    </div>
+
+                    <!-- BILLING CHECKBOX -->
+                    <div class="lg:col-span-2">
+                        <label
+                            class="text-texto-secundario flex items-center gap-3 text-sm"
+                        >
+                            <input
+                                type="checkbox"
+                                v-model="user.useShippingAsBilling"
+                            />
+
+                            Usar dirección de envío como facturación
+                        </label>
+                    </div>
+
+                    <!-- BILLING ADDRESS -->
+                    <div
+                        v-if="!user.useShippingAsBilling"
+                        class="flex flex-col gap-2 lg:col-span-2"
+                    >
+                        <label class="text-rojo-fuerte text-sm font-semibold">
+                            Dirección de facturación
+                        </label>
+
+                        <InputText
+                            v-model="user.billingAddress"
+                            fluid
+                            placeholder="Calle, número, ciudad, código postal"
+                            class="focus:border-azul hover:border-azul w-full rounded-2xl border px-4 py-3 transition"
+                            :class="
+                                errors.billingAddress
+                                    ? 'border-red-500'
+                                    : 'border-borde'
+                            "
+                            @blur="validate"
+                        />
+
+                        <p class="text-texto-secundario text-sm">
+                            Ejemplo: Avenida Diagonal 120, Barcelona
+                        </p>
+
+                        <p
+                            v-if="errors.billingAddress"
+                            class="text-sm text-red-500"
+                        >
+                            {{ errors.billingAddress }}
                         </p>
                     </div>
 

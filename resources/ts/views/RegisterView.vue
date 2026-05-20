@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import InputText from "@volt/InputText.vue";
 import { RouterLink } from "vue-router";
 
@@ -13,8 +13,14 @@ const form = ref({
     email: "",
     password: "",
     confirmPassword: "",
+
     shippingAddress: "",
-    billingAddress: false,
+    billingAddress: "",
+    useShippingAsBilling: false,
+
+    city: "",
+    postalCode: "",
+
     favoriteCategory: "",
     referralCode: "",
 });
@@ -23,27 +29,56 @@ const form = ref({
 // REGEX
 // ----------------------
 
-// 1–2 nombres + 1–2 apellidos, solo letras
+// 1–2 nombres + 1–2 apellidos
 const nameRegex = /^([A-Za-zÁÉÍÓÚáéíóúÑñ]+)(\s[A-Za-zÁÉÍÓÚáéíóúÑñ]+){1,3}$/;
 
 // Fecha DD/MM/YYYY
 const birthRegex =
     /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19\d{2}|20\d{2})$/;
 
-// Teléfono internacional (+34...)
+// Teléfono internacional
 const phoneRegex = /^\+\d{1,4}\s?\d{6,14}$/;
 
 // Email
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Dirección básica (mínimo número + calle)
-const addressRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,º\-]{5,}$/;
+// Dirección
+const addressRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,ºª\-]{5,}$/;
 
-// Password strength
+// Ciudad
+const cityRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s\-]{2,}$/;
+
+// Código postal español
+const postalRegex = /^[0-9]{5}$/;
+
+// Password fuerte
 const passwordStrongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
 // ----------------------
-// VALIDATION HELPERS
+// AUTO COPY ADDRESS
+// ----------------------
+watch(
+    () => form.value.useShippingAsBilling,
+    (checked) => {
+        if (checked) {
+            form.value.billingAddress = form.value.shippingAddress;
+        } else {
+            form.value.billingAddress = "";
+        }
+    },
+);
+
+watch(
+    () => form.value.shippingAddress,
+    (value) => {
+        if (form.value.useShippingAsBilling) {
+            form.value.billingAddress = value;
+        }
+    },
+);
+
+// ----------------------
+// VALIDATION
 // ----------------------
 const errors = ref<Record<string, string>>({});
 
@@ -52,27 +87,17 @@ function validate() {
 
     // NAME
     if (!nameRegex.test(form.value.fullName)) {
-        errors.value.fullName =
-            "Introduce 1–2 nombres y 1–2 apellidos sin números ni símbolos";
+        errors.value.fullName = "Introduce nombres y apellidos válidos";
     }
 
     // BIRTH DATE
     if (!birthRegex.test(form.value.birthDate)) {
         errors.value.birthDate = "Formato DD/MM/YYYY inválido";
-    } else {
-        const [d, m, y] = form.value.birthDate.split("/").map(Number);
-        const birth = new Date(y, m - 1, d);
-
-        const age = new Date().getFullYear() - birth.getFullYear();
-
-        if (age < 18 || age > 100) {
-            errors.value.birthDate = "Debes tener entre 18 y 100 años";
-        }
     }
 
     // PHONE
     if (!phoneRegex.test(form.value.phone)) {
-        errors.value.phone = "Teléfono internacional inválido (+34...)";
+        errors.value.phone = "Teléfono internacional inválido";
     }
 
     // EMAIL
@@ -80,17 +105,36 @@ function validate() {
         errors.value.email = "Email inválido";
     }
 
-    // ADDRESS
+    // SHIPPING ADDRESS
     if (!addressRegex.test(form.value.shippingAddress)) {
-        errors.value.shippingAddress = "Dirección inválida";
+        errors.value.shippingAddress = "Dirección de envío inválida";
+    }
+
+    // BILLING ADDRESS
+    if (
+        !form.value.useShippingAsBilling &&
+        !addressRegex.test(form.value.billingAddress)
+    ) {
+        errors.value.billingAddress = "Dirección de facturación inválida";
+    }
+
+    // CITY
+    if (!cityRegex.test(form.value.city)) {
+        errors.value.city = "Introduce una ciudad válida";
+    }
+
+    // POSTAL CODE
+    if (!postalRegex.test(form.value.postalCode)) {
+        errors.value.postalCode = "Código postal inválido";
     }
 
     // PASSWORD
     if (passwordStrength.value === "Débil") {
         errors.value.password =
-            "La contraseña debe tener al menos seguridad media";
+            "La contraseña debe tener seguridad media o fuerte";
     }
 
+    // CONFIRM PASSWORD
     if (form.value.password !== form.value.confirmPassword) {
         errors.value.confirmPassword = "Las contraseñas no coinciden";
     }
@@ -105,6 +149,7 @@ const passwordStrength = computed(() => {
     const p = form.value.password;
 
     let score = 0;
+
     if (p.length >= 8) score++;
     if (/[a-z]/.test(p)) score++;
     if (/[A-Z]/.test(p)) score++;
@@ -113,11 +158,12 @@ const passwordStrength = computed(() => {
 
     if (score <= 2) return "Débil";
     if (score === 3) return "Media";
+
     return "Fuerte";
 });
 
 // ----------------------
-// FORMAT NAME (capitalize)
+// FORMAT NAME
 // ----------------------
 function formatName() {
     form.value.fullName = form.value.fullName
@@ -155,11 +201,15 @@ function submit() {
                     <!-- NAME -->
                     <div>
                         <InputText
+                            class="w-full"
                             v-model="form.fullName"
                             placeholder="Nombre completo"
-                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
-                            @blur="validate"
+                            @blur="
+                                formatName();
+                                validate();
+                            "
                         />
+
                         <p
                             v-if="errors.fullName"
                             class="mt-1 text-sm text-red-500"
@@ -168,70 +218,46 @@ function submit() {
                         </p>
                     </div>
 
-                    <!-- BIRTH -->
+                    <!-- CITY -->
                     <div>
                         <InputText
-                            v-model="form.birthDate"
-                            placeholder="DD/MM/YYYY"
-                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
+                            class="w-full"
+                            v-model="form.city"
+                            placeholder="Ciudad"
                             @blur="validate"
                         />
-                        <p
-                            v-if="errors.birthDate"
-                            class="mt-1 text-sm text-red-500"
-                        >
-                            {{ errors.birthDate }}
+
+                        <p v-if="errors.city" class="mt-1 text-sm text-red-500">
+                            {{ errors.city }}
                         </p>
                     </div>
 
-                    <!-- PHONE -->
+                    <!-- POSTAL CODE -->
                     <div>
                         <InputText
-                            v-model="form.phone"
-                            placeholder="+34 600000000"
-                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
-                            @blur="validate"
-                        />
-                        <p
-                            v-if="errors.phone"
-                            class="mt-1 text-sm text-red-500"
-                        >
-                            {{ errors.phone }}
-                        </p>
-                    </div>
-
-                    <!-- EMAIL -->
-                    <div>
-                        <InputText
-                            v-model="form.email"
-                            placeholder="Correo electrónico"
-                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
+                            class="w-full"
+                            v-model="form.postalCode"
+                            placeholder="Código postal"
                             @blur="validate"
                         />
 
                         <p
-                            v-if="errors.email"
+                            v-if="errors.postalCode"
                             class="mt-1 text-sm text-red-500"
                         >
-                            {{ errors.email }}
+                            {{ errors.postalCode }}
                         </p>
                     </div>
 
                     <!-- SHIPPING ADDRESS -->
                     <div>
                         <InputText
+                            class="w-full"
                             v-model="form.shippingAddress"
                             placeholder="Dirección de envío"
-                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
                             @blur="validate"
                         />
 
-                        <!-- EJEMPLO PERMANENTE -->
-                        <p class="text-texto-secundario mt-1 text-sm">
-                            Ejemplo: Calle Mallorca 401, 3º 2ª, Barcelona
-                        </p>
-
-                        <!-- ERROR -->
                         <p
                             v-if="errors.shippingAddress"
                             class="mt-1 text-sm text-red-500"
@@ -240,22 +266,42 @@ function submit() {
                         </p>
                     </div>
 
-                    <!-- BILLING COPY -->
+                    <!-- CHECKBOX -->
                     <label
                         class="text-texto-secundario flex items-center gap-2 text-sm"
                     >
-                        <input type="checkbox" v-model="form.billingAddress" />
+                        <input
+                            type="checkbox"
+                            v-model="form.useShippingAsBilling"
+                        />
 
-                        Usar misma dirección de envío
+                        Usar dirección de envío como facturación
                     </label>
+
+                    <!-- BILLING ADDRESS -->
+                    <div v-if="!form.useShippingAsBilling">
+                        <InputText
+                            class="w-full"
+                            v-model="form.billingAddress"
+                            placeholder="Dirección de facturación"
+                            @blur="validate"
+                        />
+
+                        <p
+                            v-if="errors.billingAddress"
+                            class="mt-1 text-sm text-red-500"
+                        >
+                            {{ errors.billingAddress }}
+                        </p>
+                    </div>
 
                     <!-- PASSWORD -->
                     <div>
                         <InputText
+                            class="w-full"
                             v-model="form.password"
                             type="password"
                             placeholder="Contraseña"
-                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
                             @blur="validate"
                         />
 
@@ -267,7 +313,7 @@ function submit() {
                         </p>
                     </div>
 
-                    <!-- METER -->
+                    <!-- PASSWORD METER -->
                     <meter
                         class="w-full"
                         min="0"
@@ -279,19 +325,20 @@ function submit() {
                                   ? 2
                                   : 3
                         "
-                    ></meter>
+                    />
 
                     <p class="text-texto-secundario text-sm">
-                        Seguridad: {{ passwordStrength }}
+                        Seguridad:
+                        {{ passwordStrength }}
                     </p>
 
                     <!-- CONFIRM PASSWORD -->
                     <div>
                         <InputText
+                            class="w-full"
                             v-model="form.confirmPassword"
                             type="password"
                             placeholder="Confirmar contraseña"
-                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
                             @blur="validate"
                         />
 
@@ -312,9 +359,10 @@ function submit() {
                     </button>
 
                     <div class="text-center text-sm">
-                        <span class="text-texto-secundario"
-                            >¿Ya tienes cuenta?</span
-                        >
+                        <span class="text-texto-secundario">
+                            ¿Ya tienes cuenta?
+                        </span>
+
                         <RouterLink
                             to="/login"
                             class="text-azul ml-2 font-semibold hover:underline"
