@@ -2,6 +2,7 @@
 import DataTable from "@volt/DataTable.vue";
 import Column from "primevue/column";
 import { Article } from "@/types";
+import Button from "@volt/Button.vue";
 defineProps<{ data: Article[] }>();
 
 const rowClass = (data: Article) => {
