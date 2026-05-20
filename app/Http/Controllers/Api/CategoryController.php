@@ -33,32 +33,34 @@ class CategoryController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'img' => 'nullable|image',
+            'image' => 'nullable|image',
         ]);
 
         $path = null;
 
-        if ($request->hasFile('img')) {
-            $path = $request->file('img')->store('categories', 'public');
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('categories', 'public');
         }
 
         $category = Category::create([
             'name' => $data['name'],
-            'img' => $path,
+            'image' => $path,
         ]);
 
         return response()->json($category, 201);
     }
 
     // DELETE /api/categories/{id}
-    public function destroy(Category $category)
+    public function destroy($id)
     {
-        if ($category->img) {
-            Storage::disk('public')->delete($category->img);
+        $category = Category::find($id);
+        if (!$category) {
+            return response()->json(['message' => 'Not found'], 404);
         }
 
-        $category->delete();
+        // Si guardas imágenes en el servidor, recuerda borrar el archivo físico aquí
 
-        return response()->json(['message' => 'Category deleted']);
+        $category->delete();
+        return response()->json(['message' => 'Categoría eliminada']);
     }
 }

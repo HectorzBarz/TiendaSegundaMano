@@ -7,6 +7,8 @@ import { useAuthStore } from "@/stores/auth";
 
 defineProps<{ data: User[] }>();
 
+const emit = defineEmits(["deleted"]);
+
 const auth = useAuthStore();
 
 const toggleAdmin = async (user: User) => {
@@ -20,6 +22,18 @@ const toggleAdmin = async (user: User) => {
         }
     } catch (e) {
         console.error(e);
+    }
+};
+
+const deleteUser = async (user: User) => {
+    if (confirm(`¿Estás seguro de eliminar a ${user.name}?`)) {
+        try {
+            await auth.deleteUser(user.id);
+            emit("deleted"); // Avisamos al componente padre para que haga fetch de nuevo
+        } catch (e) {
+            console.error(e);
+            alert("Error al eliminar el usuario");
+        }
     }
 };
 </script>
@@ -73,6 +87,7 @@ const toggleAdmin = async (user: User) => {
 
                     <Button
                         icon="pi pi-trash"
+                        @click="deleteUser(data)"
                         class="bg-rojo-claro hover:bg-rojo-fuerte! h-11 w-11 rounded-2xl border-0 text-white transition"
                     />
                 </div>

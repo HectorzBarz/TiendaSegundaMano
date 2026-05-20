@@ -3,7 +3,23 @@ import DataTable from "@volt/DataTable.vue";
 import Column from "primevue/column";
 import { Category } from "@/types";
 import Button from "@volt/Button.vue";
+import { api } from "@/stores/auth";
+
 defineProps<{ data: Category[] }>();
+
+const emit = defineEmits(["deleted"]);
+
+const deleteCategory = async (category: Category) => {
+    if (confirm(`¿Eliminar la categoría ${category.name}?`)) {
+        try {
+            await api.delete(`/categories/${category.id}`);
+            emit("deleted"); // Avisamos al padre para recargar
+        } catch (e) {
+            console.error(e);
+            alert("Error al eliminar la categoría");
+        }
+    }
+};
 </script>
 
 <template>
@@ -41,8 +57,10 @@ defineProps<{ data: Category[] }>();
                             class="bg-azul! h-11 w-11 rounded-2xl border-0 text-white!"
                         />
                     </RouterLink>
+
                     <Button
                         icon="pi pi-trash"
+                        @click="deleteCategory(data)"
                         class="bg-rojo-claro hover:bg-rojo-fuerte! h-11 w-11 rounded-2xl border-0 text-white"
                     />
                 </div>

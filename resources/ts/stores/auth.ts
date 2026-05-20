@@ -19,7 +19,7 @@ export interface User {
 }
 
 // Configura la URL base de tu API de Laravel
-const api = axios.create({
+export const api = axios.create({
     baseURL: "http://localhost:8000/api",
     headers: {
         Accept: "application/json",
@@ -123,6 +123,10 @@ export const useAuthStore = defineStore(
             return response.data;
         }
 
+        const deleteUser = async (id: number) => {
+            return await api.delete(`/admin/users/${id}`);
+        };
+
         return {
             user,
             token,
@@ -136,6 +140,7 @@ export const useAuthStore = defineStore(
             getUsers,
             makeAdmin,
             removeAdmin,
+            deleteUser,
         };
     },
     {

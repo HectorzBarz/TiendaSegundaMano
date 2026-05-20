@@ -343,6 +343,17 @@ const getData = () => {
     return Array.isArray(users.value) ? users.value : [];
 };
 
+const handleDelete = () => {
+    const active = selectedOption.value.value;
+
+    if (active === "users") {
+        fetchUsers();
+    } else if (active === "categories") {
+        fetchCategories();
+    }
+    // Si tuvieras artículos, añadirías otro else if aquí
+};
+
 onMounted(() => {
     fetchUsers();
     fetchCategories();
@@ -544,6 +555,7 @@ onMounted(() => {
                         <component
                             :is="selectedOption.component"
                             :data="getData()"
+                            @deleted="handleDelete"
                         />
                     </div>
                 </section>

@@ -129,4 +129,25 @@ class AdminUserController extends Controller
             'user' => $user
         ]);
     }
+
+    // app/Http/Controllers/Api/AdminUserController.php
+
+    public function destroy(Request $request, $id)
+    {
+        // Verificación de seguridad
+        if (!$request->user()->is_admin) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
+        $user = User::findOrFail($id);
+
+        // Evitar auto-eliminación
+        if ($request->user()->id === $user->id) {
+            return response()->json(['message' => 'No puedes eliminarte a ti mismo'], 422);
+        }
+
+        $user->delete();
+
+        return response()->json(['message' => 'Usuario eliminado correctamente']);
+    }
 }
