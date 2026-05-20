@@ -218,6 +218,22 @@ function submit() {
                         </p>
                     </div>
 
+                    <div>
+                        <InputText
+                            class="w-full"
+                            v-model="form.email"
+                            placeholder="Correo electrónico"
+                            @blur="validate()"
+                        />
+
+                        <p
+                            v-if="errors.email"
+                            class="mt-1 text-sm text-red-500"
+                        >
+                            {{ errors.email }}
+                        </p>
+                    </div>
+
                     <!-- CITY -->
                     <div>
                         <InputText
