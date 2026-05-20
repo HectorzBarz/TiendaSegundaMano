@@ -19,3 +19,11 @@ export type Category = {
     name: string;
     img?: string;
 };
+
+export type User = {
+    id: number;
+    name: string;
+    email: string;
+    is_admin: boolean;
+    phone?: string;
+};

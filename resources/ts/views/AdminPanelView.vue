@@ -13,6 +13,10 @@ import { useAuthStore } from "@/stores/auth";
 import { RouterLink, useRouter } from "vue-router";
 import { computed, ref } from "vue";
 import { Article } from "@/types";
+import SelectButton from "@volt/SelectButton.vue";
+import ArticlesDataTable from "@/components/ArticlesDataTable.vue";
+import CategoriesDataTable from "@/components/CategoriesDataTable.vue";
+import UsersDataTable from "@/components/UsersDataTable.vue";
 
 // Instancias del Store y Router
 const auth = useAuthStore();
@@ -271,6 +275,31 @@ const filteredArticles = computed(() => {
 const rowClass = (data: Article) => {
     return data.stock === 0 ? "bg-red-50/60 opacity-70 grayscale" : "";
 };
+
+const options = [
+    { name: "Artículos", value: "articles", component: ArticlesDataTable },
+    { name: "Categorías", value: "categories", component: CategoriesDataTable },
+    { name: "Usuarios", value: "users", component: UsersDataTable },
+];
+
+const selectedOption = ref(options[0]);
+
+const mockArticles = ref([{ id: 1, name: "Artículo 1", price: 10, stock: 5 }]);
+const mockCategories = ref([
+    { id: 1, name: "Electrónica" },
+    { id: 2, name: "Hogar" },
+]);
+const mockUsers = ref([
+    { id: 1, name: "Admin", email: "admin@test.com", is_admin: true },
+]);
+
+const getData = () => {
+    if (selectedOption.value.value === "articles")
+        return filteredArticles.value;
+    if (selectedOption.value.value === "categories")
+        return mockCategories.value;
+    return mockUsers.value;
+};
 </script>
 
 <template>
@@ -442,192 +471,35 @@ const rowClass = (data: Article) => {
 
         <!-- CONTENT -->
         <section class="flex flex-col gap-6 lg:flex-row">
-            <!-- SIDEBAR -->
-            <div
-                class="bg-card border-borde rounded-3xl border p-6 shadow-sm lg:w-[320px]"
-            >
-                <div class="mb-6 flex items-center gap-3">
-                    <div
-                        class="bg-rojo-claro/10 flex h-11 w-11 items-center justify-center rounded-2xl"
-                    >
-                        <i class="pi pi-sliders-h text-rojo-claro"></i>
-                    </div>
-
-                    <div>
-                        <h2 class="text-rojo-fuerte text-xl font-semibold">
-                            Filtros
-                        </h2>
-
-                        <p class="text-texto-secundario text-sm">
-                            Busca artículos fácilmente
-                        </p>
-                    </div>
+            <div class="bg-fondo min-h-screen p-6">
+                <div class="mb-6 flex justify-center lg:justify-start">
+                    <SelectButton
+                        v-model="selectedOption"
+                        :options="options"
+                        optionLabel="name"
+                        class="border-borde inline-flex w-full rounded-2xl border bg-white p-1 shadow-sm sm:w-auto"
+                    />
                 </div>
 
-                <FilterBase :suggestions="articles" />
-            </div>
+                <section class="flex flex-col items-start gap-6 lg:flex-row">
+                    <div
+                        class="bg-card border-borde shrink-0 rounded-3xl border p-6 shadow-sm lg:w-[320px]"
+                    >
+                        <h2 class="text-rojo-fuerte mb-4 text-xl font-semibold">
+                            Filtros
+                        </h2>
+                        <FilterBase :suggestions="articles" />
+                    </div>
 
-            <!-- TABLE -->
-            <div
-                class="bg-card border-borde overflow-hidden rounded-3xl border shadow-sm"
-            >
-                <DataTable
-                    :value="filteredArticles"
-                    :rowClass="rowClass"
-                    paginator
-                    :rows="10"
-                    stripedRows
-                    responsiveLayout="scroll"
-                    tableStyle="min-width: 1000px"
-                >
-                    <!-- IMAGE -->
-                    <Column header="">
-                        <template #body="{ data }">
-                            <img
-                                :src="data.img"
-                                :alt="data.name"
-                                class="border-borde h-16 w-16 rounded-2xl border object-cover"
-                            />
-                        </template>
-                    </Column>
-
-                    <!-- ID -->
-                    <Column field="id" header="ID" sortable>
-                        <template #body="{ data }">
-                            <span
-                                class="bg-rojo-fuerte/10 text-rojo-fuerte rounded-xl px-3 py-1 text-sm font-semibold"
-                            >
-                                #{{ data.id }}
-                            </span>
-                        </template>
-                    </Column>
-
-                    <!-- PRODUCT -->
-                    <Column field="name" header="Producto">
-                        <template #body="{ data }">
-                            <div>
-                                <p
-                                    class="font-semibold"
-                                    :class="
-                                        data.stock === 0
-                                            ? 'text-red-700 line-through'
-                                            : 'text-texto'
-                                    "
-                                >
-                                    {{ data.name }}
-                                </p>
-
-                                <p class="text-texto-secundario mt-1 text-sm">
-                                    Categoría {{ data.categoryId }}
-                                </p>
-                            </div>
-                        </template>
-                    </Column>
-
-                    <!-- PRICE -->
-                    <Column field="price" header="Precio">
-                        <template #body="{ data }">
-                            <div class="flex items-center gap-2">
-                                <span class="text-azul text-lg font-bold">
-                                    {{ data.price }}€
-                                </span>
-
-                                <span
-                                    v-if="data.oldPrice"
-                                    class="text-texto-secundario text-sm line-through"
-                                >
-                                    {{ data.oldPrice }}€
-                                </span>
-                            </div>
-                        </template>
-                    </Column>
-
-                    <!-- STOCK -->
-                    <Column field="stock" header="Stock" sortable>
-                        <template #body="{ data }">
-                            <!-- SIN STOCK -->
-                            <span
-                                v-if="data.stock === 0"
-                                class="flex items-center gap-2 rounded-full bg-red-100 px-4 py-2 text-xs font-bold text-red-700"
-                            >
-                                <i class="pi pi-times-circle"></i>
-                                Sin stock
-                            </span>
-
-                            <!-- STOCK BAJO -->
-                            <span
-                                v-else-if="data.stock < 10"
-                                class="rounded-full bg-amber-100 px-4 py-2 text-xs font-semibold text-amber-700"
-                            >
-                                {{ data.stock }} unidades
-                            </span>
-
-                            <!-- STOCK OK -->
-                            <span
-                                v-else
-                                class="rounded-full bg-blue-100 px-4 py-2 text-xs font-semibold text-blue-700"
-                            >
-                                {{ data.stock }} unidades
-                            </span>
-                        </template>
-                    </Column>
-
-                    <!-- SELLED -->
-                    <Column field="selled" header="Vendidos">
-                        <template #body="{ data }">
-                            <span
-                                :class="
-                                    data.stock < 10
-                                        ? 'bg-amarillo/40 text-naranja'
-                                        : 'bg-azul/10 text-azul'
-                                "
-                                class="rounded-full px-4 py-2 text-xs font-semibold"
-                            >
-                                {{ data.sell_count }} unidades
-                            </span>
-                        </template>
-                    </Column>
-
-                    <!-- STATUS -->
-                    <Column field="onSale" header="Estado">
-                        <template #body="{ data }">
-                            <span
-                                :class="
-                                    data.onSale
-                                        ? 'bg-naranja/15 text-rojo-claro'
-                                        : 'bg-slate-100 text-slate-500'
-                                "
-                                class="rounded-full px-4 py-2 text-xs font-semibold"
-                            >
-                                {{ data.onSale ? "En oferta" : "Normal" }}
-                            </span>
-                        </template>
-                    </Column>
-
-                    <!-- ACTIONS -->
-                    <Column header="Acciones">
-                        <template #body="{ data }">
-                            <div class="flex gap-2">
-                                <!-- EDIT -->
-                                <RouterLink
-                                    :to="'/admin/articles/' + data.id + '/edit'"
-                                >
-                                    <Button
-                                        icon="pi pi-pencil"
-                                        :disabled="data.stock === 0"
-                                        class="bg-azul! hover:bg-azul/90! h-11 w-11 rounded-2xl border-0 text-white! transition"
-                                    />
-                                </RouterLink>
-
-                                <!-- DELETE -->
-                                <Button
-                                    icon="pi pi-trash"
-                                    class="bg-rojo-claro hover:bg-rojo-fuerte! h-11 w-11 rounded-2xl border-0 text-white transition"
-                                />
-                            </div>
-                        </template>
-                    </Column>
-                </DataTable>
+                    <div
+                        class="bg-card border-borde w-full grow overflow-hidden rounded-3xl border shadow-sm"
+                    >
+                        <component
+                            :is="selectedOption.component"
+                            :data="getData()"
+                        />
+                    </div>
+                </section>
             </div>
         </section>
     </div>
