@@ -32,45 +32,51 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-export const useAuthStore = defineStore("auth", () => {
-    // 2. Le indicamos a TypeScript que 'user' puede ser de tipo 'User' o 'null'
-    const user = ref<User | null>(null);
-    const token = ref(localStorage.getItem("auth_token") || null);
+export const useAuthStore = defineStore(
+    "auth",
+    () => {
+        // 2. Le indicamos a TypeScript que 'user' puede ser de tipo 'User' o 'null'
+        const user = ref<User | null>(null);
+        const token = ref(localStorage.getItem("auth_token") || null);
 
-    const isAuthenticated = computed(() => !!token.value);
+        const isAuthenticated = computed(() => !!token.value);
 
-    async function login(credentials: any) {
-        const response = await api.post("/login", credentials);
-        setSession(response.data.token, response.data.user);
-    }
-
-    async function register(data: any) {
-        const response = await api.post("/register", data);
-        setSession(response.data.token, response.data.user);
-    }
-
-    async function logout() {
-        try {
-            await api.post("/logout");
-        } catch (e) {
-            console.error(e);
-        } finally {
-            clearSession();
+        async function login(credentials: any) {
+            const response = await api.post("/login", credentials);
+            setSession(response.data.token, response.data.user);
         }
-    }
 
-    // 3. Tipamos 'userData' para que coincida con nuestra interfaz
-    function setSession(newToken: string, userData: User) {
-        token.value = newToken;
-        user.value = userData;
-        localStorage.setItem("auth_token", newToken);
-    }
+        async function register(data: any) {
+            const response = await api.post("/register", data);
+            setSession(response.data.token, response.data.user);
+        }
 
-    function clearSession() {
-        token.value = null;
-        user.value = null;
-        localStorage.removeItem("auth_token");
-    }
+        async function logout() {
+            try {
+                await api.post("/logout");
+            } catch (e) {
+                console.error(e);
+            } finally {
+                clearSession();
+            }
+        }
 
-    return { user, token, isAuthenticated, login, register, logout };
-});
+        // 3. Tipamos 'userData' para que coincida con nuestra interfaz
+        function setSession(newToken: string, userData: User) {
+            token.value = newToken;
+            user.value = userData;
+            localStorage.setItem("auth_token", newToken);
+        }
+
+        function clearSession() {
+            token.value = null;
+            user.value = null;
+            localStorage.removeItem("auth_token");
+        }
+
+        return { user, token, isAuthenticated, login, register, logout };
+    },
+    {
+        persist: true,
+    },
+);
