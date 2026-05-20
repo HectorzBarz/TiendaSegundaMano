@@ -5,11 +5,16 @@ import Button from "@volt/Button.vue";
 import InputText from "@volt/InputText.vue";
 import Password from "@volt/Password.vue";
 import { useAuthStore } from "@/stores/auth";
+import { useRoute } from "vue-router";
 
 // Instancias
 const auth = useAuthStore();
+const route = useRoute();
 const { show } = useAppToast();
 const fileInput = ref<HTMLInputElement | null>(null);
+
+const editingUserId = computed(() => route.params.id);
+const isAdminEditing = computed(() => !!editingUserId.value);
 
 // Estado del Formulario
 const userForm = ref({
@@ -26,19 +31,40 @@ const userForm = ref({
 });
 
 // Precarga de datos al montar el componente
-onMounted(() => {
-    if (auth.user) {
-        userForm.value.name = auth.user.name || "";
-        userForm.value.email = auth.user.email || "";
-        userForm.value.phone = auth.user.phone || "";
-        userForm.value.shippingAddress = auth.user.shipping_address || "";
-        userForm.value.billingAddress = auth.user.billing_address || "";
-        userForm.value.birthDate = auth.user.birth_date || ""; // Formato YYYY-MM-DD
+onMounted(async () => {
+    try {
+        let userData;
+
+        // ADMIN EDITANDO
+        if (isAdminEditing.value) {
+            userData = await auth.getUserById(Number(editingUserId.value));
+        } else {
+            // PERFIL NORMAL
+            userData = auth.user;
+        }
+
+        if (!userData) return;
+
+        userForm.value.name = userData.name || "";
+        userForm.value.email = userData.email || "";
+        userForm.value.phone = userData.phone || "";
+        userForm.value.shippingAddress = userData.shipping_address || "";
+
+        userForm.value.billingAddress = userData.billing_address || "";
+
+        userForm.value.birthDate = userData.birth_date || "";
+
+        preview.value =
+            userData.profile_image ||
+            "/storage/profile-images/default/default_image.jpg";
+    } catch (e) {
+        console.error(e);
     }
 });
 
 const preview = ref(
-    auth.user?.profile_image || "/storage/app/public/img/hampter.jpg",
+    auth.user?.profile_image ||
+        "/storage/profile-images/default/default_image.jpg",
 );
 const errors = ref<Record<string, string>>({});
 
@@ -142,7 +168,11 @@ const saveChanges = async () => {
     }
 
     try {
-        await auth.updateProfile(formData);
+        if (isAdminEditing.value) {
+            await auth.updateUserByAdmin(Number(editingUserId.value), formData);
+        } else {
+            await auth.updateProfile(formData);
+        }
         show({
             message: "¡Perfil actualizado!",
             severity: "success",

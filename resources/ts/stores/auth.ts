@@ -91,6 +91,21 @@ export const useAuthStore = defineStore(
             return response.data;
         }
 
+        async function getUserById(id: number) {
+            const response = await api.get(`/admin/users/${id}`);
+            return response.data;
+        }
+
+        async function updateUserByAdmin(id: number, formData: FormData) {
+            const response = await api.post(`/admin/users/${id}`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            return response.data;
+        }
+
         return {
             user,
             token,
@@ -99,6 +114,8 @@ export const useAuthStore = defineStore(
             register,
             logout,
             updateProfile,
+            getUserById,
+            updateUserByAdmin,
         };
     },
     {

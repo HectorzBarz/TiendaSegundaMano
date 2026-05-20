@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdminUserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProfileController;
@@ -24,4 +25,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Usamos POST en lugar de PUT/PATCH porque la actualización incluye archivos (imágenes)
     // y PHP maneja mejor los form-data multipart con peticiones POST.
     Route::post('/user/profile', [ProfileController::class, 'update']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/admin/users/{id}', [AdminUserController::class, 'show']);
+    Route::post('/admin/users/{id}', [AdminUserController::class, 'update']);
+
 });
