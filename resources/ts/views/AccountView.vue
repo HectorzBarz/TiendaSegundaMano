@@ -1,9 +1,18 @@
 <script setup lang="ts">
 import ItemCard from "@/components/ItemCard.vue";
+import { useAuthStore } from "@/stores/auth";
 import { ref } from "vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 
 const showAdmin = ref(true);
+
+// Instancias añadidas para el Logout
+const auth = useAuthStore();
+const router = useRouter();
+
+if (!auth.isAuthenticated) {
+    router.push("/login");
+}
 </script>
 
 <template>
