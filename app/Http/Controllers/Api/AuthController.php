@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -14,17 +15,23 @@ class AuthController extends Controller
 {
     public function register(RegisterRequest $request)
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'city' => $request->city,
-            'postal_code' => $request->postal_code,
-            'shipping_address' => $request->shipping_address,
-            'billing_address' => $request->billing_address,
-        ]);
+        // Extraemos los datos ya validados por el Request
+        $validatedData = $request->validated();
 
-        // La imagen por defecto y el is_admin=false se asignan automáticamente por la BD
+        // Convertimos la fecha recogida "DD/MM/YYYY" a "YYYY-MM-DD"
+        $formattedBirthDate = Carbon::createFromFormat('d/m/Y', $validatedData['birth_date'])->format('Y-m-d');
+
+        $user = User::create([
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'phone' => $validatedData['phone'],       // Forzado explícito
+            'birth_date' => $formattedBirthDate,           // Forzado explícito
+            'password' => Hash::make($validatedData['password']),
+            'city' => $validatedData['city'],
+            'postal_code' => $validatedData['postal_code'],
+            'shipping_address' => $validatedData['shipping_address'],
+            'billing_address' => $validatedData['billing_address'] ?? $validatedData['shipping_address'],
+        ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
