@@ -15,40 +15,35 @@ defineProps<{ data: Category[] }>();
         responsiveLayout="scroll"
         tableStyle="min-width: 1000px"
     >
-        <!-- IMAGE -->
-        <Column field="img" header="Imagen">
+        <!-- CORRECCIÓN: Campo de imagen -->
+        <Column header="Imagen">
             <template #body="{ data }">
+                <!-- Verificamos que data.image exista para evitar errores de render -->
                 <img
-                    :src="data.img"
+                    v-if="data.image"
+                    :src="data.image"
                     :alt="data.name"
                     class="border-borde h-16 w-16 rounded-2xl border object-cover"
                 />
             </template>
         </Column>
 
-        <!-- SELLED -->
-        <Column field="id" header="ID"> </Column>
+        <Column field="id" header="ID"></Column>
+        <Column field="name" header="Nombre"></Column>
 
-        <!-- STATUS -->
-        <Column field="name" header="Nombre"> </Column>
-
-        <!-- ACTIONS -->
         <Column field="actions" header="Acciones">
             <template #body="{ data }">
                 <div class="flex gap-2">
-                    <!-- EDIT -->
-                    <RouterLink :to="'/admin/articles/' + data.id + '/edit'">
+                    <!-- CORRECCIÓN: Asegúrate de que la ruta sea correcta -->
+                    <RouterLink :to="`/admin/categories/${data.id}/edit`">
                         <Button
                             icon="pi pi-pencil"
-                            :disabled="data.stock === 0"
-                            class="bg-azul! hover:bg-azul/90! h-11 w-11 rounded-2xl border-0 text-white! transition"
+                            class="bg-azul! h-11 w-11 rounded-2xl border-0 text-white!"
                         />
                     </RouterLink>
-
-                    <!-- DELETE -->
                     <Button
                         icon="pi pi-trash"
-                        class="bg-rojo-claro hover:bg-rojo-fuerte! h-11 w-11 rounded-2xl border-0 text-white transition"
+                        class="bg-rojo-claro hover:bg-rojo-fuerte! h-11 w-11 rounded-2xl border-0 text-white"
                     />
                 </div>
             </template>

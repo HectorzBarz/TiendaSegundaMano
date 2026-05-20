@@ -12,14 +12,16 @@ import { useAuthStore } from "@/stores/auth";
 
 import { RouterLink, useRouter } from "vue-router";
 import { computed, onMounted, ref } from "vue";
-import { Article } from "@/types";
+import { Article, Category } from "@/types";
 import SelectButton from "@volt/SelectButton.vue";
 import ArticlesDataTable from "@/components/ArticlesDataTable.vue";
 import CategoriesDataTable from "@/components/CategoriesDataTable.vue";
 import UsersDataTable from "@/components/UsersDataTable.vue";
 import type { User } from "@/stores/auth";
+import axios from "axios";
 
 // Instancias del Store y Router
+const store = useArticleFiltersStore();
 const auth = useAuthStore();
 const router = useRouter();
 
@@ -28,9 +30,15 @@ if (!auth.user?.is_admin) {
     router.push("account");
 }
 
-const isChartCollapsed = ref(true);
+const options = [
+    { name: "Artículos", value: "articles", component: ArticlesDataTable },
+    { name: "Categorías", value: "categories", component: CategoriesDataTable },
+    { name: "Usuarios", value: "users", component: UsersDataTable },
+];
 
-const store = useArticleFiltersStore();
+const selectedOption = ref(options[0]);
+
+const isChartCollapsed = ref(true);
 
 const articles = <Article[]>[
     {
@@ -252,6 +260,8 @@ const articles = <Article[]>[
         sell_count: 4,
     },
 ];
+const categories = ref<Category[]>([]);
+const users = ref<User[]>([]);
 
 const filteredArticles = computed(() => {
     return articles.filter((article) => {
@@ -273,26 +283,41 @@ const filteredArticles = computed(() => {
     });
 });
 
-const rowClass = (data: Article) => {
-    return data.stock === 0 ? "bg-red-50/60 opacity-70 grayscale" : "";
+const mockArticles = ref([{ id: 1, name: "Artículo 1", price: 10, stock: 5 }]);
+
+// CATEGORIES
+const categoriesLoading = ref(false);
+
+const fetchCategories = async () => {
+    try {
+        categoriesLoading.value = true;
+        const response = await axios.get("api/categories");
+
+        console.log("Respuesta completa de la API:", response.data); // <--- ESTO ES CLAVE
+
+        // Prueba esta lógica más flexible:
+        // Si response.data es un array, lo usa.
+        // Si response.data.data es un array, usa eso.
+        if (Array.isArray(response.data)) {
+            categories.value = response.data;
+        } else if (response.data && Array.isArray(response.data.data)) {
+            categories.value = response.data.data;
+        } else {
+            console.warn(
+                "La estructura de datos no es un array:",
+                response.data,
+            );
+            categories.value = [];
+        }
+    } catch (e) {
+        console.error("Error al cargar categorías", e);
+        categories.value = [];
+    } finally {
+        categoriesLoading.value = false;
+    }
 };
 
-const options = [
-    { name: "Artículos", value: "articles", component: ArticlesDataTable },
-    { name: "Categorías", value: "categories", component: CategoriesDataTable },
-    { name: "Usuarios", value: "users", component: UsersDataTable },
-];
-
-const selectedOption = ref(options[0]);
-
-const mockArticles = ref([{ id: 1, name: "Artículo 1", price: 10, stock: 5 }]);
-const mockCategories = ref([
-    { id: 1, name: "Electrónica" },
-    { id: 2, name: "Hogar" },
-]);
-
 // USERS
-const users = ref<User[]>([]);
 const usersLoading = ref(false);
 
 const fetchUsers = async () => {
@@ -308,15 +333,19 @@ const fetchUsers = async () => {
 };
 
 const getData = () => {
+    // Si no hay datos, retornamos un array vacío explícitamente
     if (selectedOption.value.value === "articles")
-        return filteredArticles.value;
+        return filteredArticles.value || [];
+
     if (selectedOption.value.value === "categories")
-        return mockCategories.value;
-    return users.value;
+        return Array.isArray(categories.value) ? categories.value : [];
+
+    return Array.isArray(users.value) ? users.value : [];
 };
 
 onMounted(() => {
     fetchUsers();
+    fetchCategories();
 });
 </script>
 
