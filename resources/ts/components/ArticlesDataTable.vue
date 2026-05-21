@@ -3,13 +3,28 @@ import DataTable from "@volt/DataTable.vue";
 import Column from "primevue/column";
 import { Article } from "@/types";
 import Button from "@volt/Button.vue";
+import { api } from "@/stores/auth";
+
 defineProps<{ data: Article[] }>();
+
+const emit = defineEmits(["deleted"]);
+
+const deleteArticle = async (article: Article) => {
+    if (confirm(`¿Eliminar el artículo ${article.name}?`)) {
+        try {
+            await api.delete(`/articles/${article.id}`);
+            emit("deleted");
+        } catch (e) {
+            console.error(e);
+            alert("Error al eliminar el artículo");
+        }
+    }
+};
 
 const rowClass = (data: Article) => {
     return data.stock === 0 ? "bg-red-50/60 opacity-70 grayscale" : "";
 };
 </script>
-
 <template>
     <DataTable
         :value="data"
@@ -160,6 +175,7 @@ const rowClass = (data: Article) => {
                     <!-- DELETE -->
                     <Button
                         icon="pi pi-trash"
+                        @click="deleteArticle(data)"
                         class="bg-rojo-claro hover:bg-rojo-fuerte! h-11 w-11 rounded-2xl border-0 text-white transition"
                     />
                 </div>

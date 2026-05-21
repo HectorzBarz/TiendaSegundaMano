@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import FilterBase from "@/components/FilterBase.vue";
 import StockBarChart from "@/components/StockBarChart.vue";
-import hampter from "/storage/app/public/img/hampter.jpg";
 
 import DataTable from "@volt/DataTable.vue";
 import Column from "primevue/column";
@@ -12,7 +11,7 @@ import { useAuthStore } from "@/stores/auth";
 
 import { RouterLink, useRouter } from "vue-router";
 import { computed, onMounted, ref } from "vue";
-import { Article, Category } from "@/types";
+import type { Article, RawArticle, ApiResponse, Category } from "@/types";
 import SelectButton from "@volt/SelectButton.vue";
 import ArticlesDataTable from "@/components/ArticlesDataTable.vue";
 import CategoriesDataTable from "@/components/CategoriesDataTable.vue";
@@ -40,231 +39,14 @@ const selectedOption = ref(options[0]);
 
 const isChartCollapsed = ref(true);
 
-const articles = <Article[]>[
-    {
-        id: 1,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 1",
-        onSale: true,
-        categoryId: 1,
-        stock: 0,
-        sell_count: 10,
-    },
-    {
-        id: 2,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 2 ",
-        onSale: false,
-        categoryId: 2,
-        stock: 2,
-        sell_count: 5,
-    },
-    {
-        id: 3,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 3",
-        onSale: false,
-        categoryId: 1,
-        stock: 1,
-        sell_count: 6,
-    },
-    {
-        id: 4,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 4",
-        onSale: true,
-        categoryId: 3,
-        stock: 7,
-        sell_count: 2,
-    },
-    {
-        id: 5,
-        img: hampter,
-        price: 10,
-        name: "Artículo 5",
-        onSale: false,
-        categoryId: 1,
-        stock: 1,
-        sell_count: 1,
-    },
-    {
-        id: 6,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 6",
-        onSale: true,
-        categoryId: 4,
-        stock: 8,
-        sell_count: 9,
-    },
-    {
-        id: 7,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 7",
-        onSale: false,
-        categoryId: 6,
-        stock: 2,
-        sell_count: 7,
-    },
-    {
-        id: 8,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 8",
-        onSale: false,
-        categoryId: 5,
-        stock: 3,
-        sell_count: 5,
-    },
-    {
-        id: 9,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 9",
-        onSale: false,
-        categoryId: 6,
-        stock: 1,
-        sell_count: 10,
-    },
-    {
-        id: 10,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 10",
-        onSale: false,
-        categoryId: 2,
-        stock: 11,
-        sell_count: 11,
-    },
-    {
-        id: 1,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 11",
-        onSale: true,
-        categoryId: 1,
-        stock: 10,
-        sell_count: 15,
-    },
-    {
-        id: 2,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 12 ",
-        onSale: false,
-        categoryId: 2,
-        stock: 2,
-        sell_count: 1,
-    },
-    {
-        id: 3,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 13",
-        onSale: false,
-        categoryId: 1,
-        stock: 1,
-        sell_count: 6,
-    },
-    {
-        id: 4,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 14",
-        onSale: true,
-        categoryId: 3,
-        stock: 7,
-        sell_count: 6,
-    },
-    {
-        id: 5,
-        img: hampter,
-        price: 10,
-        name: "Artículo 15",
-        onSale: false,
-        categoryId: 1,
-        stock: 1,
-        sell_count: 7,
-    },
-    {
-        id: 6,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 16",
-        onSale: true,
-        categoryId: 4,
-        stock: 8,
-        sell_count: 1,
-    },
-    {
-        id: 7,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 17",
-        onSale: false,
-        categoryId: 6,
-        stock: 2,
-        sell_count: 1,
-    },
-    {
-        id: 8,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 18",
-        onSale: false,
-        categoryId: 5,
-        stock: 3,
-        sell_count: 8,
-    },
-    {
-        id: 9,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 19",
-        onSale: false,
-        categoryId: 6,
-        stock: 1,
-        sell_count: 2,
-    },
-    {
-        id: 10,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 20",
-        onSale: false,
-        categoryId: 2,
-        stock: 11,
-        sell_count: 4,
-    },
-];
+// Estado reactivo para artículos, ahora iniciamos con un array vacío
+const articles = ref<Article[]>([]);
 const categories = ref<Category[]>([]);
 const users = ref<User[]>([]);
 
+// Propiedad computada para filtrar artículos
 const filteredArticles = computed(() => {
-    return articles.filter((article) => {
+    return articles.value.filter((article) => {
         const matchesCategory =
             !store.categoryId || article.categoryId === store.categoryId;
 
@@ -283,7 +65,71 @@ const filteredArticles = computed(() => {
     });
 });
 
-const mockArticles = ref([{ id: 1, name: "Artículo 1", price: 10, stock: 5 }]);
+// ARTICLES
+const articlesLoading = ref(false);
+
+const fetchArticles = async (): Promise<void> => {
+    try {
+        articlesLoading.value = true;
+
+        // Tipamos la respuesta: puede ser el array directo o el objeto envuelto
+        const response = await axios.get<
+            RawArticle[] | ApiResponse<RawArticle[]>
+        >("api/articles");
+
+        // 1. Extraer datos brutos con seguridad de tipos
+        let rawData: RawArticle[] = [];
+        if (Array.isArray(response.data)) {
+            rawData = response.data;
+        } else if (response.data && Array.isArray(response.data.data)) {
+            rawData = response.data.data;
+        }
+
+        // 2. Configurar URL base
+        const baseUrl = axios.defaults.baseURL
+            ? axios.defaults.baseURL.replace(/\/api\/?$/, "")
+            : "http://localhost:8000";
+
+        // 3. Procesar y mapear a tipo Article (UI)
+        articles.value = rawData.map((art: RawArticle): Article => {
+            let firstImagePath = "";
+
+            // Lógica de extracción de imagen tipada
+            if (Array.isArray(art.images) && art.images.length > 0) {
+                firstImagePath = art.images[0];
+            } else if (typeof art.images === "string") {
+                try {
+                    const parsed = JSON.parse(art.images) as string[];
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        firstImagePath = parsed[0];
+                    }
+                } catch {
+                    firstImagePath = art.images;
+                }
+            }
+
+            const imgUrl = firstImagePath
+                ? firstImagePath.startsWith("http")
+                    ? firstImagePath
+                    : `${baseUrl}/storage/${firstImagePath}`
+                : "https://placehold.co/600x400?text=Sin+Imagen";
+
+            // Retornamos el objeto cumpliendo la interfaz Article
+            return {
+                ...art,
+                // Mapeo de snake_case a camelCase si el backend no lo hace
+                onSale: Boolean(art.on_sale),
+                oldPrice: art.old_price,
+                img: imgUrl,
+            };
+        });
+    } catch (e) {
+        console.error("Error al cargar artículos", e);
+        articles.value = [];
+    } finally {
+        articlesLoading.value = false;
+    }
+};
 
 // CATEGORIES
 const categoriesLoading = ref(false);
@@ -293,18 +139,13 @@ const fetchCategories = async () => {
         categoriesLoading.value = true;
         const response = await axios.get("api/categories");
 
-        console.log("Respuesta completa de la API:", response.data); // <--- ESTO ES CLAVE
-
-        // Prueba esta lógica más flexible:
-        // Si response.data es un array, lo usa.
-        // Si response.data.data es un array, usa eso.
         if (Array.isArray(response.data)) {
             categories.value = response.data;
         } else if (response.data && Array.isArray(response.data.data)) {
             categories.value = response.data.data;
         } else {
             console.warn(
-                "La estructura de datos no es un array:",
+                "La structure de datos no es un array:",
                 response.data,
             );
             categories.value = [];
@@ -333,7 +174,6 @@ const fetchUsers = async () => {
 };
 
 const getData = () => {
-    // Si no hay datos, retornamos un array vacío explícitamente
     if (selectedOption.value.value === "articles")
         return filteredArticles.value || [];
 
@@ -350,11 +190,14 @@ const handleDelete = () => {
         fetchUsers();
     } else if (active === "categories") {
         fetchCategories();
+    } else if (active === "articles") {
+        fetchArticles(); // Recargar los artículos al borrar uno
     }
-    // Si tuvieras artículos, añadirías otro else if aquí
 };
 
+// Cargar todos los datos al montar la vista
 onMounted(() => {
+    fetchArticles();
     fetchUsers();
     fetchCategories();
 });
@@ -395,7 +238,9 @@ onMounted(() => {
 
                 <Button
                     icon="pi pi-refresh"
+                    @click="handleDelete"
                     class="border-borde! text-rojo-fuerte! hover:bg-amarillo/20! w-full border bg-white px-4 py-3 transition sm:w-auto"
+                    title="Actualizar datos"
                 />
             </div>
         </div>
@@ -411,7 +256,12 @@ onMounted(() => {
                         </p>
 
                         <h2 class="text-rojo-fuerte mt-2 text-4xl font-bold">
-                            {{ filteredArticles.length }}
+                            <!-- Si está cargando, mostramos un indicador de carga -->
+                            <span
+                                v-if="articlesLoading"
+                                class="pi pi-spinner pi-spin text-2xl"
+                            ></span>
+                            <span v-else>{{ filteredArticles.length }}</span>
                         </h2>
                     </div>
 
@@ -432,9 +282,17 @@ onMounted(() => {
                         </p>
 
                         <h2 class="text-rojo-claro mt-2 text-4xl font-bold">
-                            {{
-                                filteredArticles.filter((a) => a.onSale).length
-                            }}
+                            <span
+                                v-if="articlesLoading"
+                                class="pi pi-spinner pi-spin text-2xl"
+                            ></span>
+                            <span v-else>
+                                {{
+                                    filteredArticles.filter(
+                                        (a) => a.onSale || a.onSale,
+                                    ).length
+                                }}
+                            </span>
                         </h2>
                     </div>
 
@@ -455,11 +313,17 @@ onMounted(() => {
                         </p>
 
                         <h2 class="text-naranja mt-2 text-4xl font-bold">
-                            {{
-                                filteredArticles.filter(
-                                    (a) => (a.stock ?? 0) < 10,
-                                ).length
-                            }}
+                            <span
+                                v-if="articlesLoading"
+                                class="pi pi-spinner pi-spin text-2xl"
+                            ></span>
+                            <span v-else>
+                                {{
+                                    filteredArticles.filter(
+                                        (a) => (a.stock ?? 0) < 10,
+                                    ).length
+                                }}
+                            </span>
                         </h2>
                     </div>
 
@@ -522,14 +386,24 @@ onMounted(() => {
                 leave-to-class="max-h-0 opacity-0"
             >
                 <div v-show="!isChartCollapsed" class="px-6 pb-6">
-                    <StockBarChart :articles="filteredArticles" />
+                    <!-- Evitamos pasar arrays vacios mientas carga para prevenir fallos en el Canvas del grafico -->
+                    <StockBarChart
+                        v-if="!articlesLoading && filteredArticles.length > 0"
+                        :articles="filteredArticles"
+                    />
+                    <div
+                        v-else-if="articlesLoading"
+                        class="flex justify-center py-10"
+                    >
+                        <i class="pi pi-spinner pi-spin text-azul text-4xl"></i>
+                    </div>
                 </div>
             </transition>
         </section>
 
         <!-- CONTENT -->
         <section class="flex flex-col gap-6 lg:flex-row">
-            <div class="bg-fondo min-h-screen p-6">
+            <div class="bg-fondo min-w-full pb-6">
                 <div class="mb-6 flex justify-center lg:justify-start">
                     <SelectButton
                         v-model="selectedOption"
@@ -540,12 +414,15 @@ onMounted(() => {
                 </div>
 
                 <section class="flex flex-col items-start gap-6 lg:flex-row">
+                    <!-- FILTROS SÓLO SI ESTAMOS EN ARTÍCULOS -->
                     <div
+                        v-show="selectedOption.value === 'articles'"
                         class="bg-card border-borde shrink-0 rounded-3xl border p-6 shadow-sm lg:w-[320px]"
                     >
                         <h2 class="text-rojo-fuerte mb-4 text-xl font-semibold">
                             Filtros
                         </h2>
+                        <!-- Se pasa el valor reactivo extraído para las sugerencias -->
                         <FilterBase :suggestions="articles" />
                     </div>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
@@ -11,7 +11,7 @@ import Select from "@volt/Select.vue";
 import Checkbox from "@volt/Checkbox.vue";
 
 import { api, useAuthStore } from "@/stores/auth";
-import { Article } from "@/types";
+import { Article, Category } from "@/types";
 
 // Instancias del Store y Router
 const auth = useAuthStore();
@@ -22,13 +22,25 @@ if (!auth.user?.is_admin) {
     router.push({ name: "account" }); // Ajusta según el esquema de tus rutas
 }
 
-const categories = [
-    { label: "Accesorios", value: 1 },
-    { label: "Tecnología", value: 2 },
-    { label: "Hogar", value: 3 },
-    { label: "Gaming", value: 4 },
-    { label: "Ropa", value: 5 },
-];
+const categories = ref<Category[]>([]);
+
+const loadCategories = async () => {
+    try {
+        const response = await api.get<Category[]>("/categories");
+
+        categories.value = response.data.map((category) => ({
+            label: category.name,
+            value: category.id,
+        }));
+
+        // Seleccionar la primera categoría automáticamente
+        if (categories.value.length > 0) {
+            article.value.categoryId = categories.value[0].value;
+        }
+    } catch (error) {
+        console.error("Error cargando categorías:", error);
+    }
+};
 
 const states = [
     { label: "Nuevo", value: 1 },
@@ -128,6 +140,10 @@ const saveArticle = async () => {
         isLoading.value = false;
     }
 };
+
+onMounted(() => {
+    loadCategories();
+});
 </script>
 
 <template>
