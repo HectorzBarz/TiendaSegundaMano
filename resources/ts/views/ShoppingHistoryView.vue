@@ -1,7 +1,17 @@
 <script setup lang="ts">
+import { useAuthStore } from "@/stores/auth";
 import hampter from "/storage/app/public/img/hampter.jpg";
 import DataTable from "@volt/DataTable.vue";
 import Column from "primevue/column";
+import { useRouter } from "vue-router";
+
+const auth = useAuthStore();
+const router = useRouter();
+
+// Redirección si el usuario no está autenticado
+if (!auth.isAuthenticated) {
+    router.push("login");
+}
 
 const orders = [
     {

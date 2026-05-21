@@ -5,13 +5,19 @@ import Button from "@volt/Button.vue";
 import InputText from "@volt/InputText.vue";
 import Password from "@volt/Password.vue";
 import { useAuthStore } from "@/stores/auth";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 // Instancias
 const auth = useAuthStore();
 const route = useRoute();
 const { show } = useAppToast();
 const fileInput = ref<HTMLInputElement | null>(null);
+const router = useRouter();
+
+// Redirección si el usuario no está autenticado
+if (!auth.isAuthenticated) {
+    router.push("login");
+}
 
 const editingUserId = computed(() => route.params.id);
 const isAdminEditing = computed(() => !!editingUserId.value);

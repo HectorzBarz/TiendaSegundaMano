@@ -98,9 +98,15 @@ const routes = [
     },
     {
         path: "/admin/articles/:id/edit",
-        name: "edit",
+        name: "Edit Article",
         component: () => import("@/views/EditArticleView.vue"),
         meta: { title: "Edit Article" },
+    },
+    {
+        path: "/admin/category/:id/edit",
+        name: "Edit Category",
+        component: () => import("@/views/EditCategoryView.vue"),
+        meta: { title: "Edit Category" },
     },
 ];
 
