@@ -90,8 +90,12 @@ class CategoryController extends Controller
     }
 
     // DELETE /api/categories/{id}
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        if (!$request->user()?->is_admin) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
         $category = Category::find($id);
         if (!$category) {
             return response()->json(['message' => 'Not found'], 404);

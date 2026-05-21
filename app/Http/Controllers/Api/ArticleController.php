@@ -36,6 +36,10 @@ class ArticleController extends Controller
     // POST /api/articles (Crear)
     public function store(Request $request)
     {
+        if (!$request->user()?->is_admin) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
         // Se cambia 'image' por 'file' para evitar falsos negativos con el formato de vectores XML (SVG)
         $data = $request->validate([
             'name' => 'required|string|max:255',
@@ -72,6 +76,10 @@ class ArticleController extends Controller
     // POST /api/articles/{id} (Actualizar)
     public function update(Request $request, $id)
     {
+        if (!$request->user()?->is_admin) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
         $article = Article::findOrFail($id);
 
         $data = $request->validate([
@@ -127,8 +135,12 @@ class ArticleController extends Controller
     }
 
     // DELETE /api/articles/{id} (Eliminar)
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        if (!$request->user()?->is_admin) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
         $article = Article::find($id);
 
         if (!$article) {
