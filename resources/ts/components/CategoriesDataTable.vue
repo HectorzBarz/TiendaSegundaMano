@@ -51,7 +51,7 @@ const deleteCategory = async (category: Category) => {
             <template #body="{ data }">
                 <div class="flex gap-2">
                     <!-- CORRECCIÓN: Asegúrate de que la ruta sea correcta -->
-                    <RouterLink :to="`/admin/categories/${data.id}/edit`">
+                    <RouterLink :to="`/admin/category/${data.id}/edit`">
                         <Button
                             icon="pi pi-pencil"
                             class="bg-azul! h-11 w-11 rounded-2xl border-0 text-white!"

@@ -28,6 +28,45 @@ class CategoryController extends Controller
         return response()->json($query->get());
     }
 
+    // GET /api/categories/{id}
+    public function show($id)
+    {
+        $category = Category::find($id);
+
+        if (!$category) {
+            return response()->json(['message' => 'Categoría no encontrada'], 404);
+        }
+
+        return response()->json($category);
+    }
+
+    // POST /api/categories/{id} (Actualización)
+    public function update(UpdateCategoryRequest $request, $id)
+    {
+        $category = Category::find($id);
+
+        if (!$category) {
+            return response()->json(['message' => 'Categoría no encontrada'], 404);
+        }
+
+        $data = $request->validated();
+
+        // Si se sube una nueva imagen
+        if ($request->hasFile('image')) {
+            // Opcional: Eliminar la imagen antigua si existe
+            if ($category->image) {
+                Storage::disk('public')->delete($category->image);
+            }
+
+            // Guardar nueva imagen
+            $data['image'] = $request->file('image')->store('categories', 'public');
+        }
+
+        $category->update($data);
+
+        return response()->json($category);
+    }
+
     // POST /api/categories
     public function store(StoreCategoryRequest $request)
     {
