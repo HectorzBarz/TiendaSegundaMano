@@ -3,16 +3,15 @@
 use App\Http\Controllers\Api\AdminUserController;
 use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\CategoryController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\ReviewController; // 👈 Importamos tu nuevo controlador de reseñas
+use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-
-
 
 // Rutas públicas
 Route::post('/register', [AuthController::class, 'register']);
@@ -44,8 +43,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/admin/users/{id}', [AdminUserController::class, 'destroy']);
 });
 
-// routes/api.php
-
 // Mueve esto FUERA de cualquier grupo 'auth:sanctum'
 Route::get('/categories', [CategoryController::class, 'index']);
 
@@ -61,6 +58,9 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('/articles', [ArticleController::class, 'index']); // GET /api/articles?in_stock=true
 Route::get('/articles/{id}', [ArticleController::class, 'show']);
 
+// 📄 Ruta Pública de Reseñas: Cualquiera puede ver las opiniones de un artículo
+Route::get('/articles/{article}/reviews', [ReviewController::class, 'index']);
+
 // Rutas Protegidas (Crear, Editar, Borrar, Comprar)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/articles', [ArticleController::class, 'store']);
@@ -69,4 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Ruta personalizada para la compra
     Route::post('/articles/{id}/buy', [ArticleController::class, 'buy']);
+
+    // 💬 Ruta Protegida de Reseñas: Solo usuarios logueados pueden comentar
+    Route::post('/articles/{article}/reviews', [ReviewController::class, 'store']);
 });

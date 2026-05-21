@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { api } from "@/stores/auth";
+import ArticleReviews from "@/components/ArticleReviews.vue";
 
 import Button from "@volt/Button.vue";
 import { Carousel, Slide, Navigation, Pagination } from "vue3-carousel";
@@ -81,6 +82,10 @@ const goToQuery = () => {
         params: { id: article.value.id },
     });
 };
+
+const handleReviewAdded = () => {
+    fetchArticle();
+};
 </script>
 
 <template>
@@ -144,6 +149,29 @@ const goToQuery = () => {
                         >
                             {{ article.name }}
                         </h1>
+
+                        <div
+                            v-if="article.product_count! > 0"
+                            class="mt-2 flex items-center gap-2"
+                        >
+                            <div class="flex gap-0.5 text-sm">
+                                <i
+                                    v-for="star in 5"
+                                    :key="star"
+                                    :class="
+                                        star <= Math.round(article.product_avg!)
+                                            ? 'pi pi-star-fill text-yellow-400'
+                                            : 'pi pi-star text-gray-300'
+                                    "
+                                ></i>
+                            </div>
+                            <span class="text-texto text-sm font-bold">
+                                {{ article.product_avg }}
+                            </span>
+                            <span class="text-texto-secundario text-xs">
+                                ({{ article.product_count }} valoraciones)
+                            </span>
+                        </div>
                     </div>
 
                     <div class="flex items-center gap-3">
@@ -201,5 +229,10 @@ const goToQuery = () => {
                 </div>
             </div>
         </div>
+
+        <ArticleReviews
+            :article-id="article.id"
+            @review-added="handleReviewAdded"
+        />
     </main>
 </template>
