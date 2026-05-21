@@ -44,7 +44,13 @@ function close() {
                 class="flex gap-3 rounded-2xl border p-3"
             >
                 <img
-                    :src="item.article.img"
+                    :src="
+                        Array.isArray(item.article.images)
+                            ? (item.article.images[0] ??
+                              '/images/placeholder.jpg')
+                            : (item.article.images ?? '/images/placeholder.jpg')
+                    "
+                    :alt="item.article.name"
                     class="h-16 w-16 rounded-xl object-cover"
                 />
 

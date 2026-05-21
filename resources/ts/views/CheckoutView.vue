@@ -44,10 +44,24 @@ const groupedItems = computed(() => cart.items);
                                 <div
                                     class="border-borde bg-fondo h-20 w-20 shrink-0 overflow-hidden rounded-xl border"
                                 >
-                                    <img
-                                        :src="item.article.img"
-                                        class="h-full w-full object-cover"
-                                    />
+                                    <!-- IMAGE -->
+                                    <div
+                                        class="border-borde bg-fondo h-20 w-20 shrink-0 overflow-hidden rounded-xl border"
+                                    >
+                                        <img
+                                            :src="
+                                                Array.isArray(
+                                                    item.article.images,
+                                                )
+                                                    ? (item.article.images[0] ??
+                                                      '/images/placeholder.jpg')
+                                                    : (item.article.images ??
+                                                      '/images/placeholder.jpg')
+                                            "
+                                            :alt="item.article.name"
+                                            class="h-full w-full object-cover"
+                                        />
+                                    </div>
                                 </div>
 
                                 <!-- INFO -->
