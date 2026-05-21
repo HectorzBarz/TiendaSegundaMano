@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import InputText from "@volt/InputText.vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth"; // Importamos la store
+
+const auth = useAuthStore();
+const router = useRouter();
 
 // ----------------------
 // STATE
@@ -54,14 +58,29 @@ function fieldClass(field: string) {
 }
 
 // ----------------------
-// SUBMIT
+// SUBMIT ACTUALIZADO
 // ----------------------
-function submit() {
+async function submit() {
     submitted.value = true;
-
     if (!validate()) return;
 
-    console.log("Login OK:", form.value);
+    try {
+        await auth.login({
+            email: form.value.email,
+            password: form.value.password,
+        });
+
+        console.log("Login OK");
+        router.push("/"); // Redirigir al inicio o al área personal
+    } catch (error: any) {
+        console.error("Error en login:", error);
+        // Si Laravel devuelve error 422 de validación (credenciales incorrectas)
+        if (error.response?.status === 422) {
+            errors.value.email = "Credenciales incorrectas";
+        } else {
+            errors.value.email = "Error de conexión con el servidor";
+        }
+    }
 }
 </script>
 

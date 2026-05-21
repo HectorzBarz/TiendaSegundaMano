@@ -1,19 +1,70 @@
 <script setup lang="ts">
 import { ref } from "vue";
-
+import { useAuthStore, api } from "@/stores/auth";
 import Button from "@volt/Button.vue";
+
 import InputText from "@volt/InputText.vue";
+import { useRouter } from "vue-router";
+import { useAppToast } from "@/composables/useAppToast";
 
-import { Category } from "@/types";
-import { RouterLink } from "vue-router";
+const auth = useAuthStore();
+const router = useRouter();
+const { show } = useAppToast();
 
-const category = ref<Category>({
-    id: 0,
+if (!auth.user?.is_admin) {
+    router.push("/account");
+}
+
+// FORM
+const category = ref({
     name: "",
-    img: "",
 });
 
-const preview = "https://placehold.co/600x400/f8f7f5/70191d?text=Vista+previa";
+// IMAGE
+const imageFile = ref<File | null>(null);
+const preview = ref(
+    "https://placehold.co/600x400/f8f7f5/70191d?text=Vista+previa",
+);
+
+function handleFileChange(e: Event) {
+    const target = e.target as HTMLInputElement;
+
+    if (target.files && target.files[0]) {
+        imageFile.value = target.files[0];
+        preview.value = URL.createObjectURL(target.files[0]);
+    }
+}
+
+// CREATE CATEGORY
+async function createCategory() {
+    try {
+        const formData = new FormData();
+
+        formData.append("name", category.value.name);
+
+        if (imageFile.value) {
+            formData.append("image", imageFile.value);
+        }
+
+        await api.post("/categories", formData);
+
+        show({
+            message: "Categoría creada correctamente",
+            severity: "success",
+            life: 3000,
+        });
+
+        router.push("/admin");
+    } catch (e: any) {
+        console.error(e.response?.data);
+
+        show({
+            message: "Error al crear categoría",
+            severity: "error",
+            life: 3000,
+        });
+    }
+}
 </script>
 
 <template>
@@ -162,8 +213,8 @@ const preview = "https://placehold.co/600x400/f8f7f5/70191d?text=Vista+previa";
 
                                 <input
                                     type="file"
-                                    accept="image/*"
-                                    class="hidden"
+                                    accept=".jpg,.jpeg,.png,.webp,.avif,.svg"
+                                    @change="handleFileChange"
                                 />
                             </div>
                         </div>
@@ -194,13 +245,12 @@ const preview = "https://placehold.co/600x400/f8f7f5/70191d?text=Vista+previa";
                             class="bg-naranja! hover:bg-naranja/90! rounded-2xl px-6 py-3 text-white!"
                         />
 
-                        <RouterLink to="/admin">
-                            <Button
-                                label="Guardar categoría"
-                                icon="pi pi-save"
-                                class="bg-azul! hover:bg-azul/90! rounded-2xl border-0 px-6 py-3 text-white transition"
-                            />
-                        </RouterLink>
+                        <Button
+                            label="Guardar categoría"
+                            icon="pi pi-save"
+                            class="bg-azul! hover:bg-azul/90! rounded-2xl border-0 px-6 py-3 text-white transition"
+                            @click="createCategory"
+                        />
                     </div>
                 </div>
             </div>

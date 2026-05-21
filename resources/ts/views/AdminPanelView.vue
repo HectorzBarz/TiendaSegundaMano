@@ -1,249 +1,55 @@
 <script setup lang="ts">
 import FilterBase from "@/components/FilterBase.vue";
-import ArticleItemCard from "@/components/ArticleItemCard.vue";
-import hampter from "/storage/app/public/img/hampter.jpg";
+import StockBarChart from "@/components/StockBarChart.vue";
 
 import DataTable from "@volt/DataTable.vue";
 import Column from "primevue/column";
 import Button from "@volt/Button.vue";
-import DangerButton from "@volt/DangerButton.vue";
-import ColumnGroup from "primevue/columngroup"; // optional
-import Row from "primevue/row"; // optional
 
-import { computed, ref } from "vue";
 import { useArticleFiltersStore } from "@/stores/articleFilters";
-import { Article } from "@/types";
-import StockBarChart from "@/components/StockBarChart.vue";
-import { RouterLink } from "vue-router";
-import SecondaryButton from "@volt/SecondaryButton.vue";
+import { useAuthStore } from "@/stores/auth";
+
+import { RouterLink, useRouter } from "vue-router";
+import { computed, onMounted, ref } from "vue";
+import type { Article, RawArticle, ApiResponse, Category, User } from "@/types";
+import SelectButton from "@volt/SelectButton.vue";
+import ArticlesDataTable from "@/components/ArticlesDataTable.vue";
+import CategoriesDataTable from "@/components/CategoriesDataTable.vue";
+import UsersDataTable from "@/components/UsersDataTable.vue";
+import OrdersDataTable from "@/components/OrdersDataTable.vue";
+import { api } from "@/stores/auth";
+import axios from "axios";
+
+// Instancias del Store y Router
+const store = useArticleFiltersStore();
+const auth = useAuthStore();
+const router = useRouter();
+
+// Redirección si el usuario no está autenticado
+if (!auth.user?.is_admin) {
+    router.push("account");
+}
+
+const options = [
+    { name: "Artículos", value: "articles", component: ArticlesDataTable },
+    { name: "Categorías", value: "categories", component: CategoriesDataTable },
+    { name: "Usuarios", value: "users", component: UsersDataTable },
+    { name: "Pedidos", value: "orders", component: OrdersDataTable },
+];
+
+const selectedOption = ref(options[0]);
 
 const isChartCollapsed = ref(true);
 
-const store = useArticleFiltersStore();
+// Estado reactivo para artículos, ahora iniciamos con un array vacío
+const articles = ref<Article[]>([]);
+const categories = ref<Category[]>([]);
+const users = ref<User[]>([]);
+const orders = ref<any[]>([]);
 
-const articles = <Article[]>[
-    {
-        id: 1,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 1",
-        onSale: true,
-        categoryId: 1,
-        stock: 0,
-        sell_count: 10,
-    },
-    {
-        id: 2,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 2 ",
-        onSale: false,
-        categoryId: 2,
-        stock: 2,
-        sell_count: 5,
-    },
-    {
-        id: 3,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 3",
-        onSale: false,
-        categoryId: 1,
-        stock: 1,
-        sell_count: 6,
-    },
-    {
-        id: 4,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 4",
-        onSale: true,
-        categoryId: 3,
-        stock: 7,
-        sell_count: 2,
-    },
-    {
-        id: 5,
-        img: hampter,
-        price: 10,
-        name: "Artículo 5",
-        onSale: false,
-        categoryId: 1,
-        stock: 1,
-        sell_count: 1,
-    },
-    {
-        id: 6,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 6",
-        onSale: true,
-        categoryId: 4,
-        stock: 8,
-        sell_count: 9,
-    },
-    {
-        id: 7,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 7",
-        onSale: false,
-        categoryId: 6,
-        stock: 2,
-        sell_count: 7,
-    },
-    {
-        id: 8,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 8",
-        onSale: false,
-        categoryId: 5,
-        stock: 3,
-        sell_count: 5,
-    },
-    {
-        id: 9,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 9",
-        onSale: false,
-        categoryId: 6,
-        stock: 1,
-        sell_count: 10,
-    },
-    {
-        id: 10,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 10",
-        onSale: false,
-        categoryId: 2,
-        stock: 11,
-        sell_count: 11,
-    },
-    {
-        id: 1,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 11",
-        onSale: true,
-        categoryId: 1,
-        stock: 10,
-        sell_count: 15,
-    },
-    {
-        id: 2,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 12 ",
-        onSale: false,
-        categoryId: 2,
-        stock: 2,
-        sell_count: 1,
-    },
-    {
-        id: 3,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 13",
-        onSale: false,
-        categoryId: 1,
-        stock: 1,
-        sell_count: 6,
-    },
-    {
-        id: 4,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 14",
-        onSale: true,
-        categoryId: 3,
-        stock: 7,
-        sell_count: 6,
-    },
-    {
-        id: 5,
-        img: hampter,
-        price: 10,
-        name: "Artículo 15",
-        onSale: false,
-        categoryId: 1,
-        stock: 1,
-        sell_count: 7,
-    },
-    {
-        id: 6,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 16",
-        onSale: true,
-        categoryId: 4,
-        stock: 8,
-        sell_count: 1,
-    },
-    {
-        id: 7,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 17",
-        onSale: false,
-        categoryId: 6,
-        stock: 2,
-        sell_count: 1,
-    },
-    {
-        id: 8,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 18",
-        onSale: false,
-        categoryId: 5,
-        stock: 3,
-        sell_count: 8,
-    },
-    {
-        id: 9,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 19",
-        onSale: false,
-        categoryId: 6,
-        stock: 1,
-        sell_count: 2,
-    },
-    {
-        id: 10,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 20",
-        onSale: false,
-        categoryId: 2,
-        stock: 11,
-        sell_count: 4,
-    },
-];
-
+// Propiedad computada para filtrar artículos
 const filteredArticles = computed(() => {
-    return articles.filter((article) => {
+    return articles.value.filter((article) => {
         const matchesCategory =
             !store.categoryId || article.categoryId === store.categoryId;
 
@@ -262,9 +68,164 @@ const filteredArticles = computed(() => {
     });
 });
 
-const rowClass = (data: Article) => {
-    return data.stock === 0 ? "bg-red-50/60 opacity-70 grayscale" : "";
+// ARTICLES
+const articlesLoading = ref(false);
+
+const fetchArticles = async (): Promise<void> => {
+    try {
+        articlesLoading.value = true;
+
+        // Tipamos la respuesta: puede ser el array directo o el objeto envuelto
+        const response = await axios.get<
+            RawArticle[] | ApiResponse<RawArticle[]>
+        >("api/articles");
+
+        // 1. Extraer datos brutos con seguridad de tipos
+        let rawData: RawArticle[] = [];
+        if (Array.isArray(response.data)) {
+            rawData = response.data;
+        } else if (response.data && Array.isArray(response.data.data)) {
+            rawData = response.data.data;
+        }
+
+        // 2. Configurar URL base
+        const baseUrl = axios.defaults.baseURL
+            ? axios.defaults.baseURL.replace(/\/api\/?$/, "")
+            : "http://localhost:8000";
+
+        // 3. Procesar y mapear a tipo Article (UI)
+        articles.value = rawData.map((art: RawArticle): Article => {
+            let firstImagePath = "";
+
+            // Lógica de extracción de imagen tipada
+            if (Array.isArray(art.images) && art.images.length > 0) {
+                firstImagePath = art.images[0];
+            } else if (typeof art.images === "string") {
+                try {
+                    const parsed = JSON.parse(art.images) as string[];
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        firstImagePath = parsed[0];
+                    }
+                } catch {
+                    firstImagePath = art.images;
+                }
+            }
+
+            const imgUrl = firstImagePath
+                ? firstImagePath.startsWith("http")
+                    ? firstImagePath
+                    : `${baseUrl}/storage/${firstImagePath}`
+                : "https://placehold.co/600x400?text=Sin+Imagen";
+
+            // Retornamos el objeto cumpliendo la interfaz Article
+            return {
+                ...art,
+                // Mapeo de snake_case a camelCase si el backend no lo hace
+                onSale: Boolean(art.on_sale),
+                oldPrice: art.old_price,
+                img: imgUrl,
+            };
+        });
+    } catch (e) {
+        console.error("Error al cargar artículos", e);
+        articles.value = [];
+    } finally {
+        articlesLoading.value = false;
+    }
 };
+
+// CATEGORIES
+const categoriesLoading = ref(false);
+
+const fetchCategories = async () => {
+    try {
+        categoriesLoading.value = true;
+        const response = await axios.get("api/categories");
+
+        if (Array.isArray(response.data)) {
+            categories.value = response.data;
+        } else if (response.data && Array.isArray(response.data.data)) {
+            categories.value = response.data.data;
+        } else {
+            console.warn(
+                "La structure de datos no es un array:",
+                response.data,
+            );
+            categories.value = [];
+        }
+    } catch (e) {
+        console.error("Error al cargar categorías", e);
+        categories.value = [];
+    } finally {
+        categoriesLoading.value = false;
+    }
+};
+
+// USERS
+const usersLoading = ref(false);
+
+const fetchUsers = async () => {
+    try {
+        usersLoading.value = true;
+
+        users.value = await auth.getUsers();
+    } catch (e) {
+        console.error("Error fetching users", e);
+    } finally {
+        usersLoading.value = false;
+    }
+};
+
+// ORDERS
+const ordersLoading = ref(false);
+
+const fetchOrders = async () => {
+    try {
+        ordersLoading.value = true;
+        const response = await api.get("/admin/orders");
+        orders.value = Array.isArray(response.data) ? response.data : [];
+    } catch (e) {
+        console.error("Error fetching orders", e);
+        orders.value = [];
+    } finally {
+        ordersLoading.value = false;
+    }
+};
+
+const getData = () => {
+    if (selectedOption.value.value === "articles")
+        return filteredArticles.value || [];
+
+    if (selectedOption.value.value === "categories")
+        return Array.isArray(categories.value) ? categories.value : [];
+
+    if (selectedOption.value.value === "orders")
+        return Array.isArray(orders.value) ? orders.value : [];
+
+    return Array.isArray(users.value) ? users.value : [];
+};
+
+const handleDelete = () => {
+    const active = selectedOption.value.value;
+
+    if (active === "users") {
+        fetchUsers();
+    } else if (active === "categories") {
+        fetchCategories();
+    } else if (active === "articles") {
+        fetchArticles(); // Recargar los artículos al borrar uno
+    } else if (active === "orders") {
+        fetchOrders();
+    }
+};
+
+// Cargar todos los datos al montar la vista
+onMounted(() => {
+    fetchArticles();
+    fetchUsers();
+    fetchCategories();
+    fetchOrders();
+});
 </script>
 
 <template>
@@ -302,7 +263,9 @@ const rowClass = (data: Article) => {
 
                 <Button
                     icon="pi pi-refresh"
+                    @click="handleDelete"
                     class="border-borde! text-rojo-fuerte! hover:bg-amarillo/20! w-full border bg-white px-4 py-3 transition sm:w-auto"
+                    title="Actualizar datos"
                 />
             </div>
         </div>
@@ -318,7 +281,12 @@ const rowClass = (data: Article) => {
                         </p>
 
                         <h2 class="text-rojo-fuerte mt-2 text-4xl font-bold">
-                            {{ filteredArticles.length }}
+                            <!-- Si está cargando, mostramos un indicador de carga -->
+                            <span
+                                v-if="articlesLoading"
+                                class="pi pi-spinner pi-spin text-2xl"
+                            ></span>
+                            <span v-else>{{ filteredArticles.length }}</span>
                         </h2>
                     </div>
 
@@ -339,9 +307,17 @@ const rowClass = (data: Article) => {
                         </p>
 
                         <h2 class="text-rojo-claro mt-2 text-4xl font-bold">
-                            {{
-                                filteredArticles.filter((a) => a.onSale).length
-                            }}
+                            <span
+                                v-if="articlesLoading"
+                                class="pi pi-spinner pi-spin text-2xl"
+                            ></span>
+                            <span v-else>
+                                {{
+                                    filteredArticles.filter(
+                                        (a) => a.onSale || a.onSale,
+                                    ).length
+                                }}
+                            </span>
                         </h2>
                     </div>
 
@@ -362,11 +338,17 @@ const rowClass = (data: Article) => {
                         </p>
 
                         <h2 class="text-naranja mt-2 text-4xl font-bold">
-                            {{
-                                filteredArticles.filter(
-                                    (a) => (a.stock ?? 0) < 10,
-                                ).length
-                            }}
+                            <span
+                                v-if="articlesLoading"
+                                class="pi pi-spinner pi-spin text-2xl"
+                            ></span>
+                            <span v-else>
+                                {{
+                                    filteredArticles.filter(
+                                        (a) => (a.stock ?? 0) < 10,
+                                    ).length
+                                }}
+                            </span>
                         </h2>
                     </div>
 
@@ -429,199 +411,56 @@ const rowClass = (data: Article) => {
                 leave-to-class="max-h-0 opacity-0"
             >
                 <div v-show="!isChartCollapsed" class="px-6 pb-6">
-                    <StockBarChart :articles="filteredArticles" />
+                    <!-- Evitamos pasar arrays vacios mientas carga para prevenir fallos en el Canvas del grafico -->
+                    <StockBarChart
+                        v-if="!articlesLoading && filteredArticles.length > 0"
+                        :articles="filteredArticles"
+                    />
+                    <div
+                        v-else-if="articlesLoading"
+                        class="flex justify-center py-10"
+                    >
+                        <i class="pi pi-spinner pi-spin text-azul text-4xl"></i>
+                    </div>
                 </div>
             </transition>
         </section>
 
         <!-- CONTENT -->
         <section class="flex flex-col gap-6 lg:flex-row">
-            <!-- SIDEBAR -->
-            <div
-                class="bg-card border-borde rounded-3xl border p-6 shadow-sm lg:w-[320px]"
-            >
-                <div class="mb-6 flex items-center gap-3">
-                    <div
-                        class="bg-rojo-claro/10 flex h-11 w-11 items-center justify-center rounded-2xl"
-                    >
-                        <i class="pi pi-sliders-h text-rojo-claro"></i>
-                    </div>
-
-                    <div>
-                        <h2 class="text-rojo-fuerte text-xl font-semibold">
-                            Filtros
-                        </h2>
-
-                        <p class="text-texto-secundario text-sm">
-                            Busca artículos fácilmente
-                        </p>
-                    </div>
+            <div class="bg-fondo min-w-full pb-6">
+                <div class="mb-6 flex justify-center lg:justify-start">
+                    <SelectButton
+                        v-model="selectedOption"
+                        :options="options"
+                        optionLabel="name"
+                        class="border-borde inline-flex w-full rounded-2xl border bg-white p-1 shadow-sm sm:w-auto"
+                    />
                 </div>
 
-                <FilterBase :suggestions="articles" />
-            </div>
+                <section class="flex flex-col items-start gap-6 lg:flex-row">
+                    <!-- FILTROS SÓLO SI ESTAMOS EN ARTÍCULOS -->
+                    <div
+                        v-show="selectedOption.value === 'articles'"
+                        class="bg-card border-borde shrink-0 rounded-3xl border p-6 shadow-sm lg:w-[320px]"
+                    >
+                        <h2 class="text-rojo-fuerte mb-4 text-xl font-semibold">
+                            Filtros
+                        </h2>
+                        <!-- Se pasa el valor reactivo extraído para las sugerencias -->
+                        <FilterBase :suggestions="articles" />
+                    </div>
 
-            <!-- TABLE -->
-            <div
-                class="bg-card border-borde overflow-hidden rounded-3xl border shadow-sm"
-            >
-                <DataTable
-                    :value="filteredArticles"
-                    :rowClass="rowClass"
-                    paginator
-                    :rows="10"
-                    stripedRows
-                    responsiveLayout="scroll"
-                    tableStyle="min-width: 1000px"
-                >
-                    <!-- IMAGE -->
-                    <Column header="">
-                        <template #body="{ data }">
-                            <img
-                                :src="data.img"
-                                :alt="data.name"
-                                class="border-borde h-16 w-16 rounded-2xl border object-cover"
-                            />
-                        </template>
-                    </Column>
-
-                    <!-- ID -->
-                    <Column field="id" header="ID" sortable>
-                        <template #body="{ data }">
-                            <span
-                                class="bg-rojo-fuerte/10 text-rojo-fuerte rounded-xl px-3 py-1 text-sm font-semibold"
-                            >
-                                #{{ data.id }}
-                            </span>
-                        </template>
-                    </Column>
-
-                    <!-- PRODUCT -->
-                    <Column field="name" header="Producto">
-                        <template #body="{ data }">
-                            <div>
-                                <p
-                                    class="font-semibold"
-                                    :class="
-                                        data.stock === 0
-                                            ? 'text-red-700 line-through'
-                                            : 'text-texto'
-                                    "
-                                >
-                                    {{ data.name }}
-                                </p>
-
-                                <p class="text-texto-secundario mt-1 text-sm">
-                                    Categoría {{ data.categoryId }}
-                                </p>
-                            </div>
-                        </template>
-                    </Column>
-
-                    <!-- PRICE -->
-                    <Column field="price" header="Precio">
-                        <template #body="{ data }">
-                            <div class="flex items-center gap-2">
-                                <span class="text-azul text-lg font-bold">
-                                    {{ data.price }}€
-                                </span>
-
-                                <span
-                                    v-if="data.oldPrice"
-                                    class="text-texto-secundario text-sm line-through"
-                                >
-                                    {{ data.oldPrice }}€
-                                </span>
-                            </div>
-                        </template>
-                    </Column>
-
-                    <!-- STOCK -->
-                    <Column field="stock" header="Stock" sortable>
-                        <template #body="{ data }">
-                            <!-- SIN STOCK -->
-                            <span
-                                v-if="data.stock === 0"
-                                class="flex items-center gap-2 rounded-full bg-red-100 px-4 py-2 text-xs font-bold text-red-700"
-                            >
-                                <i class="pi pi-times-circle"></i>
-                                Sin stock
-                            </span>
-
-                            <!-- STOCK BAJO -->
-                            <span
-                                v-else-if="data.stock < 10"
-                                class="rounded-full bg-amber-100 px-4 py-2 text-xs font-semibold text-amber-700"
-                            >
-                                {{ data.stock }} unidades
-                            </span>
-
-                            <!-- STOCK OK -->
-                            <span
-                                v-else
-                                class="rounded-full bg-blue-100 px-4 py-2 text-xs font-semibold text-blue-700"
-                            >
-                                {{ data.stock }} unidades
-                            </span>
-                        </template>
-                    </Column>
-
-                    <!-- SELLED -->
-                    <Column field="selled" header="Vendidos">
-                        <template #body="{ data }">
-                            <span
-                                :class="
-                                    data.stock < 10
-                                        ? 'bg-amarillo/40 text-naranja'
-                                        : 'bg-azul/10 text-azul'
-                                "
-                                class="rounded-full px-4 py-2 text-xs font-semibold"
-                            >
-                                {{ data.sell_count }} unidades
-                            </span>
-                        </template>
-                    </Column>
-
-                    <!-- STATUS -->
-                    <Column field="onSale" header="Estado">
-                        <template #body="{ data }">
-                            <span
-                                :class="
-                                    data.onSale
-                                        ? 'bg-naranja/15 text-rojo-claro'
-                                        : 'bg-slate-100 text-slate-500'
-                                "
-                                class="rounded-full px-4 py-2 text-xs font-semibold"
-                            >
-                                {{ data.onSale ? "En oferta" : "Normal" }}
-                            </span>
-                        </template>
-                    </Column>
-
-                    <!-- ACTIONS -->
-                    <Column header="Acciones">
-                        <template #body="{ data }">
-                            <div class="flex gap-2">
-                                <!-- EDIT -->
-                                <RouterLink
-                                    :to="'/admin/articles/' + data.id + '/edit'"
-                                >
-                                    <Button
-                                        icon="pi pi-pencil"
-                                        :disabled="data.stock === 0"
-                                        class="bg-azul! hover:bg-azul/90! h-11 w-11 rounded-2xl border-0 text-white! transition"
-                                    />
-                                </RouterLink>
-
-                                <!-- DELETE -->
-                                <Button
-                                    icon="pi pi-trash"
-                                    class="bg-rojo-claro hover:bg-rojo-fuerte! h-11 w-11 rounded-2xl border-0 text-white transition"
-                                />
-                            </div>
-                        </template>
-                    </Column>
-                </DataTable>
+                    <div
+                        class="bg-card border-borde w-full grow overflow-hidden rounded-3xl border shadow-sm"
+                    >
+                        <component
+                            :is="selectedOption.component"
+                            :data="getData()"
+                            @deleted="handleDelete"
+                        />
+                    </div>
+                </section>
             </div>
         </section>
     </div>

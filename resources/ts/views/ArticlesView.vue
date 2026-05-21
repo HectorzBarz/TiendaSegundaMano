@@ -1,152 +1,82 @@
 <script setup lang="ts">
 import FilterBase from "@/components/FilterBase.vue";
 import ArticleItemCard from "@/components/ArticleItemCard.vue";
-import hampter from "/storage/app/public/img/hampter.jpg";
 
-import { computed } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useArticleFiltersStore } from "@/stores/articleFilters";
-import { Article } from "@/types";
+import { Article, ApiResponse, RawArticle } from "@/types";
+import { useRoute } from "vue-router";
+import axios from "axios";
 
 const store = useArticleFiltersStore();
+const route = useRoute();
 
-const articles = <Article[]>[
-    {
-        id: 1,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 1",
-        onSale: true,
-        categoryId: 1,
-        product_avg: 3.2,
-        product_count: 3,
-        stock: 1,
-    },
-    {
-        id: 2,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 2 ",
-        onSale: false,
-        categoryId: 2,
-        product_avg: 4.1,
-        product_count: 3,
-        stock: 1,
-    },
-    {
-        id: 3,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 3",
-        onSale: false,
-        categoryId: 1,
-        product_avg: 3.5,
-        product_count: 3,
-        stock: 1,
-    },
-    {
-        id: 4,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 4",
-        onSale: true,
-        categoryId: 3,
-        product_avg: 3,
-        product_count: 3,
-        stock: 1,
-    },
-    {
-        id: 5,
-        img: hampter,
-        price: 10,
-        name: "Artículo 5",
-        onSale: false,
-        categoryId: 1,
-        product_avg: 3.2,
-        product_count: 3,
-        stock: 1,
-    },
-    {
-        id: 6,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 6",
-        onSale: true,
-        categoryId: 4,
-        product_avg: 4,
-        product_count: 3,
-        stock: 1,
-    },
-    {
-        id: 7,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 7",
-        onSale: false,
-        categoryId: 6,
-        product_avg: 1.2,
-        product_count: 3,
-        stock: 1,
-    },
-    {
-        id: 8,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 8",
-        onSale: false,
-        categoryId: 5,
-        product_avg: 5,
-        product_count: 3,
-        stock: 1,
-    },
-    {
-        id: 9,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 9",
-        onSale: false,
-        categoryId: 6,
-        product_avg: 4.2,
-        product_count: 3,
-        stock: 1,
-    },
-    {
-        id: 10,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 10",
-        onSale: false,
-        categoryId: 2,
-        product_avg: 3.2,
-        product_count: 3,
-        stock: 2,
-    },
-    {
-        id: 10,
-        img: hampter,
-        oldPrice: 1,
-        price: 0.1,
-        name: "Artículo 11",
-        onSale: false,
-        categoryId: 2,
-        product_avg: 3.2,
-        product_count: 3,
-        stock: 0,
-    },
-];
+const articles = ref<Article[]>([]);
+const loading = ref(false);
 
+/**
+ * FETCH ARTICLES FROM BACKEND
+ */
+const fetchArticles = async () => {
+    try {
+        loading.value = true;
+
+        const response = await axios.get<
+            RawArticle[] | ApiResponse<RawArticle[]>
+        >("api/articles");
+
+        let raw: RawArticle[] = [];
+
+        if (Array.isArray(response.data)) {
+            raw = response.data;
+        } else if (response.data?.data) {
+            raw = response.data.data;
+        }
+
+        articles.value = raw.map((a): Article => {
+            let img = "";
+
+            if (Array.isArray(a.images) && a.images.length > 0) {
+                img = a.images[0];
+            } else if (typeof a.images === "string") {
+                try {
+                    const parsed = JSON.parse(a.images);
+                    img = parsed?.[0] ?? "";
+                } catch {
+                    img = a.images;
+                }
+            }
+
+            const baseUrl = axios.defaults.baseURL
+                ? axios.defaults.baseURL.replace(/\/api\/?$/, "")
+                : "http://localhost:8000";
+
+            return {
+                ...a,
+                onSale: Boolean(a.on_sale),
+                oldPrice: a.old_price,
+                img: img
+                    ? img.startsWith("http")
+                        ? img
+                        : `${baseUrl}/storage/${img}`
+                    : "https://placehold.co/600x400?text=Sin+Imagen",
+            };
+        });
+    } catch (e) {
+        console.error("Error cargando artículos:", e);
+        articles.value = [];
+    } finally {
+        loading.value = false;
+    }
+};
+
+/**
+ * FILTERS
+ */
 const filteredArticles = computed(() => {
-    return articles.filter((article) => {
+    return articles.value.filter((article) => {
         const matchesCategory =
-            !store.categoryId || article.categoryId === store.categoryId;
+            store.categoryId === 0 || article.categoryId === store.categoryId;
 
         const matchesName =
             !store.articleName ||
@@ -161,6 +91,25 @@ const filteredArticles = computed(() => {
 
         return matchesCategory && matchesName && matchesPrice && matchesSale;
     });
+});
+
+/**
+ * SYNC CATEGORY FROM URL
+ */
+watch(
+    () => route.query.category,
+    (newVal) => {
+        if (newVal) {
+            store.setCategory(Number(newVal));
+        } else {
+            store.reset();
+        }
+    },
+    { immediate: true },
+);
+
+onMounted(() => {
+    fetchArticles();
 });
 </script>
 
@@ -181,9 +130,14 @@ const filteredArticles = computed(() => {
                 class="bg-card border-borde rounded-2xl border lg:w-1/3 xl:max-w-1/5 xl:min-w-1/5"
             />
 
+            <!-- LOADING -->
+            <div v-if="loading" class="flex w-full items-center justify-center py-20">
+                <i class="pi pi-spinner pi-spin text-azul text-4xl"></i>
+            </div>
+
             <!-- LIST -->
             <div
-                v-if="filteredArticles.length"
+                v-else-if="filteredArticles.length"
                 class="grid w-full grid-cols-1 gap-3 p-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
             >
                 <ArticleItemCard

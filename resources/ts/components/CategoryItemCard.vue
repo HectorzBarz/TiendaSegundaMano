@@ -13,7 +13,7 @@ const props = defineProps<{
         >
             <!-- Imagen -->
             <img
-                :src="category.img"
+                :src="category.image"
                 alt="img"
                 class="absolute inset-0 h-full w-full object-cover opacity-40 transition-all group-hover:scale-115"
             />

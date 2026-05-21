@@ -1,20 +1,30 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import InputText from "@volt/InputText.vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+
+const auth = useAuthStore();
+const router = useRouter();
 
 // ----------------------
 // FORM STATE
 // ----------------------
 const form = ref({
     fullName: "",
-    birthDate: "",
-    phone: "",
+    birthDate: "", // Re-activado
+    phone: "", // Re-activado
     email: "",
     password: "",
     confirmPassword: "",
+
     shippingAddress: "",
-    billingAddress: false,
+    billingAddress: "",
+    useShippingAsBilling: false,
+
+    city: "",
+    postalCode: "",
+
     favoriteCategory: "",
     referralCode: "",
 });
@@ -22,28 +32,40 @@ const form = ref({
 // ----------------------
 // REGEX
 // ----------------------
-
-// 1–2 nombres + 1–2 apellidos, solo letras
 const nameRegex = /^([A-Za-zÁÉÍÓÚáéíóúÑñ]+)(\s[A-Za-zÁÉÍÓÚáéíóúÑñ]+){1,3}$/;
-
-// Fecha DD/MM/YYYY
 const birthRegex =
-    /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19\d{2}|20\d{2})$/;
-
-// Teléfono internacional (+34...)
-const phoneRegex = /^\+\d{1,4}\s?\d{6,14}$/;
-
-// Email
+    /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19\d{2}|20\d{2})$/; // DD/MM/YYYY
+const phoneRegex = /^\+\d{1,4}\s?\d{6,14}$/; // Internacional: +34 600000000
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// Dirección básica (mínimo número + calle)
-const addressRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,º\-]{5,}$/;
-
-// Password strength
-const passwordStrongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+const addressRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s.,ºª\-]{5,}$/;
+const cityRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s\-]{2,}$/;
+const postalRegex = /^[0-9]{5}$/;
 
 // ----------------------
-// VALIDATION HELPERS
+// AUTO COPY ADDRESS
+// ----------------------
+watch(
+    () => form.value.useShippingAsBilling,
+    (checked) => {
+        if (checked) {
+            form.value.billingAddress = form.value.shippingAddress;
+        } else {
+            form.value.billingAddress = "";
+        }
+    },
+);
+
+watch(
+    () => form.value.shippingAddress,
+    (value) => {
+        if (form.value.useShippingAsBilling) {
+            form.value.billingAddress = value;
+        }
+    },
+);
+
+// ----------------------
+// VALIDATION
 // ----------------------
 const errors = ref<Record<string, string>>({});
 
@@ -52,27 +74,18 @@ function validate() {
 
     // NAME
     if (!nameRegex.test(form.value.fullName)) {
-        errors.value.fullName =
-            "Introduce 1–2 nombres y 1–2 apellidos sin números ni símbolos";
+        errors.value.fullName = "Introduce nombres y apellidos válidos";
     }
 
-    // BIRTH DATE
+    // BIRTH DATE (Re-activado)
     if (!birthRegex.test(form.value.birthDate)) {
         errors.value.birthDate = "Formato DD/MM/YYYY inválido";
-    } else {
-        const [d, m, y] = form.value.birthDate.split("/").map(Number);
-        const birth = new Date(y, m - 1, d);
-
-        const age = new Date().getFullYear() - birth.getFullYear();
-
-        if (age < 18 || age > 100) {
-            errors.value.birthDate = "Debes tener entre 18 y 100 años";
-        }
     }
 
-    // PHONE
+    // PHONE (Re-activado)
     if (!phoneRegex.test(form.value.phone)) {
-        errors.value.phone = "Teléfono internacional inválido (+34...)";
+        errors.value.phone =
+            "Teléfono internacional inválido (Ej: +34 600000000)";
     }
 
     // EMAIL
@@ -80,17 +93,36 @@ function validate() {
         errors.value.email = "Email inválido";
     }
 
-    // ADDRESS
+    // SHIPPING ADDRESS
     if (!addressRegex.test(form.value.shippingAddress)) {
-        errors.value.shippingAddress = "Dirección inválida";
+        errors.value.shippingAddress = "Dirección de envío inválida";
+    }
+
+    // BILLING ADDRESS
+    if (
+        !form.value.useShippingAsBilling &&
+        !addressRegex.test(form.value.billingAddress)
+    ) {
+        errors.value.billingAddress = "Dirección de facturación inválida";
+    }
+
+    // CITY
+    if (!cityRegex.test(form.value.city)) {
+        errors.value.city = "Introduce una ciudad válida";
+    }
+
+    // POSTAL CODE
+    if (!postalRegex.test(form.value.postalCode)) {
+        errors.value.postalCode = "Código postal inválido";
     }
 
     // PASSWORD
     if (passwordStrength.value === "Débil") {
         errors.value.password =
-            "La contraseña debe tener al menos seguridad media";
+            "La contraseña debe tener seguridad media o fuerte";
     }
 
+    // CONFIRM PASSWORD
     if (form.value.password !== form.value.confirmPassword) {
         errors.value.confirmPassword = "Las contraseñas no coinciden";
     }
@@ -103,7 +135,6 @@ function validate() {
 // ----------------------
 const passwordStrength = computed(() => {
     const p = form.value.password;
-
     let score = 0;
     if (p.length >= 8) score++;
     if (/[a-z]/.test(p)) score++;
@@ -117,7 +148,7 @@ const passwordStrength = computed(() => {
 });
 
 // ----------------------
-// FORMAT NAME (capitalize)
+// FORMAT NAME
 // ----------------------
 function formatName() {
     form.value.fullName = form.value.fullName
@@ -129,10 +160,36 @@ function formatName() {
 // ----------------------
 // SUBMIT
 // ----------------------
-function submit() {
+async function submit() {
     if (!validate()) return;
 
-    console.log("Formulario válido:", form.value);
+    try {
+        const payload = {
+            name: form.value.fullName,
+            email: form.value.email,
+            phone: form.value.phone, // Añadido al payload
+            birth_date: form.value.birthDate, // Añadido al payload
+            password: form.value.password,
+            password_confirmation: form.value.confirmPassword,
+            city: form.value.city,
+            postal_code: form.value.postalCode,
+            shipping_address: form.value.shippingAddress,
+            billing_address: form.value.billingAddress,
+        };
+
+        await auth.register(payload);
+        console.log("Registro OK");
+        router.push("/");
+    } catch (error: any) {
+        console.error("Error en registro:", error);
+        if (error.response?.status === 422) {
+            const apiErrors = error.response.data.errors;
+            if (apiErrors.email) errors.value.email = apiErrors.email[0];
+            if (apiErrors.phone) errors.value.phone = apiErrors.phone[0];
+            if (apiErrors.birth_date)
+                errors.value.birthDate = apiErrors.birth_date[0];
+        }
+    }
 }
 </script>
 
@@ -144,7 +201,6 @@ function submit() {
             class="bg-card border-borde w-full max-w-5xl overflow-hidden rounded-3xl border shadow-2xl"
         >
             <div class="grid md:grid-cols-2">
-                <!-- FORM -->
                 <div class="space-y-5 p-10">
                     <h1
                         class="text-rojo-fuerte mb-6 text-center text-4xl font-bold"
@@ -152,13 +208,15 @@ function submit() {
                         Registro
                     </h1>
 
-                    <!-- NAME -->
                     <div>
                         <InputText
+                            class="w-full"
                             v-model="form.fullName"
                             placeholder="Nombre completo"
-                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
-                            @blur="validate"
+                            @blur="
+                                formatName();
+                                validate();
+                            "
                         />
                         <p
                             v-if="errors.fullName"
@@ -168,13 +226,27 @@ function submit() {
                         </p>
                     </div>
 
-                    <!-- BIRTH -->
                     <div>
                         <InputText
+                            class="w-full"
+                            v-model="form.email"
+                            placeholder="Correo electrónico"
+                            @blur="validate()"
+                        />
+                        <p
+                            v-if="errors.email"
+                            class="mt-1 text-sm text-red-500"
+                        >
+                            {{ errors.email }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <InputText
+                            class="w-full"
                             v-model="form.birthDate"
-                            placeholder="DD/MM/YYYY"
-                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
-                            @blur="validate"
+                            placeholder="Fecha de nacimiento (DD/MM/YYYY)"
+                            @blur="validate()"
                         />
                         <p
                             v-if="errors.birthDate"
@@ -184,13 +256,12 @@ function submit() {
                         </p>
                     </div>
 
-                    <!-- PHONE -->
                     <div>
                         <InputText
+                            class="w-full"
                             v-model="form.phone"
-                            placeholder="+34 600000000"
-                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
-                            @blur="validate"
+                            placeholder="Teléfono (ej: +34 600000000)"
+                            @blur="validate()"
                         />
                         <p
                             v-if="errors.phone"
@@ -200,38 +271,40 @@ function submit() {
                         </p>
                     </div>
 
-                    <!-- EMAIL -->
                     <div>
                         <InputText
-                            v-model="form.email"
-                            placeholder="Correo electrónico"
-                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
-                            @blur="validate"
+                            class="w-full"
+                            v-model="form.city"
+                            placeholder="Ciudad"
+                            @blur="validate()"
                         />
-
-                        <p
-                            v-if="errors.email"
-                            class="mt-1 text-sm text-red-500"
-                        >
-                            {{ errors.email }}
+                        <p v-if="errors.city" class="mt-1 text-sm text-red-500">
+                            {{ errors.city }}
                         </p>
                     </div>
 
-                    <!-- SHIPPING ADDRESS -->
                     <div>
                         <InputText
+                            class="w-full"
+                            v-model="form.postalCode"
+                            placeholder="Código postal"
+                            @blur="validate()"
+                        />
+                        <p
+                            v-if="errors.postalCode"
+                            class="mt-1 text-sm text-red-500"
+                        >
+                            {{ errors.postalCode }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <InputText
+                            class="w-full"
                             v-model="form.shippingAddress"
                             placeholder="Dirección de envío"
-                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
-                            @blur="validate"
+                            @blur="validate()"
                         />
-
-                        <!-- EJEMPLO PERMANENTE -->
-                        <p class="text-texto-secundario mt-1 text-sm">
-                            Ejemplo: Calle Mallorca 401, 3º 2ª, Barcelona
-                        </p>
-
-                        <!-- ERROR -->
                         <p
                             v-if="errors.shippingAddress"
                             class="mt-1 text-sm text-red-500"
@@ -240,25 +313,39 @@ function submit() {
                         </p>
                     </div>
 
-                    <!-- BILLING COPY -->
                     <label
                         class="text-texto-secundario flex items-center gap-2 text-sm"
                     >
-                        <input type="checkbox" v-model="form.billingAddress" />
-
-                        Usar misma dirección de envío
+                        <input
+                            type="checkbox"
+                            v-model="form.useShippingAsBilling"
+                        />
+                        Usar dirección de envío como facturación
                     </label>
 
-                    <!-- PASSWORD -->
+                    <div v-if="!form.useShippingAsBilling">
+                        <InputText
+                            class="w-full"
+                            v-model="form.billingAddress"
+                            placeholder="Dirección de facturación"
+                            @blur="validate()"
+                        />
+                        <p
+                            v-if="errors.billingAddress"
+                            class="mt-1 text-sm text-red-500"
+                        >
+                            {{ errors.billingAddress }}
+                        </p>
+                    </div>
+
                     <div>
                         <InputText
+                            class="w-full"
                             v-model="form.password"
                             type="password"
                             placeholder="Contraseña"
-                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
-                            @blur="validate"
+                            @blur="validate()"
                         />
-
                         <p
                             v-if="errors.password"
                             class="mt-1 text-sm text-red-500"
@@ -267,7 +354,6 @@ function submit() {
                         </p>
                     </div>
 
-                    <!-- METER -->
                     <meter
                         class="w-full"
                         min="0"
@@ -279,22 +365,19 @@ function submit() {
                                   ? 2
                                   : 3
                         "
-                    ></meter>
-
+                    />
                     <p class="text-texto-secundario text-sm">
                         Seguridad: {{ passwordStrength }}
                     </p>
 
-                    <!-- CONFIRM PASSWORD -->
                     <div>
                         <InputText
+                            class="w-full"
                             v-model="form.confirmPassword"
                             type="password"
                             placeholder="Confirmar contraseña"
-                            class="focus:border-azul focus:ring-azul/20 w-full rounded-xl border p-3 transition focus:ring-2"
-                            @blur="validate"
+                            @blur="validate()"
                         />
-
                         <p
                             v-if="errors.confirmPassword"
                             class="mt-1 text-sm text-red-500"
@@ -303,7 +386,6 @@ function submit() {
                         </p>
                     </div>
 
-                    <!-- SUBMIT -->
                     <button
                         @click="submit"
                         class="bg-azul hover:bg-azul/90 w-full rounded-xl py-3 font-semibold text-white transition"
@@ -324,7 +406,6 @@ function submit() {
                     </div>
                 </div>
 
-                <!-- IMAGE -->
                 <div
                     class="bg-amarillo/10 hidden items-center justify-center p-10 md:flex"
                 >

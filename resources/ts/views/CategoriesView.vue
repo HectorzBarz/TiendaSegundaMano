@@ -1,83 +1,38 @@
 <script setup lang="ts">
-import img1 from "@/assets/example/juguetes.webp";
-import img2 from "@/assets/example/informatica.png";
-import img3 from "@/assets/example/dados.png";
-import img4 from "@/assets/example/nevera.svg";
-import img5 from "@/assets/example/mesa.svg";
-import img6 from "@/assets/example/patinete.svg";
-import img7 from "@/assets/example/camiseta.svg";
-import img8 from "@/assets/example/videojuegos.svg";
-import img9 from "@/assets/example/vhs.svg";
-import img10 from "@/assets/example/reprodutor_musical.svg";
-
-import { Category } from "@/types";
-import CategoryItemCard from "@/components/CategoryItemCard.vue";
+import { onMounted, ref } from "vue";
+import axios from "axios";
 import { useRouter } from "vue-router";
 import { useArticleFiltersStore } from "@/stores/articleFilters";
+import { Category } from "@/types";
+import CategoryItemCard from "@/components/CategoryItemCard.vue";
 
-/**
- * TODO
- * Articles will come filtered from the backend
- */
-const categories = <Category[]>[
-    {
-        id: 1,
-        img: img1,
-        name: "Juguetes",
-    },
-    {
-        id: 2,
-        img: img2,
-        name: "Informática",
-    },
-    {
-        id: 3,
-        img: img3,
-        name: "Juegos de mesa",
-    },
-    {
-        id: 4,
-        img: img4,
-        name: "Electrodomesticos",
-    },
-    {
-        id: 5,
-        img: img5,
-        name: "Muebles",
-    },
-    {
-        id: 6,
-        img: img6,
-        name: "Patinetes",
-    },
-    {
-        id: 7,
-        img: img7,
-        name: "Ropa",
-    },
-    {
-        id: 8,
-        img: img8,
-        name: "Videojuegos",
-    },
-    {
-        id: 9,
-        img: img9,
-        name: "Películas",
-    },
-    {
-        id: 10,
-        img: img10,
-        name: "Reproductores de música",
-    },
-];
+const categories = ref<Category[]>([]);
+const isLoading = ref(true);
 
 const store = useArticleFiltersStore();
 const router = useRouter();
 
+onMounted(async () => {
+    try {
+        // Obtenemos todas las categorías (sin limit)
+        const response = await axios.get(
+            "http://localhost:8000/api/categories",
+        );
+        categories.value = response.data;
+    } catch (error) {
+        console.error("Error al cargar las categorías:", error);
+    } finally {
+        isLoading.value = false;
+    }
+});
+
 function selectCategory(id: number) {
     store.setCategory(id);
-    router.push("/articles");
+
+    router.push({
+        name: "articles",
+        query: { category: String(id) },
+    });
 }
 </script>
 
@@ -86,26 +41,29 @@ function selectCategory(id: number) {
         <!-- Title -->
         <div class="my-5 text-center align-middle">
             <h1 class="text-rojo-fuerte text-5xl font-bold">Categorías</h1>
-
             <p class="text-texto-secundario mt-2">
                 Explora todas las categorías disponibles
             </p>
         </div>
-        <!-- END Title -->
 
-        <!-- Category Selector -->
+        <!-- Loading state -->
+        <div v-if="isLoading" class="py-10 text-center">
+            Cargando categorías...
+        </div>
+
+        <!-- Category Grid -->
         <div
+            v-else
             class="grid h-full w-full gap-2 overflow-hidden px-2 pb-5 text-center align-middle sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
         >
-            <div v-for="category in categories" :key="category.id" class="">
-                <RouterLink to="/articles" @click="selectCategory(category.id)">
+            <div v-for="category in categories" :key="category.id">
+                <div @click="selectCategory(category.id)">
                     <CategoryItemCard
                         :category="category"
-                        class="bg-card border-borde text-texto"
+                        class="bg-card border-borde text-texto cursor-pointer"
                     />
-                </RouterLink>
+                </div>
             </div>
         </div>
-        <!-- END Category Selector -->
     </div>
 </template>

@@ -85,6 +85,12 @@ const routes = [
         meta: { title: "Create Category" },
     },
     {
+        path: "/admin/users/:id/edit", // Nueva ruta específica para admins
+        name: "admin-edit-user",
+        component: () => import("@/views/ProfileView.vue"), // Reutilizamos tu vista
+        meta: { title: "Edit User" },
+    },
+    {
         path: "/checkout",
         name: "Checkout",
         component: () => import("@/views/CheckoutView.vue"),
@@ -92,9 +98,15 @@ const routes = [
     },
     {
         path: "/admin/articles/:id/edit",
-        name: "edit",
+        name: "Edit Article",
         component: () => import("@/views/EditArticleView.vue"),
         meta: { title: "Edit Article" },
+    },
+    {
+        path: "/admin/category/:id/edit",
+        name: "Edit Category",
+        component: () => import("@/views/EditCategoryView.vue"),
+        meta: { title: "Edit Category" },
     },
 ];
 

@@ -1,7 +1,16 @@
 <script setup lang="ts">
-import { RouterLink } from "vue-router";
-import hampter from "/storage/app/public/img/hampter.jpg";
+import { RouterLink, useRouter } from "vue-router";
+const hampter = "/images/placeholder.jpg";
 import { useCartStore } from "@/stores/cart";
+import { useAuthStore } from "@/stores/auth";
+
+const auth = useAuthStore();
+const router = useRouter();
+
+// Redirección si el usuario no está autenticado
+if (!auth.isAuthenticated) {
+    router.push("login");
+}
 
 const wishlist = [
     {

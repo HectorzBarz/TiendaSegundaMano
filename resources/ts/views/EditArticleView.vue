@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { api } from "@/stores/auth";
 
 import Button from "@volt/Button.vue";
 import InputText from "@volt/InputText.vue";
@@ -9,46 +10,100 @@ import Textarea from "@volt/Textarea.vue";
 import ToggleSwitch from "@volt/ToggleSwitch.vue";
 import Select from "@volt/Select.vue";
 
-import hampter from "/storage/app/public/img/hampter.jpg";
-
+import { useAuthStore } from "@/stores/auth";
 import { useAppToast } from "@/composables/useAppToast";
-import type { Article } from "@/types";
 
-const route = useRoute();
+import type { Article, Category } from "@/types";
+
+const auth = useAuthStore();
 const router = useRouter();
-
+const route = useRoute();
 const { show } = useAppToast();
 
+if (!auth.user?.is_admin) {
+    router.push("/account");
+}
+
 /**
- * Simulación fetch article
- * Aquí cargarías el artículo real con route.params.id
+ * STATE
  */
-const article = ref<Article>({
-    id: Number(route.params.id),
-    name: "Hamburguesa especial",
-    description:
-        "Hamburguesa premium con doble carne, cheddar y salsa especial.",
-    oldPrice: 14.99,
-    price: 10.99,
-    onSale: true,
-    img: hampter,
-    categoryId: 1,
-    stock: 8,
-    sell_count: 42,
-});
+const article = ref<Article | null>(null);
+const categories = ref<{ label: string; value: number }[]>([]);
+const loading = ref(true);
 
-const categories = [
-    { label: "Hamburguesas", value: 1 },
-    { label: "Pizzas", value: 2 },
-    { label: "Postres", value: 3 },
-    { label: "Bebidas", value: 4 },
-];
+/**
+ * IMAGES
+ * - images = todo lo visible (backend + previews)
+ * - newImages = SOLO archivos nuevos
+ */
+const images = ref<string[]>([]);
+const newImages = ref<File[]>([]);
 
-const images = ref<string[]>([hampter, hampter, hampter]);
+const mainImage = computed(() => images.value[0] ?? "");
 
+/**
+ * LOAD CATEGORIES
+ */
+const loadCategories = async () => {
+    try {
+        const { data } = await api.get<Category[]>("/categories");
+
+        categories.value = data.map((c) => ({
+            label: c.name,
+            value: c.id,
+        }));
+    } catch (err) {
+        console.error("Error cargando categorías", err);
+    }
+};
+
+/**
+ * FETCH ARTICLE
+ */
+const fetchArticle = async () => {
+    try {
+        const id = route.params.id;
+
+        const { data } = await api.get(`/articles/${id}`);
+
+        let rawImages: string[] = [];
+
+        if (Array.isArray(data.images)) {
+            rawImages = data.images;
+        } else if (typeof data.images === "string") {
+            try {
+                rawImages = JSON.parse(data.images);
+            } catch {
+                rawImages = [data.images];
+            }
+        }
+
+        const baseUrl =
+            api.defaults.baseURL?.replace(/\/api\/?$/, "") ||
+            "http://localhost:8000";
+
+        images.value = rawImages.map((img: string) =>
+            img.startsWith("http") ? img : `${baseUrl}/storage/${img}`,
+        );
+
+        article.value = {
+            ...data,
+            onSale: Boolean(data.on_sale),
+            oldPrice: data.old_price,
+        };
+    } catch (err) {
+        console.error("Error cargando artículo:", err);
+        article.value = null;
+    } finally {
+        loading.value = false;
+    }
+};
+
+/**
+ * HANDLE IMAGES
+ */
 const handleImages = (event: Event) => {
     const files = (event.target as HTMLInputElement).files;
-
     if (!files) return;
 
     const remaining = 5 - images.value.length;
@@ -56,28 +111,164 @@ const handleImages = (event: Event) => {
     Array.from(files)
         .slice(0, remaining)
         .forEach((file) => {
-            const url = URL.createObjectURL(file);
-
-            images.value.push(url);
+            newImages.value.push(file);
+            images.value.push(URL.createObjectURL(file));
         });
 };
 
+/**
+ * REMOVE IMAGE (CORREGIDO)
+ */
 const removeImage = (index: number) => {
+    const removed = images.value[index];
+
     images.value.splice(index, 1);
+
+    /**
+     * Si era una imagen NUEVA (blob), la quitamos de newImages
+     */
+    if (removed.startsWith("blob:")) {
+        const fileIndex = newImages.value.findIndex(
+            (_, i) => i === index, // sincronizado por orden
+        );
+
+        if (fileIndex !== -1) {
+            newImages.value.splice(fileIndex, 1);
+        }
+    }
 };
 
-const saveArticle = () => {
-    show({
-        severity: "success",
-        message: "Artículo actualizado correctamente",
-        life: 3000,
-        position: "top-right",
+/**
+ * SAVE ARTICLE
+ */
+const saveArticle = async () => {
+    if (!article.value) return;
+
+    /**
+     * VALIDACIONES FRONTEND
+     */
+    if (!article.value.name?.trim()) {
+        show({
+            severity: "warn",
+            message: "El nombre del artículo es obligatorio",
+            life: 3000,
+            position: "top-right",
+        });
+        return;
+    }
+
+    if (article.value.price == null || article.value.price <= 0) {
+        show({
+            severity: "warn",
+            message: "El precio debe ser mayor a 0",
+            life: 3000,
+            position: "top-right",
+        });
+        return;
+    }
+
+    if (!article.value.categoryId) {
+        show({
+            severity: "warn",
+            message: "Debes seleccionar una categoría",
+            life: 3000,
+            position: "top-right",
+        });
+        return;
+    }
+
+    if (article.value.stock == null || article.value.stock < 0) {
+        show({
+            severity: "warn",
+            message: "El stock no puede ser negativo",
+            life: 3000,
+            position: "top-right",
+        });
+        return;
+    }
+
+    if (images.value.length === 0) {
+        show({
+            severity: "warn",
+            message: "Debes añadir al menos una imagen",
+            life: 3000,
+            position: "top-right",
+        });
+        return;
+    }
+
+    /**
+     * ENVÍO
+     */
+    const id = route.params.id;
+
+    const formData = new FormData();
+
+    formData.append("name", article.value.name);
+    formData.append("description", article.value.description ?? "");
+    formData.append("price", String(article.value.price));
+    formData.append("old_price", String(article.value.oldPrice ?? 0));
+    formData.append("on_sale", article.value.onSale ? "1" : "0");
+    formData.append("category_id", String(article.value.categoryId));
+    formData.append("stock", String(article.value.stock ?? 0));
+
+    /**
+     * EXISTENTES
+     */
+    images.value.forEach((img) => {
+        if (!img.startsWith("blob:")) {
+            formData.append(
+                "existing_images[]",
+                img.replace(/^.*\/storage\//, ""),
+            );
+        }
     });
+
+    /**
+     * NUEVAS
+     */
+    newImages.value.forEach((file) => {
+        formData.append("new_images[]", file);
+    });
+
+    try {
+        await api.post(`/articles/${id}`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
+        show({
+            severity: "success",
+            message: "Artículo actualizado correctamente",
+            life: 3000,
+            position: "top-right",
+        });
+
+        newImages.value = [];
+        await fetchArticle();
+
+        router.push("/admin");
+    } catch (err) {
+        console.error(err);
+
+        show({
+            severity: "error",
+            message: "Error al actualizar el artículo",
+            life: 3000,
+            position: "top-right",
+        });
+    }
 };
+
+onMounted(() => {
+    fetchArticle();
+    loadCategories();
+});
 </script>
 
 <template>
-    <div class="bg-fondo min-h-screen p-6">
+    <div v-if="article" class="bg-fondo min-h-screen p-6">
         <!-- CONTAINER -->
         <div class="mx-auto max-w-7xl">
             <!-- HEADER -->
@@ -89,7 +280,7 @@ const saveArticle = () => {
                     <!-- PRODUCT IMAGE -->
                     <div class="relative">
                         <img
-                            :src="article.img"
+                            :src="mainImage"
                             :alt="article.name"
                             class="border-borde h-28 w-28 rounded-3xl border-4 object-cover shadow-sm"
                         />
@@ -486,5 +677,8 @@ const saveArticle = () => {
                 </div>
             </div>
         </div>
+    </div>
+    <div v-else class="flex h-screen items-center justify-center">
+        <p class="text-xl">Cargando artículo...</p>
     </div>
 </template>
