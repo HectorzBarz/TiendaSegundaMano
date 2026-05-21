@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useAuthStore } from "@/stores/auth";
+import { useAuthStore, api } from "@/stores/auth";
 import Button from "@volt/Button.vue";
-import api from "@/services/api";
+
 import InputText from "@volt/InputText.vue";
 import { useRouter } from "vue-router";
 import { useAppToast } from "@/composables/useAppToast";
@@ -46,11 +46,7 @@ async function createCategory() {
             formData.append("image", imageFile.value);
         }
 
-        await api.post("/categories", formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        });
+        await api.post("/categories", formData);
 
         show({
             message: "Categoría creada correctamente",
@@ -59,8 +55,8 @@ async function createCategory() {
         });
 
         router.push("/admin");
-    } catch (e) {
-        console.error(e);
+    } catch (e: any) {
+        console.error(e.response?.data);
 
         show({
             message: "Error al crear categoría",
@@ -217,7 +213,7 @@ async function createCategory() {
 
                                 <input
                                     type="file"
-                                    accept="image/*"
+                                    accept=".jpg,.jpeg,.png,.webp,.avif,.svg"
                                     @change="handleFileChange"
                                 />
                             </div>
@@ -249,14 +245,12 @@ async function createCategory() {
                             class="bg-naranja! hover:bg-naranja/90! rounded-2xl px-6 py-3 text-white!"
                         />
 
-                        <RouterLink to="/admin">
-                            <Button
-                                label="Guardar categoría"
-                                icon="pi pi-save"
-                                class="bg-azul! hover:bg-azul/90! rounded-2xl border-0 px-6 py-3 text-white transition"
-                                @click="createCategory"
-                            />
-                        </RouterLink>
+                        <Button
+                            label="Guardar categoría"
+                            icon="pi pi-save"
+                            class="bg-azul! hover:bg-azul/90! rounded-2xl border-0 px-6 py-3 text-white transition"
+                            @click="createCategory"
+                        />
                     </div>
                 </div>
             </div>

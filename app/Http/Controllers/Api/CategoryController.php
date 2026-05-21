@@ -29,21 +29,21 @@ class CategoryController extends Controller
     }
 
     // POST /api/categories
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'image' => 'nullable|image',
-        ]);
+        $data = $request->validated();
 
         $path = null;
 
         if ($request->hasFile('image')) {
+            // 1. Guardar el archivo en 'storage/app/public/categories'
+            // store() devuelve solo el path relativo: 'categories/nombre-archivo.jpg'
             $path = $request->file('image')->store('categories', 'public');
         }
 
         $category = Category::create([
             'name' => $data['name'],
+            // 2. Guardamos solo el path relativo, no la URL completa
             'image' => $path,
         ]);
 
