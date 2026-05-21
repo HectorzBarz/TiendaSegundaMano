@@ -72,45 +72,54 @@ class ArticleController extends Controller
     // POST /api/articles/{id} (Actualizar)
     public function update(Request $request, $id)
     {
-        $article = Article::find($id);
+        $article = Article::findOrFail($id);
 
-        if (!$article) {
-            return response()->json(['message' => 'Artículo no encontrado'], 404);
-        }
-
-        // Se replica la validación segura de SVG para el proceso de edición
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'old_price' => 'nullable|numeric|min:0',
-            'on_sale' => 'nullable|in:1,0,true,false',
+            'on_sale' => 'nullable|boolean',
             'item_state' => 'nullable|integer',
             'category_id' => 'required|exists:categories,id',
             'stock' => 'nullable|integer|min:0',
-            'images' => 'nullable|array|max:5',
-            'images.*' => 'file|mimes:jpeg,png,jpg,webp,svg|max:2048', // Añadido soporte SVG aquí
+
+            // imágenes
+            'existing_images' => 'nullable|array',
+            'existing_images.*' => 'string',
+
+            'new_images' => 'nullable|array|max:5',
+            'new_images.*' => 'file|mimes:jpeg,png,jpg,webp,svg|max:2048',
         ]);
 
-        if (isset($data['on_sale'])) {
-            $data['on_sale'] = filter_var($data['on_sale'], FILTER_VALIDATE_BOOLEAN);
+        $data['on_sale'] = filter_var($data['on_sale'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+        /**
+         * 1. mantener imágenes existentes seleccionadas
+         */
+        $finalImages = $data['existing_images'] ?? [];
+
+        /**
+         * 2. añadir nuevas imágenes
+         */
+        if ($request->hasFile('new_images')) {
+            foreach ($request->file('new_images') as $file) {
+                $finalImages[] = $file->store('articles', 'public');
+            }
         }
 
-        if ($request->hasFile('images')) {
-            // Eliminar las imágenes antiguas del almacenamiento
-            if (is_array($article->images)) {
-                foreach ($article->images as $oldImage) {
-                    Storage::disk('public')->delete($oldImage);
-                }
-            }
+        /**
+         * 3. borrar del disco las eliminadas
+         */
+        $oldImages = is_array($article->images) ? $article->images : [];
 
-            $imagePaths = [];
-            $files = $request->file('images');
-            foreach (array_slice($files, 0, 5) as $file) {
-                $imagePaths[] = $file->store('articles', 'public');
+        foreach ($oldImages as $img) {
+            if (!in_array($img, $finalImages)) {
+                Storage::disk('public')->delete($img);
             }
-            $data['images'] = $imagePaths;
         }
+
+        $data['images'] = $finalImages;
 
         $article->update($data);
 
