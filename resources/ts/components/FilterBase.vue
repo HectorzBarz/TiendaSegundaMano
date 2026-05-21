@@ -2,7 +2,7 @@
 import hampter from "/storage/app/public/img/hampter.jpg";
 
 import { computed, onMounted, ref, watch } from "vue";
-import { Article, Category } from "@/types";
+import { ApiResponse, Article, Category } from "@/types";
 
 import AutoComplete from "@volt/AutoComplete.vue";
 import InputNumber from "@volt/InputNumber.vue";
@@ -11,6 +11,7 @@ import Select from "@volt/Select.vue";
 import Button from "@volt/Button.vue";
 import DangerButton from "@volt/DangerButton.vue";
 import { useArticleFiltersStore } from "@/stores/articleFilters";
+import { api } from "@/stores/auth";
 
 const props = defineProps<{
     suggestions: Article[];
@@ -39,21 +40,30 @@ const minPrice = ref(0);
 const maxPrice = ref(0);
 const onSale = ref(false);
 
-const selectedCategory = ref<Category | null>(null);
+const categories = ref<Category[]>([]);
 
-// MOCK categories
-const categories = ref<Category[]>([
-    { id: 1, img: hampter, name: "Juguetes" },
-    { id: 2, img: hampter, name: "Informática" },
-    { id: 3, img: hampter, name: "Juegos de mesa" },
-    { id: 4, img: hampter, name: "Electrodomesticos" },
-    { id: 5, img: hampter, name: "Muebles" },
-    { id: 6, img: hampter, name: "Patinetes" },
-    { id: 7, img: hampter, name: "Ropa" },
-    { id: 8, img: hampter, name: "Videojuegos" },
-    { id: 9, img: hampter, name: "Películas" },
-    { id: 10, img: hampter, name: "Reproductores de música" },
-]);
+const loadCategories = async () => {
+    try {
+        const response = await api.get<ApiResponse<Category[]>>("/categories");
+
+        const data = Array.isArray(response.data)
+            ? response.data
+            : response.data.data;
+
+        categories.value = data;
+    } catch (error) {
+        console.error("Error cargando categorías:", error);
+    }
+};
+
+const categoryOptions = computed(() =>
+    categories.value.map((c) => ({
+        label: c.name,
+        value: c.id,
+    })),
+);
+
+const selectedCategoryId = ref<number | null>(null);
 
 // AUTOCOMPLETE
 const search = (event: any) => {
@@ -84,7 +94,7 @@ function onSelect(event: any) {
 
 function submit() {
     store.setFilters({
-        categoryId: selectedCategory.value?.id,
+        categoryId: selectedCategoryId.value,
         articleName: articleName.value,
         minPrice: minPrice.value,
         maxPrice: maxPrice.value,
@@ -95,7 +105,7 @@ function submit() {
 // RESET
 function reset() {
     articleName.value = "";
-    selectedCategory.value = null;
+    selectedCategoryId.value = null;
     onSale.value = false;
 
     minPrice.value = minAvailablePrice.value;
@@ -106,6 +116,7 @@ function reset() {
 
 onMounted(() => {
     reset();
+    loadCategories();
 });
 </script>
 
@@ -138,10 +149,10 @@ onMounted(() => {
                 class="flex w-full items-center gap-2 sm:col-span-2 lg:col-span-5 lg:justify-start"
             >
                 <Select
-                    v-model="selectedCategory"
-                    editable
-                    :options="categories"
-                    optionLabel="name"
+                    v-model="selectedCategoryId"
+                    :options="categoryOptions"
+                    optionLabel="label"
+                    optionValue="value"
                     placeholder="Categoría"
                     class="w-full"
                 />
