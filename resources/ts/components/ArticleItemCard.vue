@@ -18,7 +18,13 @@ const hasStock = (props.article.stock ?? 0) > 0;
             class="flex flex-col items-center justify-center overflow-hidden rounded-t-lg hover:cursor-pointer"
         >
             <!-- Image -->
-            <img :src="props.article.img" alt="img" class="h-full w-full" />
+            <div class="h-48 w-full overflow-hidden">
+                <img
+                    :src="props.article.img"
+                    alt="img"
+                    class="h-full w-full object-cover"
+                />
+            </div>
 
             <!-- Article name -->
             <h2
