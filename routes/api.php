@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AdminUserController;
+use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
@@ -54,4 +55,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/categories', [CategoryController::class, 'store']);
     Route::post('/categories/{id}', [CategoryController::class, 'update']);
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+});
+
+// Rutas Públicas de Artículos
+Route::get('/articles', [ArticleController::class, 'index']); // GET /api/articles?in_stock=true
+Route::get('/articles/{id}', [ArticleController::class, 'show']);
+
+// Rutas Protegidas (Crear, Editar, Borrar, Comprar)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/articles', [ArticleController::class, 'store']);
+    Route::post('/articles/{id}', [ArticleController::class, 'update']); // Usamos POST por las imágenes
+    Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);
+
+    // Ruta personalizada para la compra
+    Route::post('/articles/{id}/buy', [ArticleController::class, 'buy']);
 });
