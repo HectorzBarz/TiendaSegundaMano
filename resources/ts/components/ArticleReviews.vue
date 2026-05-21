@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { api } from "@/stores/auth";
+import { api, useAuthStore } from "@/stores/auth";
 
 const props = defineProps<{
     articleId: number;
 }>();
 
-const emit = defineEmits(["review-added"]);
+const emit = defineEmits(["review-added", "review-deleted"]); // Añadimos el emit de borrado por si acaso
+
+const authStore = useAuthStore();
 
 interface UserPublic {
     name: string;
@@ -15,10 +17,11 @@ interface UserPublic {
 
 interface Review {
     id: number;
+    user_id: number; // 👈 Clave para saber quién creó la reseña
     rating: number;
     comment: string | null;
     created_at: string;
-    user?: UserPublic; // Hacemos la propiedad opcional por seguridad
+    user?: UserPublic;
 }
 
 const reviews = ref<Review[]>([]);
@@ -50,22 +53,46 @@ const submitReview = async () => {
             },
         );
 
-        // Validamos que la respuesta tenga la estructura de usuario esperada antes de renderizarla
         if (data && data.id) {
+            // Si el backend no te devuelve el 'user_id' o 'user' al crear, se lo inyectamos localmente
+            if (!data.user_id && authStore.user)
+                data.user_id = authStore.user.id;
+            if (!data.user && authStore.user) {
+                data.user = {
+                    name: authStore.user.name,
+                    profile_image: authStore.user.profile_image,
+                };
+            }
             reviews.value.unshift(data);
         }
 
         comment.value = "";
         rating.value = 5;
-
         emit("review-added");
     } catch (err: any) {
         console.error("Error al publicar la reseña:", err);
         errorMessage.value =
             err.response?.data?.message ||
-            "Ocurrió un error al enviar tu reseña. Revisa tus rutas en Laravel.";
+            "Ocurrió un error al enviar tu reseña.";
     } finally {
         submitting.value = false;
+    }
+};
+
+// 🗑️ Función para eliminar la reseña
+const deleteReview = async (reviewId: number) => {
+    if (!confirm("¿Estás seguro de que quieres eliminar tu opinión?")) return;
+
+    try {
+        await api.delete(`/reviews/${reviewId}`);
+        // Quitamos la reseña de la pantalla instantáneamente
+        reviews.value = reviews.value.filter((rev) => rev.id !== reviewId);
+        emit("review-deleted");
+    } catch (err: any) {
+        console.error("Error al eliminar la reseña:", err);
+        alert(
+            err.response?.data?.message || "No se pudo eliminar el comentario.",
+        );
     }
 };
 
@@ -87,7 +114,12 @@ onMounted(fetchReviews);
                     Deja tu opinión
                 </h3>
 
-                <form @submit.prevent="submitReview" class="space-y-4">
+                <!-- Solo permitimos comentar si está logueado -->
+                <form
+                    v-if="authStore.isAuthenticated"
+                    @submit.prevent="submitReview"
+                    class="space-y-4"
+                >
                     <div>
                         <label class="text-texto mb-2 block text-sm font-medium"
                             >Puntuación</label
@@ -121,14 +153,14 @@ onMounted(fetchReviews);
                             id="comment"
                             v-model="comment"
                             rows="4"
-                            placeholder="¿Qué te pareció el artículo? Cuéntale a otros usuarios..."
-                            class="focus:border-azul focus:ring-azul w-full rounded-xl border border-gray-300 p-3 text-sm focus:ring-1 focus:outline-none"
+                            placeholder="¿Qué te pareció el artículo?..."
+                            class="focus:border-azul w-full rounded-xl border border-gray-300 p-3 text-sm focus:outline-none"
                         ></textarea>
                     </div>
 
                     <p
                         v-if="errorMessage"
-                        class="wrap-words rounded-lg bg-red-50 p-2 text-xs text-red-600"
+                        class="rounded-lg bg-red-50 p-2 text-xs text-red-600"
                     >
                         {{ errorMessage }}
                     </p>
@@ -141,6 +173,12 @@ onMounted(fetchReviews);
                         {{ submitting ? "Enviando..." : "Publicar reseña" }}
                     </button>
                 </form>
+                <div
+                    v-else
+                    class="text-texto-secundario py-4 text-center text-sm"
+                >
+                    Necesitas iniciar sesión para dejar una opinión.
+                </div>
             </div>
 
             <!-- LISTADO DE COMENTARIOS -->
@@ -157,9 +195,8 @@ onMounted(fetchReviews);
                     v-else
                     v-for="rev in reviews"
                     :key="rev.id"
-                    class="bg-card border-borde flex gap-4 rounded-2xl border p-5 shadow-2xs"
+                    class="bg-card border-borde group relative flex gap-4 rounded-2xl border p-5 shadow-2xs"
                 >
-                    <!-- Avatar con accesos seguros usando ?. -->
                     <div
                         class="h-10 w-10 shrink-0 overflow-hidden rounded-full border bg-gray-200"
                     >
@@ -178,7 +215,7 @@ onMounted(fetchReviews);
 
                     <div class="flex-1">
                         <div
-                            class="flex flex-wrap items-center justify-between gap-2"
+                            class="flex flex-wrap items-center justify-between gap-2 pr-6"
                         >
                             <h4 class="text-texto font-semibold">
                                 {{ rev.user?.name || "Usuario Anónimo" }}
@@ -195,7 +232,6 @@ onMounted(fetchReviews);
                             </span>
                         </div>
 
-                        <!-- Estrellas del comentario -->
                         <div class="my-1 flex gap-0.5 text-sm">
                             <i
                                 v-for="star in 5"
@@ -214,6 +250,20 @@ onMounted(fetchReviews);
                             {{ rev.comment }}
                         </p>
                     </div>
+
+                    <!-- 🛑 BOTÓN DE ELIMINAR (Solo visible para el creador del comentario) -->
+                    <button
+                        v-if="
+                            authStore.isAuthenticated &&
+                            authStore.user &&
+                            rev.user_id === authStore.user.id
+                        "
+                        @click="deleteReview(rev.id)"
+                        class="absolute top-4 right-4 p-1 text-gray-400 transition-colors hover:text-red-500"
+                        title="Eliminar comentario"
+                    >
+                        <i class="pi pi-trash"></i>
+                    </button>
                 </div>
             </div>
         </div>

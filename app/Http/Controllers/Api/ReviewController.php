@@ -58,4 +58,20 @@ class ReviewController extends Controller
 
         return response()->json($review->load('user'), 201);
     }
+
+    public function destroy(Request $request, Review $review)
+    {
+        // 🛡️ Seguridad: Verificamos si el usuario logueado es el dueño de la reseña
+        if ($request->user()->id !== $review->user_id) {
+            return response()->json([
+                'message' => 'No tienes permisos para eliminar esta reseña.'
+            ], 403); // 403 Forbidden
+        }
+
+        $review->delete();
+
+        return response()->json([
+            'message' => 'Reseña eliminada correctamente.'
+        ], 200);
+    }
 }

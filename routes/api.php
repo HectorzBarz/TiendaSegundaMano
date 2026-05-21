@@ -72,4 +72,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 💬 Ruta Protegida de Reseñas: Solo usuarios logueados pueden comentar
     Route::post('/articles/{article}/reviews', [ReviewController::class, 'store']);
+    // En routes/api.php (Dentro del grupo Route::middleware('auth:sanctum')->group(...))
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy']);
 });
