@@ -36,9 +36,12 @@ const userForm = ref({
     avatarFile: null as File | null,
 });
 
+const loadingProfile = ref(true);
+
 // Precarga de datos al montar el componente
 onMounted(async () => {
     try {
+        loadingProfile.value = true;
         let userData;
 
         // ADMIN EDITANDO
@@ -65,6 +68,8 @@ onMounted(async () => {
             "/storage/profile-images/default/default_image.jpg";
     } catch (e) {
         console.error(e);
+    } finally {
+        loadingProfile.value = false;
     }
 });
 
@@ -191,7 +196,11 @@ const saveChanges = async () => {
 </script>
 
 <template>
-    <div class="bg-fondo min-h-screen p-6">
+    <div v-if="loadingProfile" class="flex min-h-screen items-center justify-center bg-fondo">
+        <i class="pi pi-spinner pi-spin text-azul text-4xl"></i>
+    </div>
+
+    <div v-else class="bg-fondo min-h-screen p-6">
         <div class="mx-auto max-w-5xl">
             <div
                 class="bg-card border-borde mb-8 flex flex-col gap-6 rounded-3xl border p-8 shadow-sm lg:flex-row lg:items-center lg:justify-between"

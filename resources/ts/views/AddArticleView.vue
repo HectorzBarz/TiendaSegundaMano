@@ -23,6 +23,7 @@ if (!auth.user?.is_admin) {
 }
 
 const categories = ref<SelectOption[]>([]);
+const loadingCategories = ref(true);
 
 const loadCategories = async () => {
     try {
@@ -39,6 +40,8 @@ const loadCategories = async () => {
         }
     } catch (error) {
         console.error("Error cargando categorías:", error);
+    } finally {
+        loadingCategories.value = false;
     }
 };
 

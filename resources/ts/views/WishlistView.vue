@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, useRouter } from "vue-router";
-import hampter from "/storage/app/public/img/hampter.jpg";
+const hampter = "/images/placeholder.jpg";
 import { useCartStore } from "@/stores/cart";
 import { useAuthStore } from "@/stores/auth";
 

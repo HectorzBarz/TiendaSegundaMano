@@ -58,3 +58,41 @@ export type SelectOption = {
     label: string;
     value: number;
 };
+
+export interface OrderItem {
+    id: number;
+    order_id: number;
+    article_id: number;
+    article_name: string;
+    quantity: number;
+    unit_price: number;
+    subtotal: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Order {
+    id: number;
+    user_id: number;
+    status: 'pending' | 'processing' | 'completed' | 'delivered' | 'cancelled';
+    total: number;
+    shipping_name: string;
+    shipping_address: string;
+    shipping_city: string;
+    shipping_province: string;
+    shipping_postal_code: string;
+    shipping_phone: string;
+    billing_same_as_shipping: boolean;
+    billing_name: string | null;
+    billing_address: string | null;
+    billing_city: string | null;
+    billing_province: string | null;
+    billing_postal_code: string | null;
+    billing_phone: string | null;
+    card_last_four: string | null;
+    card_brand: string | null;
+    created_at: string;
+    updated_at: string;
+    items: OrderItem[];
+    user?: User;
+}

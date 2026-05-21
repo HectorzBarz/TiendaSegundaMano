@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import hampter from "/storage/app/public/img/hampter.jpg";
-
 import { computed, onMounted, ref, watch } from "vue";
 import { ApiResponse, Article, Category } from "@/types";
 
@@ -113,6 +111,16 @@ function reset() {
 
     store.reset();
 }
+
+watch(
+    () => props.suggestions.length,
+    () => {
+        if (props.suggestions.length > 0) {
+            minPrice.value = minAvailablePrice.value;
+            maxPrice.value = maxAvailablePrice.value;
+        }
+    },
+);
 
 onMounted(() => {
     reset();

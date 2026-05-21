@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\Api\AdminOrderController;
 use App\Http\Controllers\Api\AdminUserController;
 use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProfileController;
-use App\Http\Controllers\Api\ReviewController; // 👈 Importamos tu nuevo controlador de reseñas
+use App\Http\Controllers\Api\ReviewController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -41,6 +43,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/admin/users/{id}/remove-admin', [AdminUserController::class, 'removeAdmin']);
 
     Route::delete('/admin/users/{id}', [AdminUserController::class, 'destroy']);
+
+    // Admin - Orders
+    Route::get('/admin/orders', [AdminOrderController::class, 'index']);
+    Route::get('/admin/orders/{id}', [AdminOrderController::class, 'show']);
+    Route::put('/admin/orders/{id}/status', [AdminOrderController::class, 'updateStatus']);
+    Route::delete('/admin/orders/{id}', [AdminOrderController::class, 'destroy']);
 });
 
 // Mueve esto FUERA de cualquier grupo 'auth:sanctum'
@@ -69,6 +77,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Ruta personalizada para la compra
     Route::post('/articles/{id}/buy', [ArticleController::class, 'buy']);
+
+    // Client - Orders
+    Route::post('/checkout', [OrderController::class, 'checkout']);
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/{id}', [OrderController::class, 'show']);
 
     // 💬 Ruta Protegida de Reseñas: Solo usuarios logueados pueden comentar
     Route::post('/articles/{article}/reviews', [ReviewController::class, 'store']);

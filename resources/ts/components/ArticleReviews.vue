@@ -28,14 +28,18 @@ const reviews = ref<Review[]>([]);
 const rating = ref(5);
 const comment = ref("");
 const submitting = ref(false);
+const loadingReviews = ref(false);
 const errorMessage = ref("");
 
 const fetchReviews = async () => {
     try {
+        loadingReviews.value = true;
         const { data } = await api.get(`/articles/${props.articleId}/reviews`);
         reviews.value = Array.isArray(data) ? data : [];
     } catch (err) {
         console.error("Error al cargar comentarios:", err);
+    } finally {
+        loadingReviews.value = false;
     }
 };
 
@@ -184,7 +188,14 @@ onMounted(fetchReviews);
             <!-- LISTADO DE COMENTARIOS -->
             <div class="space-y-4 md:col-span-2">
                 <div
-                    v-if="reviews.length === 0"
+                    v-if="loadingReviews"
+                    class="flex items-center justify-center py-10"
+                >
+                    <i class="pi pi-spinner pi-spin text-azul text-3xl"></i>
+                </div>
+
+                <div
+                    v-else-if="reviews.length === 0"
                     class="text-texto-secundario rounded-2xl border border-dashed bg-gray-50 py-10 text-center"
                 >
                     <i class="pi pi-comments mb-2 block text-3xl"></i>

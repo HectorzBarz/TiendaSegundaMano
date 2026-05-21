@@ -16,6 +16,8 @@ import SelectButton from "@volt/SelectButton.vue";
 import ArticlesDataTable from "@/components/ArticlesDataTable.vue";
 import CategoriesDataTable from "@/components/CategoriesDataTable.vue";
 import UsersDataTable from "@/components/UsersDataTable.vue";
+import OrdersDataTable from "@/components/OrdersDataTable.vue";
+import { api } from "@/stores/auth";
 import axios from "axios";
 
 // Instancias del Store y Router
@@ -32,6 +34,7 @@ const options = [
     { name: "Artículos", value: "articles", component: ArticlesDataTable },
     { name: "Categorías", value: "categories", component: CategoriesDataTable },
     { name: "Usuarios", value: "users", component: UsersDataTable },
+    { name: "Pedidos", value: "orders", component: OrdersDataTable },
 ];
 
 const selectedOption = ref(options[0]);
@@ -42,6 +45,7 @@ const isChartCollapsed = ref(true);
 const articles = ref<Article[]>([]);
 const categories = ref<Category[]>([]);
 const users = ref<User[]>([]);
+const orders = ref<any[]>([]);
 
 // Propiedad computada para filtrar artículos
 const filteredArticles = computed(() => {
@@ -172,12 +176,31 @@ const fetchUsers = async () => {
     }
 };
 
+// ORDERS
+const ordersLoading = ref(false);
+
+const fetchOrders = async () => {
+    try {
+        ordersLoading.value = true;
+        const response = await api.get("/admin/orders");
+        orders.value = Array.isArray(response.data) ? response.data : [];
+    } catch (e) {
+        console.error("Error fetching orders", e);
+        orders.value = [];
+    } finally {
+        ordersLoading.value = false;
+    }
+};
+
 const getData = () => {
     if (selectedOption.value.value === "articles")
         return filteredArticles.value || [];
 
     if (selectedOption.value.value === "categories")
         return Array.isArray(categories.value) ? categories.value : [];
+
+    if (selectedOption.value.value === "orders")
+        return Array.isArray(orders.value) ? orders.value : [];
 
     return Array.isArray(users.value) ? users.value : [];
 };
@@ -191,6 +214,8 @@ const handleDelete = () => {
         fetchCategories();
     } else if (active === "articles") {
         fetchArticles(); // Recargar los artículos al borrar uno
+    } else if (active === "orders") {
+        fetchOrders();
     }
 };
 
@@ -199,6 +224,7 @@ onMounted(() => {
     fetchArticles();
     fetchUsers();
     fetchCategories();
+    fetchOrders();
 });
 </script>
 

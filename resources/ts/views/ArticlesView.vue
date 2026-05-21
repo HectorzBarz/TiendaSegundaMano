@@ -130,9 +130,14 @@ onMounted(() => {
                 class="bg-card border-borde rounded-2xl border lg:w-1/3 xl:max-w-1/5 xl:min-w-1/5"
             />
 
+            <!-- LOADING -->
+            <div v-if="loading" class="flex w-full items-center justify-center py-20">
+                <i class="pi pi-spinner pi-spin text-azul text-4xl"></i>
+            </div>
+
             <!-- LIST -->
             <div
-                v-if="filteredArticles.length"
+                v-else-if="filteredArticles.length"
                 class="grid w-full grid-cols-1 gap-3 p-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
             >
                 <ArticleItemCard
