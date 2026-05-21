@@ -14,7 +14,6 @@ class ArticleController extends Controller
     {
         $query = Article::query();
 
-        // Si envías ?in_stock=true en la URL, te devuelve solo los que tienen stock > 0
         if ($request->query('in_stock') === 'true') {
             $query->where('stock', '>', 0);
         }
@@ -37,27 +36,32 @@ class ArticleController extends Controller
     // POST /api/articles (Crear)
     public function store(Request $request)
     {
+        // Se cambia 'image' por 'file' para evitar falsos negativos con el formato de vectores XML (SVG)
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'old_price' => 'nullable|numeric|min:0',
-            'on_sale' => 'boolean',
+            'on_sale' => 'nullable|in:1,0,true,false',
             'item_state' => 'nullable|integer',
             'category_id' => 'required|exists:categories,id',
             'stock' => 'nullable|integer|min:0',
-            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048', // Validación de imágenes
+            'images' => 'nullable|array|max:5',
+            'images.*' => 'file|mimes:jpeg,png,jpg,webp,svg|max:2048', // Añadido soporte SVG aquí
         ]);
 
-        // Manejar subida de hasta 5 imágenes
+        if (isset($data['on_sale'])) {
+            $data['on_sale'] = filter_var($data['on_sale'], FILTER_VALIDATE_BOOLEAN);
+        }
+
         $imagePaths = [];
         if ($request->hasFile('images')) {
             $files = $request->file('images');
-            // Limitamos a 5 iteraciones máximo
             foreach (array_slice($files, 0, 5) as $file) {
                 $imagePaths[] = $file->store('articles', 'public');
             }
         }
+
         $data['images'] = $imagePaths;
 
         $article = Article::create($data);
@@ -65,7 +69,7 @@ class ArticleController extends Controller
         return response()->json($article, 201);
     }
 
-    // POST /api/articles/{id} (Actualizar - Usamos POST para soportar FormData con imágenes)
+    // POST /api/articles/{id} (Actualizar)
     public function update(Request $request, $id)
     {
         $article = Article::find($id);
@@ -74,12 +78,26 @@ class ArticleController extends Controller
             return response()->json(['message' => 'Artículo no encontrado'], 404);
         }
 
-        // Validación similar a la de store...
-        $data = $request->all(); // Asegúrate de validar en un entorno real (FormRequest)
+        // Se replica la validación segura de SVG para el proceso de edición
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'old_price' => 'nullable|numeric|min:0',
+            'on_sale' => 'nullable|in:1,0,true,false',
+            'item_state' => 'nullable|integer',
+            'category_id' => 'required|exists:categories,id',
+            'stock' => 'nullable|integer|min:0',
+            'images' => 'nullable|array|max:5',
+            'images.*' => 'file|mimes:jpeg,png,jpg,webp,svg|max:2048', // Añadido soporte SVG aquí
+        ]);
 
-        // Si se suben nuevas imágenes
+        if (isset($data['on_sale'])) {
+            $data['on_sale'] = filter_var($data['on_sale'], FILTER_VALIDATE_BOOLEAN);
+        }
+
         if ($request->hasFile('images')) {
-            // Opcional: Eliminar las imágenes antiguas del servidor
+            // Eliminar las imágenes antiguas del almacenamiento
             if (is_array($article->images)) {
                 foreach ($article->images as $oldImage) {
                     Storage::disk('public')->delete($oldImage);
@@ -108,7 +126,6 @@ class ArticleController extends Controller
             return response()->json(['message' => 'Artículo no encontrado'], 404);
         }
 
-        // Borrar archivos físicos
         if (is_array($article->images)) {
             foreach ($article->images as $image) {
                 Storage::disk('public')->delete($image);
@@ -120,7 +137,7 @@ class ArticleController extends Controller
         return response()->json(['message' => 'Artículo eliminado exitosamente']);
     }
 
-    // POST /api/articles/{id}/buy (Comprar artículo y reducir stock)
+    // POST /api/articles/{id}/buy (Comprar)
     public function buy(Request $request, $id)
     {
         $request->validate([
@@ -135,7 +152,6 @@ class ArticleController extends Controller
 
         $quantityToBuy = $request->input('quantity');
 
-        // Comprobar si hay stock suficiente
         if ($article->stock < $quantityToBuy) {
             return response()->json([
                 'message' => 'Stock insuficiente',
@@ -143,13 +159,12 @@ class ArticleController extends Controller
             ], 400);
         }
 
-        // Reducir stock y aumentar ventas
         $article->decrement('stock', $quantityToBuy);
         $article->increment('sell_count', $quantityToBuy);
 
         return response()->json([
             'message' => 'Compra realizada con éxito',
-            'article' => $article // Devolvemos el artículo actualizado
+            'article' => $article
         ]);
     }
 }
