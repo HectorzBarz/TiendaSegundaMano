@@ -11,12 +11,11 @@ import { useAuthStore } from "@/stores/auth";
 
 import { RouterLink, useRouter } from "vue-router";
 import { computed, onMounted, ref } from "vue";
-import type { Article, RawArticle, ApiResponse, Category } from "@/types";
+import type { Article, RawArticle, ApiResponse, Category, User } from "@/types";
 import SelectButton from "@volt/SelectButton.vue";
 import ArticlesDataTable from "@/components/ArticlesDataTable.vue";
 import CategoriesDataTable from "@/components/CategoriesDataTable.vue";
 import UsersDataTable from "@/components/UsersDataTable.vue";
-import type { User } from "@/stores/auth";
 import axios from "axios";
 
 // Instancias del Store y Router

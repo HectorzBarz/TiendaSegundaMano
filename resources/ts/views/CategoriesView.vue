@@ -28,7 +28,11 @@ onMounted(async () => {
 
 function selectCategory(id: number) {
     store.setCategory(id);
-    router.push("/articles");
+
+    router.push({
+        name: "articles",
+        query: { category: String(id) },
+    });
 }
 </script>
 
@@ -53,12 +57,12 @@ function selectCategory(id: number) {
             class="grid h-full w-full gap-2 overflow-hidden px-2 pb-5 text-center align-middle sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5"
         >
             <div v-for="category in categories" :key="category.id">
-                <RouterLink to="/articles" @click="selectCategory(category.id)">
+                <div @click="selectCategory(category.id)">
                     <CategoryItemCard
                         :category="category"
-                        class="bg-card border-borde text-texto"
+                        class="bg-card border-borde text-texto cursor-pointer"
                     />
-                </RouterLink>
+                </div>
             </div>
         </div>
     </div>

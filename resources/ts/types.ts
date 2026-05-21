@@ -37,13 +37,24 @@ export interface ApiResponse<T> {
 export type Category = {
     id: number;
     name: string;
-    image: string;
+    image?: string;
 };
 
-export type User = {
+export interface User {
     id: number;
     name: string;
     email: string;
     is_admin: boolean;
-    phone?: string;
+    phone?: string | null;
+    birth_date?: string | null;
+    city?: string | null;
+    postal_code?: string | null;
+    shipping_address?: string | null;
+    billing_address?: string | null;
+    profile_image?: string | null;
+}
+
+export type SelectOption = {
+    label: string;
+    value: number;
 };

@@ -2,21 +2,9 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import axios from "axios";
+import { User } from "@/types";
 
 // 1. Definimos la interfaz (molde) de lo que es un Usuario en tu aplicación
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    is_admin: boolean;
-    phone?: string | null;
-    birth_date?: string | null;
-    city?: string | null;
-    postal_code?: string | null;
-    shipping_address?: string | null;
-    billing_address?: string | null;
-    profile_image?: string | null;
-}
 
 // Configura la URL base de tu API de Laravel
 export const api = axios.create({

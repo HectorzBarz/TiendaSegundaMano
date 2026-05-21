@@ -3,11 +3,13 @@ import FilterBase from "@/components/FilterBase.vue";
 import ArticleItemCard from "@/components/ArticleItemCard.vue";
 import hampter from "/storage/app/public/img/hampter.jpg";
 
-import { computed } from "vue";
+import { computed, onMounted, watch } from "vue";
 import { useArticleFiltersStore } from "@/stores/articleFilters";
 import { Article } from "@/types";
+import { useRoute } from "vue-router";
 
 const store = useArticleFiltersStore();
+const route = useRoute();
 
 const articles = <Article[]>[
     {
@@ -146,7 +148,7 @@ const articles = <Article[]>[
 const filteredArticles = computed(() => {
     return articles.filter((article) => {
         const matchesCategory =
-            !store.categoryId || article.categoryId === store.categoryId;
+            store.categoryId === 0 || article.categoryId === store.categoryId;
 
         const matchesName =
             !store.articleName ||
@@ -161,6 +163,25 @@ const filteredArticles = computed(() => {
 
         return matchesCategory && matchesName && matchesPrice && matchesSale;
     });
+});
+
+watch(
+    () => route.query.category,
+    (newVal) => {
+        if (newVal) {
+            store.setCategory(Number(newVal));
+        } else {
+            store.reset();
+        }
+    },
+);
+
+onMounted(() => {
+    const category = route.query.category;
+
+    if (category) {
+        store.setCategory(Number(category));
+    }
 });
 </script>
 

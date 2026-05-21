@@ -11,7 +11,7 @@ import Select from "@volt/Select.vue";
 import Checkbox from "@volt/Checkbox.vue";
 
 import { api, useAuthStore } from "@/stores/auth";
-import { Article, Category } from "@/types";
+import { Article, Category, SelectOption } from "@/types";
 
 // Instancias del Store y Router
 const auth = useAuthStore();
@@ -22,7 +22,7 @@ if (!auth.user?.is_admin) {
     router.push({ name: "account" }); // Ajusta según el esquema de tus rutas
 }
 
-const categories = ref<Category[]>([]);
+const categories = ref<SelectOption[]>([]);
 
 const loadCategories = async () => {
     try {
