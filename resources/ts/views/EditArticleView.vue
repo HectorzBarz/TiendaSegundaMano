@@ -90,6 +90,7 @@ const fetchArticle = async () => {
             ...data,
             onSale: Boolean(data.on_sale),
             oldPrice: data.old_price,
+            categoryId: data.category_id,
         };
     } catch (err) {
         console.error("Error cargando artículo:", err);

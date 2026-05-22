@@ -87,6 +87,15 @@ const hasStock = (props.article.stock ?? 0) > 0;
             </div>
             <!-- END Rating section -->
 
+            <!-- Stock -->
+            <div
+                v-if="article.stock !== undefined"
+                class="text-xs"
+                :class="hasStock ? 'text-green-600' : 'text-red-500'"
+            >
+                {{ hasStock ? 'Stock: ' + article.stock + ' uds.' : 'Agotado' }}
+            </div>
+
             <!-- Cart section -->
             <div>
                 <i

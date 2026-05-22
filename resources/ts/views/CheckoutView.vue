@@ -344,13 +344,20 @@ const groupedItems = computed(() => cart.items);
                                 <div v-for="item in groupedItems" :key="item.article.id"
                                     class="border-borde flex items-center gap-4 rounded-2xl border bg-white p-4 transition hover:shadow-md">
                                     <div class="border-borde bg-fondo h-20 w-20 shrink-0 overflow-hidden rounded-xl border">
-                                        <img :src="Array.isArray(item.article.images) ? (item.article.images[0] ?? '/images/placeholder.jpg') : (item.article.images ?? '/images/placeholder.jpg')"
+                                        <img :src="item.article.img || '/images/placeholder.jpg'"
                                             :alt="item.article.name" class="h-full w-full object-cover" />
                                     </div>
                                     <div class="flex flex-1 flex-col justify-between gap-1">
                                         <div>
                                             <p class="text-texto font-semibold">{{ item.article.name }}</p>
                                             <p class="text-texto-secundario text-sm">Cantidad: {{ item.quantity }}</p>
+                                            <p
+                                                v-if="item.article.stock !== undefined"
+                                                class="text-xs"
+                                                :class="(item.article.stock ?? 0) > 0 ? 'text-green-600' : 'text-red-500'"
+                                            >
+                                                {{ (item.article.stock ?? 0) > 0 ? 'Stock: ' + item.article.stock + ' uds.' : 'Agotado' }}
+                                            </p>
                                         </div>
                                         <div class="flex items-center justify-between">
                                             <span class="text-texto-secundario text-xs">

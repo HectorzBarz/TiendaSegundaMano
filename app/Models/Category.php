@@ -18,4 +18,9 @@ class Category extends Model
             get: fn($value) => $value ? url('storage/' . $value) : null,
         );
     }
+
+    public function articles()
+    {
+        return $this->hasMany(Article::class);
+    }
 }

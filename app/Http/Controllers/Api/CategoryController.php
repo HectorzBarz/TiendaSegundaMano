@@ -16,10 +16,9 @@ class CategoryController extends Controller
     // GET /api/categories
     public function index(Request $request)
     {
-        // Si 'limit' es enviado, limitamos; si no, trae todas.
         $limit = $request->query('limit');
 
-        $query = Category::query()->orderBy('created_at', 'desc');
+        $query = Category::with('articles')->orderBy('created_at', 'desc');
 
         if ($limit && is_numeric($limit)) {
             $query->limit((int) $limit);

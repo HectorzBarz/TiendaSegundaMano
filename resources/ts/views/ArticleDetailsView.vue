@@ -194,6 +194,25 @@ const handleReviewAdded = () => {
                         </span>
                     </div>
 
+                    <div
+                        v-if="article.stock !== undefined"
+                        class="flex items-center gap-2"
+                    >
+                        <span
+                            class="text-sm font-medium"
+                            :class="
+                                hasStock
+                                    ? 'text-green-600'
+                                    : 'text-red-500'
+                            "
+                        >
+                            {{
+                                hasStock
+                                    ? 'Stock: ' + article.stock + ' uds.'
+                                    : 'Agotado'
+                            }}
+                        </span>
+                    </div>
                     <div>
                         <h2 class="text-rojo-fuerte mb-2 text-lg font-medium">
                             Descripción

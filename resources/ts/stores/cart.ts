@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed, watch } from "vue";
 import type { Article } from "@/types";
+import { api } from "@/stores/auth";
 
 export type CartItem = {
     article: Article;
@@ -25,6 +26,35 @@ export const useCartStore = defineStore("cart", () => {
         open.value = !open.value;
     }
 
+    function getFirstImageUrl(article: Article): string {
+        const { images } = article;
+        let firstImage = "";
+
+        if (Array.isArray(images) && images.length > 0) {
+            firstImage = images[0];
+        } else if (typeof images === "string") {
+            try {
+                const parsed = JSON.parse(images);
+                firstImage = Array.isArray(parsed) ? (parsed[0] ?? "") : images;
+            } catch {
+                firstImage = images;
+            }
+        }
+
+        if (!firstImage) {
+            return "https://placehold.co/600x400?text=Sin+Imagen";
+        }
+
+        if (firstImage.startsWith("http")) {
+            return firstImage;
+        }
+
+        const baseUrl =
+            api.defaults.baseURL?.replace(/\/api\/?$/, "") ||
+            "http://localhost:8000";
+        return `${baseUrl}/storage/${firstImage}`;
+    }
+
     function load(): CartItem[] {
         const data = localStorage.getItem("cart");
         return data ? JSON.parse(data) : [];
@@ -44,7 +74,11 @@ export const useCartStore = defineStore("cart", () => {
                 found.quantity++;
             }
         } else {
-            items.value.push({ article, quantity: 1 });
+            const normalized = { ...article };
+            if (!normalized.img) {
+                normalized.img = getFirstImageUrl(normalized);
+            }
+            items.value.push({ article: normalized, quantity: 1 });
         }
     }
 

@@ -18,7 +18,19 @@ class ArticleController extends Controller
             $query->where('stock', '>', 0);
         }
 
+        $query->orderBy('name', 'asc');
+
         return response()->json($query->get());
+    }
+
+    // GET /api/articles/category/{categoryId} (Productos por categoría)
+    public function getByCategory($categoryId)
+    {
+        $articles = Article::where('category_id', $categoryId)
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return response()->json($articles);
     }
 
     // GET /api/articles/{id} (Vista detalle / editar)

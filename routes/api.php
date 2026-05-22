@@ -64,7 +64,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Rutas Públicas de Artículos
 Route::get('/articles', [ArticleController::class, 'index']); // GET /api/articles?in_stock=true
+Route::get('/articles/category/{categoryId}', [ArticleController::class, 'getByCategory']);
 Route::get('/articles/{id}', [ArticleController::class, 'show']);
+
+// Rutas para la práctica Ionic (alias de /articles)
+Route::get('/products', [ArticleController::class, 'index']);
+Route::get('/products/category/{categoryId}', [ArticleController::class, 'getByCategory']);
+Route::get('/products/{id}', [ArticleController::class, 'show']);
 
 // 📄 Ruta Pública de Reseñas: Cualquiera puede ver las opiniones de un artículo
 Route::get('/articles/{article}/reviews', [ReviewController::class, 'index']);

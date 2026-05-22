@@ -44,12 +44,7 @@ function close() {
                 class="flex gap-3 rounded-2xl border p-3"
             >
                 <img
-                    :src="
-                        Array.isArray(item.article.images)
-                            ? (item.article.images[0] ??
-                              '/images/placeholder.jpg')
-                            : (item.article.images ?? '/images/placeholder.jpg')
-                    "
+                    :src="item.article.img || '/images/placeholder.jpg'"
                     :alt="item.article.name"
                     class="h-16 w-16 rounded-xl object-cover"
                 />
@@ -60,6 +55,14 @@ function close() {
                     </p>
 
                     <p class="text-azul font-bold">{{ item.article.price }}€</p>
+
+                    <p
+                        v-if="item.article.stock !== undefined"
+                        class="text-xs"
+                        :class="(item.article.stock ?? 0) > 0 ? 'text-green-600' : 'text-red-500'"
+                    >
+                        {{ (item.article.stock ?? 0) > 0 ? 'Stock: ' + item.article.stock + ' uds.' : 'Agotado' }}
+                    </p>
 
                     <!-- CONTROLS -->
                     <div class="mt-2 flex items-center gap-2">
