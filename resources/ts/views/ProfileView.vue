@@ -189,6 +189,9 @@ const saveChanges = async () => {
             severity: "success",
             life: 3000,
         });
+        if (isAdminEditing.value) {
+            router.push("/admin");
+        }
     } catch (e) {
         show({ message: "Error al actualizar los datos", severity: "error" });
     }

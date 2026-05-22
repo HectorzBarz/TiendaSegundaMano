@@ -25,6 +25,7 @@ export interface RawArticle extends Omit<
     images: string[] | string;
     on_sale?: boolean | number;
     old_price?: number;
+    category_id?: number;
     // Añade aquí cualquier otro campo que venga en snake_case desde el server
 }
 

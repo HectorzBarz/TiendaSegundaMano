@@ -123,6 +123,7 @@ const fetchArticles = async (): Promise<void> => {
                 // Mapeo de snake_case a camelCase si el backend no lo hace
                 onSale: Boolean(art.on_sale),
                 oldPrice: art.old_price,
+                categoryId: art.category_id ?? 0,
                 img: imgUrl,
             };
         });

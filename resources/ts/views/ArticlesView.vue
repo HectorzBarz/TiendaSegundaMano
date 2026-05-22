@@ -55,6 +55,7 @@ const fetchArticles = async () => {
                 ...a,
                 onSale: Boolean(a.on_sale),
                 oldPrice: a.old_price,
+                categoryId: a.category_id ?? 0,
                 img: img
                     ? img.startsWith("http")
                         ? img
